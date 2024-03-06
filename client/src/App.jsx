@@ -1,9 +1,12 @@
 import './App.scss'
+import { HomePage } from './pages'
 
 function App() {
 
   return (
-    <a href='/sign-in'>Sign In</a>
+    <>
+      <HomePage/>
+    </>
     )
 }
 
