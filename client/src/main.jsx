@@ -7,7 +7,7 @@ import './index.css'
 import ProtectedPage from './ProtectedPage.jsx';
 import UserProfilePage from './user-profile.jsx';
 
-const publishableKey = process.env.VITE_CLERK_PUBLISHABLE_KEY;
+const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
   throw new Error("Missing Publishable Key")

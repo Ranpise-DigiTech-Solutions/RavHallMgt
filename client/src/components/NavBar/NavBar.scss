@@ -8,20 +8,26 @@
     flex-direction: row;
     justify-content: space-between;
 
-    background-color: #301500;
+    background-color: #1A1A1A;
     color: #ffffff;
+    font-size: 16px;
 
     .logo__wrapper {
         
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         justify-content: center;
         align-items: center;
+        font-weight: 600;
 
         .logo{
             height: 4rem;
             width: 4rem;
             margin-left: 1.5rem;
+        }
+
+        p{
+            margin-left: 0.5rem;
         }
     }
 
@@ -31,7 +37,7 @@
         justify-content: center;
         height: 100%;
 
-        a {
+        .tag {
             margin: 1rem;
             position: relative;
             text-decoration: none;
@@ -59,7 +65,7 @@
             }
         }
 
-        button {
+        .button {
             background-color: #ff8000;
             color: #ffffff;
             height: 60%;
