@@ -18,7 +18,7 @@ export default function NavBar() {
                 <a href="#">Our Value</a>
                 <a href="#">Contact Us</a>
                 <a href="#">Get Started</a>
-                <Button variant="contained">Contained</Button>
+                <Button variant="contained">Contact</Button>
             </div>
         </div>    
     </>
