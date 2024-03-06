@@ -153,17 +153,19 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  flex-direction: column;
+  flex-direction: row;
   height: 100%;
+  margin-top: -3.5rem;
 
-  padding: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
 
   .app__navigation-dot {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background-color: #cbcbcb;
-    margin: 0.5rem;
+    margin: 1rem;
 
     transition: background-color 0.2s ease-in-out;
 

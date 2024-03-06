@@ -4,13 +4,22 @@
 }
 
 .main__wrapper {
+    width: 100%;
+
     display: flex;
     flex-direction: row;
     justify-content: space-between;
 
-    background-color: #1A1A1A;
+    background-color: rgba(26,26,26,0.25);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border: 1px solid rgba(255,255,255,0.18);
+    position: fixed;
+    z-index: 2;
+
     color: #ffffff;
     font-size: 16px;
+    
 
     .logo__wrapper {
         
@@ -27,7 +36,9 @@
         }
 
         p{
-            margin-left: 0.5rem;
+            margin-left: 0.1rem;
+            font-size: 18px;
+            color: antiquewhite;
         }
     }
 
