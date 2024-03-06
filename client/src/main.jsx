@@ -7,7 +7,7 @@ import './index.css'
 import ProtectedPage from './ProtectedPage.jsx';
 import UserProfilePage from './user-profile.jsx';
 
-const publishableKey = "pk_test_YXNzdXJpbmctYmFkZ2VyLTg3LmNsZXJrLmFjY291bnRzLmRldiQ";
+const publishableKey = process.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
   throw new Error("Missing Publishable Key")
