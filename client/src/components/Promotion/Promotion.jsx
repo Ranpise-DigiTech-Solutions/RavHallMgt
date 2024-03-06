@@ -120,9 +120,6 @@ export default function Promotion() {
           <NavigationDots active={currentImageIndex} />
         </div>
       </div>
-      <div className="adad">
-        
-      </div>
     </>
   );
 }
