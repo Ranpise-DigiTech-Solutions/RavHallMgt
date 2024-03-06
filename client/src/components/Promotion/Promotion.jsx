@@ -42,6 +42,7 @@ export default function Promotion() {
     <>
       <div className="main__container">
         <div className="app__container">
+            <div className="white__gradient"></div>
           <div className="sub__wrapper_1">
             <div className="title__wrapper">
               <motion.div
@@ -118,6 +119,9 @@ export default function Promotion() {
         <div className="navigation__dots">
           <NavigationDots active={currentImageIndex} />
         </div>
+      </div>
+      <div className="adad">
+        
       </div>
     </>
   );

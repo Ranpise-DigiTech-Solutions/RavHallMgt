@@ -3,6 +3,11 @@
     padding: 0;
 }
 
+.adad {
+    height: 5000px;
+    width: 5000px;
+}
+
 .main__container {
 
     display: flex;
@@ -20,6 +25,22 @@
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
+        position: relative;
+        z-index: 5;
+
+        .white__gradient {
+            width: 20rem;
+            height: 20rem;
+            position: absolute;
+            top: 0;
+            left: 0;
+            
+            background: rgba(255, 255, 255, .522);
+            filter: blur(100px);
+            border-radius: 100px;
+
+            z-index: 1;
+        }
         
         .sub__wrapper_1 {
     
