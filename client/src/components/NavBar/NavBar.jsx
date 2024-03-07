@@ -30,7 +30,7 @@ export default function NavBar() {
 
   return (
     <>
-        <div className={`main__wrapper ${scrolled ? 'scrolled' : ''}`}>
+        <div className={`navbar__wrapper ${scrolled ? 'scrolled' : ''}`}>
             <div className="logo__wrapper">
                 <img src={Images.logo} alt="logo" className="logo" />
                 <p className="title">Wed-Me</p>

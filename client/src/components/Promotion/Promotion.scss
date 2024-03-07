@@ -3,25 +3,17 @@
     padding: 0;
 }
 
-.main__container {
+.promotion__container {
 
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
     
-    flex: 1;
-    width: 100%;
-    background-color: #1A1A1A;
-
     .app__container {
-    
+        
+        margin-top: 2rem;
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
         position: relative;
-        z-index: 5;
 
         .white__gradient {
             width: 20rem;

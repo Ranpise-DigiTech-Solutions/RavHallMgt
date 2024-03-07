@@ -8,7 +8,8 @@
 /* Your additional styles or customizations can go here */
 
 :root {
-  --font-base: "DM Sans", sans-serif;
+  --font-base: "Roboto", "DM Sans", sans-serif;
+  --font-family: var(--roboto, 'Roboto', sans-serif);
 
   --primary-color: #edf2f8;
   --secondary-color: #313bac;
