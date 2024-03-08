@@ -1,14 +1,15 @@
 import React from 'react'
 import './HomePage.scss'
 import { MotionWrap, AppWrap } from '../../wrapper'
-import { NavBar, Promotion, Destinations } from '../../components'
+import { NavBar, Promotion, Destinations, SearchBar } from '../../components'
 
 const HomePage = () => {
   return (
     <>
-      <NavBar/>
+      {/* <NavBar/> */}
       <Promotion/>
       <Destinations/>
+      <SearchBar /> 
 
       {/* <a href='/sign-in'>Sign In</a> */}
     </>

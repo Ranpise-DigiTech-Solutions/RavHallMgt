@@ -144,6 +144,7 @@ const Destinations = () => {
               {cardsArray.map((card, index) => (
                 <div
                   className="card"
+                  key={index}
                 >
                   <DestinationsCard key={index} card={card} />
                 </div>
@@ -155,5 +156,5 @@ const Destinations = () => {
   );
 }
 
-export default MotionWrap(Destinations, "");
-// export default Destinations;
+// export default MotionWrap(Destinations, "");
+export default Destinations;
