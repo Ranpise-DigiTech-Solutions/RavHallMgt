@@ -9,6 +9,7 @@
     display: flex;
     max-width: 100%;
     background: linear-gradient(to bottom, #1A1A1A 0%, #1A1A1A 50%,#f7f7f7 50%, #f7f7f7 100%);
+    padding-bottom: 5rem;
     
     .main__wrapper {
         width: 100%;
@@ -147,15 +148,12 @@
                     user-select: none;
                     --webkit-user-select: none;
                 }
-
-                // button {  
-                //     height: 100%;  
-                    .icon {
-                        cursor: pointer;
-                        font-size: 15px;
-                        
-                    }
-                // }
+                
+                .icon {
+                    cursor: pointer;
+                    font-size: 15px;
+                    
+                }
 
             }
         }

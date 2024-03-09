@@ -137,8 +137,12 @@ export default function SearchBar() {
               />
             </div>
           </div>
-          <div className="search__icon">
-            <button><SearchIcon/></button>
+          <div className="search__icon" >
+            <button>
+              <a href="#packages">
+                <SearchIcon/>
+              </a>
+            </button>
           </div>
         </div>
         <div className="sub__wrapper_2">
