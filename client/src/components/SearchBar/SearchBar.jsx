@@ -4,13 +4,22 @@ import axios from 'axios'
 
 import SearchIcon from '@mui/icons-material/Search';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import CloseIcon from '@mui/icons-material/Close';
 
 import "./SearchBar.scss";
 
 export default function SearchBar() {
 
   const [cities, setCities] = useState([]);
+  const [budget, setBudget] = useState(['5L-10L', '10L-20L', '20L-30L']);
+  const [vendorType, setVendorType] = useState(['option_1', 'option_2', 'option_3']);
+  
+  const [selectedDate, setSelectedDate] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
+  const [selectedBudget, setSelectedBudget] = useState(null);
+  const [selectedVendor, setSelectedVendor] = useState(null);
+
 
   const apiURL = `https://countriesnow.space/api/v0.1/countries/cities`;
   const postData = {
@@ -62,6 +71,10 @@ export default function SearchBar() {
     }),
   };
 
+  const handleDateChange = event => {
+    setSelectedDate(event.target.value);
+  };
+
   return (
     <div className="search__container">
       <div className="main__wrapper">
@@ -71,7 +84,7 @@ export default function SearchBar() {
         <div className="description">
           Find best Wedding Vendors with, <br /> thousands of trusted Reviews
         </div>
-        <div className="sub__wrapper">
+        <div className="sub__wrapper_1">
           <div className="wrapper">
             <p>Destination</p>
             <div className="input">
@@ -91,7 +104,7 @@ export default function SearchBar() {
           <div className="wrapper">
             <p>Date</p>
             <div className="input ">
-              <input type="date" placeholder="dd-mm-yyyy" />
+              <input type="date" value={selectedDate} placeholder="dd-mm-yyyy" onChange={handleDateChange}/>
             </div>
           </div>
           <div className="wrapper">
@@ -99,15 +112,14 @@ export default function SearchBar() {
             <div className="input">
             <Select
                 styles={customStyles}
-                // options={cities.map((city) => ({ value: city, label: city }))}
-                // value={selectedCity}
-                // onChange={(selectedOption) => setSelectedCity(selectedOption)}
+                options={budget.map((val) => ({ value: val, label: val }))}
+                value={selectedBudget}
+                onChange={(selectedOption) => setSelectedBudget(selectedOption.value)}
                 placeholder="Choose Your Budget..."
                 components={{
                   DropdownIndicator: () => <CurrencyRupeeIcon />
                 }}
               />
-              {/* <CurrencyRupeeIcon/> */}
             </div>
           </div>
           <div className="wrapper">
@@ -115,12 +127,12 @@ export default function SearchBar() {
             <div className="input">
               <Select
                 styles={customStyles}
-                // options={cities.map((city) => ({ value: city, label: city }))}
-                // value={selectedCity}
-                // onChange={(selectedOption) => setSelectedCity(selectedOption)}
-                placeholder="Choose Your Budget..."
+                options={vendorType.map((val) => ({ value: val, label: val }))}
+                value={selectedVendor}
+                onChange={(selectedOption) => setSelectedVendor(selectedOption.value)}
+                placeholder="Choose Vendor Type"
                 components={{
-                  DropdownIndicator: () => <CurrencyRupeeIcon />
+                  DropdownIndicator: () => <KeyboardArrowDownIcon />
                 }}
               />
             </div>
@@ -128,6 +140,36 @@ export default function SearchBar() {
           <div className="search__icon">
             <button><SearchIcon/></button>
           </div>
+        </div>
+        <div className="sub__wrapper_2">
+          {
+            selectedCity && 
+            <div className="tag">
+              <p>{selectedCity}</p>
+                <CloseIcon className='icon' onClick={() => setSelectedCity(null)}/>
+            </div>
+          }
+          {
+            selectedDate && 
+            <div className="tag">
+              <p>{selectedDate}</p>
+                <CloseIcon className='icon' onClick={() => setSelectedDate('')}/>
+            </div>
+          }
+          {
+            selectedBudget && 
+            <div className="tag">
+              <p>{selectedBudget}</p>
+                <CloseIcon className='icon' onClick={() => setSelectedBudget(null)}/>
+            </div>
+          }
+          {
+            selectedVendor && 
+            <div className="tag">
+              <p>{selectedVendor}</p>
+                <CloseIcon className='icon' onClick={() => setSelectedVendor(null)}/>
+            </div>
+          }
         </div>
       </div>
     </div>
