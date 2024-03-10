@@ -1,7 +1,7 @@
 import React from 'react'
 import './HomePage.scss'
 import { MotionWrap, AppWrap } from '../../wrapper'
-import { NavBar, Promotion, Destinations, SearchBar, Packages, AboutUs, Stories } from '../../components'
+import { NavBar, Promotion, Destinations, SearchBar, Packages, AboutUs, Stories, Blogs } from '../../components'
 
 const HomePage = () => {
   return (
@@ -13,6 +13,7 @@ const HomePage = () => {
       <Packages />
       <AboutUs />
       <Stories />
+      <Blogs />
 
       {/* <a href='/sign-in'>Sign In</a> */}
     </>
