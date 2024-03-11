@@ -19,7 +19,7 @@ const cardsArray = {
 
 export default function Blogs() {
   return (
-    <div className='blogs__container'>
+    <div className='main__container blogs__container'>
       <h3 className='sub__title'>blogs</h3>
       <h2 className='title'>travel articles</h2>
       <p className='description'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Esse possimus culpa quo explicabo repellat itaque, sequi reiciendis recusandae beatae blanditiis adipisci deserunt commodi ullam quia.</p>
