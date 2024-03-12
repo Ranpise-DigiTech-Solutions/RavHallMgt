@@ -4,8 +4,7 @@ import UserProfilePage from './user-profile'
 export default function ProtectedPage() {
   return (
     <div>
-      {/* <UserProfilePage/> */}
-      hellojanodanoaoc
+      <UserProfilePage/>
     </div>
   )
 }

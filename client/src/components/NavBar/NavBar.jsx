@@ -38,10 +38,6 @@ export default function NavBar() {
      };
    }, []);
 
-  const handleSignOut = () => {
-    console.log("Signout");
-  }
-
   return (
     <>
         <div className={`navbar__wrapper ${scrolled ? 'scrolled' : ''}`}>
@@ -57,7 +53,7 @@ export default function NavBar() {
                 <>
                   <SignedIn>
                     <div className="userButton">
-                      <UserButton onSignOut={handleSignOut}/>
+                      <UserButton />
                     </div>
                   </SignedIn>
                   <SignedOut>
