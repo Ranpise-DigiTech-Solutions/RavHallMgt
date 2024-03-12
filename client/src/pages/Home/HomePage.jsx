@@ -15,11 +15,10 @@ const HomePage = () => {
       <Stories />
       <Blogs />
       <Footer />
-
-      {/* <a href='/sign-in'>Sign In</a> */}
     </>
   )
 }
 
 // export default AppWrap(HomePage, 'app__home', 'home');
+// export default AppWrap(HomePage, "", "");
 export default HomePage;

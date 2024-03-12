@@ -1,11 +1,17 @@
 import React from 'react'
 
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+
 const AppWrap = (Component, idName, classNames) => function HOC() {
   return (
-    <div id={idName} className={`app__container ${classNames}`}>
+    <div id={idName} className={`appwrap__container ${classNames}`}>
       
       {/* <div className="app__wrapper app__flex"> */}
-        <Component/>
+        <div className="wrapper">
+          <Component/>
+          {/* adando */}
+          {/* <WhatsAppIcon /> */}
+        </div>
       {/* </div> */}
 
     </div>
