@@ -21,5 +21,5 @@ const HomePage = () => {
 }
 
 // export default AppWrap(HomePage, 'app__home', 'home');
-// export default AppWrap(HomePage, "", "");
-export default HomePage;
+export default AppWrap(HomePage, "", "");
+// export default HomePage;

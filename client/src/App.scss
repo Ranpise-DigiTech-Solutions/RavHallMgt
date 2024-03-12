@@ -19,6 +19,26 @@
   flex-direction: row;
 }
 
+.appwrap__container {
+  
+  position: relative;
+  width: 100%;
+  
+  .chatbot__icon {
+    color: #128c7e;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 999;
+    cursor: pointer;
+
+    margin-right: 1.5rem;
+    margin-bottom: 1.5rem;
+    height: 3.5rem;
+    width: 3.5rem;
+  }
+}
+
 .main__container {
   
   display: flex;
