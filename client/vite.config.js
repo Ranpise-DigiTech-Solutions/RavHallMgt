@@ -7,4 +7,8 @@ export default defineConfig({
   css: {
     postcss: './postcss.config.js',
   },
+  react: {
+    // Disable Fast Refresh
+    fastRefresh: false,
+  },
 })

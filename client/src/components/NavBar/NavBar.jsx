@@ -4,10 +4,21 @@ import React, { useState, useEffect } from 'react'
 import Button from '@mui/material/Button';
 
 import { Images } from '../../constants';
+import { SignInDialog } from '../../ui';
+import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
 
 export default function NavBar() {
-
+  
   const [scrolled, setScrolled] = useState(false);
+  const [isSignInDialogOpen, setSignInDialogOpen] = useState(false);
+
+  const handleSignInButtonClick = () => {
+    setSignInDialogOpen(true);
+  };
+
+  const handleSignInDialogClose = () => {
+    setSignInDialogOpen(false);
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,6 +38,9 @@ export default function NavBar() {
      };
    }, []);
 
+  const handleSignOut = () => {
+    console.log("Signout");
+  }
 
   return (
     <>
@@ -40,8 +54,27 @@ export default function NavBar() {
                 <a href="#" className="tag">Our Value</a>
                 <a href="#" className="tag">Contact Us</a>
                 <a href="#" className="tag">Get Started</a>
-                <Button variant="contained" href="/sign-in" className="button">Sign In</Button>
+                <>
+                  <SignedIn>
+                    <div className="userButton">
+                      <UserButton onSignOut={handleSignOut}/>
+                    </div>
+                  </SignedIn>
+                  <SignedOut>
+                    <Button
+                      variant="contained"
+                      className="button"
+                      onClick={handleSignInButtonClick}
+                    >
+                      Sign In
+                    </Button>
+                  </SignedOut>
+                </>
             </div>
+            {
+              isSignInDialogOpen &&
+                <SignInDialog open={isSignInDialogOpen} handleClose={handleSignInDialogClose}/>
+            }
         </div>    
     </>
   )

@@ -4,6 +4,7 @@ import { MotionWrap, AppWrap } from '../../wrapper'
 import { NavBar, Promotion, Destinations, SearchBar, Packages, AboutUs, Stories, Blogs, Footer } from '../../components'
 
 const HomePage = () => {
+
   return (
     <>
       <NavBar/>

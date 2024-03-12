@@ -6,7 +6,9 @@ import App from './App.jsx'
 import './index.css'
 import ProtectedPage from './ProtectedPage.jsx';
 import UserProfilePage from './user-profile.jsx';
-
+import { HomePage } from './pages/index.js';
+import { NavBar } from './components/index.js';
+ 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
@@ -22,31 +24,6 @@ const ClerkProviderWithRoutes = () => {
       navigate={(to) => navigate(to)}>
         <Routes>
           <Route path="/" element={<App />} />
-          <Route
-          path="/sign-in/*"
-          element={<SignIn redirectUrl={'/protected'} routing="path" path="/sign-in" />}
-          />
-          <Route
-          path="/sign-up/*"
-          element={<SignUp redirectUrl={'/protected'} routing="path" path="/sign-up" />}
-          />
-          <Route
-          path="/user-profile/*"
-          element={<UserProfilePage redirectUrl={'/protected'} routing="path" path="/user-profile" />}
-          />
-          <Route
-            path="/protected"
-            element={
-              <>
-                <SignedIn>
-                  <UserButton/>
-                </SignedIn>
-                <SignedOut>
-                  <RedirectToSignIn/>
-                </SignedOut>
-              </>
-            }
-          />
         </Routes>
       </ClerkProvider>
     );
@@ -57,6 +34,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
     <BrowserRouter>
       <ClerkProviderWithRoutes />
     </BrowserRouter>
-    {/* <App/> */}
   </React.StrictMode>,
 )
