@@ -11,28 +11,28 @@ export default function PackagesCard({ card }) {
   return (
     <div className="box__wrapper">
           <div className="image__wrapper">
-            <img src={Images.wedding2} alt="Img" />
+            <img src={card.hall_image} alt="Img" />
           </div>
           <div className="contents__wrapper">
             <div className="wrapper wrapper_1">
-              <h2>{card.title}</h2>
+              <h2>{card.hall_name}</h2>
               <div className="ratings">
-                <p>{card.rating}</p>
+                <p>4.9</p>
                 <StarIcon className="starIcon" />
               </div>
             </div>
             <div className="description">
-              {card.description}
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, cum?
             </div>
             <div className="wrapper wrapper_2">
               <div className="sub__wrapper">
                 <LocationOnIcon className="icon" />
-                <p>{card.location}</p>
+                <p>{card.hall_city}</p>
               </div>
               <div className="sub__wrapper">
                 <MonetizationOnIcon className="icon" />
                 <p>
-                  {card.rate} <span> / package</span>
+                  49 <span> / package</span>
                 </p>
               </div>
             </div>

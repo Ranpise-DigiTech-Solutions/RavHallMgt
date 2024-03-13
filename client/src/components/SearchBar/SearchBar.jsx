@@ -13,7 +13,7 @@ export default function SearchBar() {
 
   const [cities, setCities] = useState([]);
   const [budget, setBudget] = useState(['5L-10L', '10L-20L', '20L-30L']);
-  const [vendorType, setVendorType] = useState(['option_1', 'option_2', 'option_3']);
+  const [vendorType, setVendorType] = useState([]);
   
   const [selectedDate, setSelectedDate] = useState('');
   const [selectedCity, setSelectedCity] = useState(null);
@@ -21,31 +21,44 @@ export default function SearchBar() {
   const [selectedVendor, setSelectedVendor] = useState(null);
 
 
-  const apiURL = `https://countriesnow.space/api/v0.1/countries/cities`;
-  const postData = {
-    'country' : 'india'
-  }
-
   useEffect(() => {
 
     const fetchCities = async () => {
       try {
 
-        // await axios.post(apiURL, postData)
-        // .then((response) => {
-        //   // Handle success
-        //   console.log('Response:', response.data.data);
-        //   setCities(response.data.data);
-        // })
-        // .catch((error) => {
-        //   // Handle error
-        //   console.error('Error:', error);
-        // });
+        const URL = "http://localhost:8000/eventify_server/countriesNow/";
+
+        await axios.get(URL)
+        .then((response) => {
+          // Handle success
+          setCities(response.data);
+          console.log('Response:', typeof(cities));
+        })
+        .catch((error) => {
+          // Handle error
+          console.error('Error:', error);
+        });
         
       } catch (error) {
         console.error('Error fetching cities:', error);
       }
     };
+
+    setVendorType([
+      'All Categories',
+      'Wedding Venues',
+      'Wedding Photographers',
+      'Bridal Makeup Artist',
+      'Wedding Decorators',
+      'Wedding Planners',
+      'Bridal Mehendi Artist',
+      'Wedding Catering',
+      'Wedding Cards',
+      'DJ',
+      'Wedding Entertainment',
+      'Sangeet Choreographers',
+      'Pre Wedding Photographers'
+    ]);
 
     fetchCities();
   }, []);
@@ -92,7 +105,7 @@ export default function SearchBar() {
                 styles={customStyles}
                 options={cities.map((city) => ({ value: city, label: city }))}
                 value={selectedCity}
-                onChange={(selectedOption) => setSelectedCity(selectedOption)}
+                onChange={(selectedOption) => setSelectedCity(selectedOption.value)}
                 placeholder="Select or type a city..."
                 components={{
                   DropdownIndicator: () => <SearchIcon />
