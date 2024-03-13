@@ -4,7 +4,7 @@ import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
 import { collection, addDoc, query, getDocs } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { db } from './firebase';
+import { db } from '../../../../server/firebase/firebase';
 
 import './ChatBot.scss'; // Import CSS file for styling
 
