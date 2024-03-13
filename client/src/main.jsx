@@ -1,10 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ClerkProvider, RedirectToSignIn, SignIn, SignUp, SignedOut, SignedIn, UserButton } from "@clerk/clerk-react";
+import { ClerkProvider } from "@clerk/clerk-react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+import { Provider } from 'react-redux';
+
 import App from './App.jsx'
 import './index.css'
- 
+import { store } from './states';
+
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!publishableKey) {
@@ -27,8 +30,10 @@ const ClerkProviderWithRoutes = () => {
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ClerkProviderWithRoutes />
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <ClerkProviderWithRoutes />
+      </BrowserRouter>
+    </Provider>
   </React.StrictMode>,
 )

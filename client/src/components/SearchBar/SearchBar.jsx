@@ -1,4 +1,6 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import Select from 'react-select';
 import axios from 'axios'
 
@@ -6,6 +8,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import CloseIcon from '@mui/icons-material/Close';
+
+import { searchBoxFilterActions } from '../../states/SearchBoxFilter';
 
 import "./SearchBar.scss";
 
@@ -19,6 +23,13 @@ export default function SearchBar() {
   const [selectedCity, setSelectedCity] = useState(null);
   const [selectedBudget, setSelectedBudget] = useState(null);
   const [selectedVendor, setSelectedVendor] = useState(null);
+
+  const dispatch = useDispatch();
+
+  // const handleUpdate = () => {
+  //   dispatch(searchBoxFilterActions('data1', 'new value for data1'));
+  //   dispatch(searchBoxFilterActions('data2', 'new value for data2'));
+  // };
 
 
   useEffect(() => {
@@ -61,7 +72,7 @@ export default function SearchBar() {
     ]);
 
     fetchCities();
-  }, []);
+  }, [cities]);
 
   const customStyles = {
     control: (provided, state) => ({

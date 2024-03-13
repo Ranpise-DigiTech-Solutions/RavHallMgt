@@ -2,7 +2,7 @@ import { Int32 } from "mongodb";
 import mongoose from "mongoose";
 
 const hallMasterSchema = new mongoose.Schema({
-    hall_name: { type: String},
+    hall_name: { type: String, required: true, unique:true},
     hall_age: { type: Number},
     hall_nrooms: { type: Number},
     hall_vrate: { type: Number},
@@ -18,8 +18,8 @@ const hallMasterSchema = new mongoose.Schema({
     hall_email: { type: String},
     hall_image: { type: String},
     hall_description: {type: String}
-})
+}, { timestamps: true });
 
-const hallMaster = mongoose.model("hallMaster1", hallMasterSchema);
+const hallMaster = mongoose.model("hallMaster", hallMasterSchema);
 
 export default hallMaster;

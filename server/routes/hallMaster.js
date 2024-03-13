@@ -53,6 +53,23 @@ router.patch('/:id', async (req, res) => {
     } catch(err) {
         return res.status(500),json({message: err.message});
     }
-})
+});
+
+router.delete("/:id", async (req, res) => {
+
+    const { id } = req.params;
+
+    try {
+      const deletedHall = await hallMaster.findByIdAndDelete(id);
+  
+      if (!deletedHall) {
+        return res.status(404).json({ message: 'Document not found.' });
+      }
+  
+      return res.status(200).json({ message: 'Document deleted successfully.', deletedHall });
+    } catch (error) {
+      return res.status(500).json({ message: error.message });
+    }
+});
 
 export default router;
