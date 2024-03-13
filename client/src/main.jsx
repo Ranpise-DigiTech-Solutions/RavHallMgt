@@ -4,10 +4,6 @@ import { ClerkProvider, RedirectToSignIn, SignIn, SignUp, SignedOut, SignedIn, U
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import App from './App.jsx'
 import './index.css'
-import ProtectedPage from './ProtectedPage.jsx';
-import UserProfilePage from './user-profile.jsx';
-import { HomePage } from './pages/index.js';
-import { NavBar } from './components/index.js';
  
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 

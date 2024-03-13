@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import Connection from './database/db.js';
 
 import hallMasterRoute from './routes/hallMaster.js';
+import countriesNowRoute from './routes/countriesNow.js';
 
 const app = express();
 app.use(cors());
@@ -20,5 +21,6 @@ const PORT = process.env.SERVER_PORT_NUMBER;
 Connection(USERNAME, PASSWORD);
 
 app.use('/eventify_server/hallMaster/', hallMasterRoute);
+app.use('/eventify_server/countriesNow/', countriesNowRoute);
 
 app.listen(PORT, () => console.log(`server running successfully on 8000`));
