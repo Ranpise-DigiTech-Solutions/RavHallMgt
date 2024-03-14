@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import Select from 'react-select';
 import axios from 'axios'
 
@@ -26,10 +26,9 @@ export default function SearchBar() {
 
   const dispatch = useDispatch();
 
-  // const handleUpdate = () => {
-  //   dispatch(searchBoxFilterActions('data1', 'new value for data1'));
-  //   dispatch(searchBoxFilterActions('data2', 'new value for data2'));
-  // };
+  const handleCityUpdate = (cityName) => {
+    dispatch(searchBoxFilterActions('cityName', cityName));
+  };
 
 
   useEffect(() => {
@@ -116,7 +115,10 @@ export default function SearchBar() {
                 styles={customStyles}
                 options={cities.map((city) => ({ value: city, label: city }))}
                 value={selectedCity}
-                onChange={(selectedOption) => setSelectedCity(selectedOption.value)}
+                onChange={(selectedOption) => {
+                  setSelectedCity(selectedOption.value);
+                  handleCityUpdate(selectedOption.value)
+                }}
                 placeholder="Select or type a city..."
                 components={{
                   DropdownIndicator: () => <SearchIcon />
@@ -174,7 +176,10 @@ export default function SearchBar() {
             selectedCity && 
             <div className="tag">
               <p>{selectedCity}</p>
-                <CloseIcon className='icon' onClick={() => setSelectedCity(null)}/>
+                <CloseIcon className='icon' onClick={() => {
+                  setSelectedCity("");
+                  dispatch(searchBoxFilterActions('cityName', ""));
+                }}/>
             </div>
           }
           {

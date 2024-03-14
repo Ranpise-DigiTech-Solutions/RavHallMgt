@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import axios from 'axios'
+import { useSelector } from "react-redux";
 
 import "./Packages.scss";
 import { PackagesCard } from '../../sub-components'
@@ -7,11 +8,12 @@ import { PackagesCard } from '../../sub-components'
 export default function Packages() {
 
   const [data, setData] = useState([]);
+  const cityName = useSelector((state) => state.searchBoxFilter.cityName);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/eventify_server/hallMaster/');
+        const response = await axios.get(`http://localhost:8000/eventify_server/hallMaster/?hallCity=${cityName}`);
         setData(response.data);
         console.log(response);
       } catch (error) {
@@ -20,7 +22,7 @@ export default function Packages() {
     };
 
     fetchData();
-  }, []); 
+  }, [cityName]); 
 
   return (
     <div className="packages__container" id="packages">

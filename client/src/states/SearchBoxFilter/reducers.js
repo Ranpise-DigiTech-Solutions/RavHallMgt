@@ -1,7 +1,7 @@
 import { SET_DATA } from "./actions";
 
 const initialState = {
-    cityName: null,
+    cityName: "",
     bookingDate: null,
     clientBudget: null,
     vendorType: null 

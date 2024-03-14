@@ -5,13 +5,13 @@ import hallMaster from "../models/hallmaster-schema.js";
 
 router.get('/', async(req, res)=> {
 
-    const { hall_city } = req.query;
+    const { hallCity } = req.query;
 
     // Build the filter object based on the provided parameters
     const filter = {};
 
-    if (hall_city) {
-        filter.hall_city = hall_city;
+    if (hallCity) {
+        filter.hall_city = hallCity;
     }
 
     try {
