@@ -3,7 +3,7 @@ import { default as dotenv } from 'dotenv';
 
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import Connection from './database/db.js';
+import Connection from './database/MongoDb.js';
 
 import hallMasterRoute from './routes/hallMaster.js';
 import countriesNowRoute from './routes/countriesNow.js';
