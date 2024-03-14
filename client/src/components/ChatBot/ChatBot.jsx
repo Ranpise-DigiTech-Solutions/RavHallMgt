@@ -4,7 +4,7 @@ import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
 import { collection, addDoc, query, getDocs } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { db } from '../../../../server/firebase/firebase';
+import { firebaseDb } from '../../../../server/database/FirebaseDb.js'
 
 import './ChatBot.scss'; // Import CSS file for styling
 
@@ -15,7 +15,7 @@ function ChatBot({ onChatClose }) {
 
   useEffect(() => {
     const loadMessages = async () => {
-      const messagesQuery = query(collection(db, `chats/${sessionID}/Messages`));
+      const messagesQuery = query(collection(firebaseDb, `chats/${sessionID}/Messages`));
       const querySnapshot = await getDocs(messagesQuery);
       const fetchedMessages = querySnapshot.docs.map((doc) => doc.data());
       setMessages(fetchedMessages);
@@ -27,7 +27,7 @@ function ChatBot({ onChatClose }) {
     event.preventDefault();
     if (inputValue.trim() !== '') {
       try {
-        const docRef = await addDoc(collection(db, `chats/${sessionID}/Messages`), {
+        const docRef = await addDoc(collection(firebaseDb, `chats/${sessionID}/Messages`), {
           content: inputValue,
           sender: 'me',
           timestamp: new Date().toISOString(),
