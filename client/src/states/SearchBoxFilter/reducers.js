@@ -2,9 +2,9 @@ import { SET_DATA } from "./actions";
 
 const initialState = {
     cityName: "",
-    bookingDate: null,
-    clientBudget: null,
-    vendorType: null 
+    bookingDate: "",
+    clientBudget: "",
+    vendorType: "" 
   };
   
 export default function SearchBoxFilterReducer(state = initialState, action) {
