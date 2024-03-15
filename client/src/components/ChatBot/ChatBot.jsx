@@ -14,6 +14,9 @@ function ChatBot({ onChatClose }) {
   const [sessionId, setsessionId] = useState(`${Date.now()}`);
   const [messages, setMessages] = useState([]);
 
+  // const CHATBOT_API_KEY = import.meta.env.CHATBOT_API_KEY;
+  const CHATBOT_API_KEY = "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";
+
   useEffect(() => {
     const loadMessages = async () => {
       const response = await axios.get('http://localhost:8000/eventify_server/chatBot/', {
@@ -27,22 +30,62 @@ function ChatBot({ onChatClose }) {
   }, [sessionId]);
 
   const handleSubmit = async (event) => {
+
     event.preventDefault();
-    console.log(sessionId);
     if (inputValue.trim() !== '') {
       try {
         const response = await axios.post('http://localhost:8000/eventify_server/chatBot/', {
             sessionId ,
+            sender: "user",
             inputValue ,
         });
         console.log(response.body);
-        setMessages([...messages, { content: inputValue, sender: 'me', timestamp: new Date().toISOString() }]);
+        setMessages([...messages, { content: inputValue, sender: 'user', timestamp: new Date().toISOString() }]);
         setInputValue('');
+        // await processMessageToChatbot(messages);
+
       } catch (e) {
         console.error('Error adding document: ', e);
       }
     }
   };
+
+  // eslint-disable-next-line no-unused-vars
+  const processMessageToChatbot = async (chatMessages) => {
+    // apiMessage format : {'role': 'user' or 'assistant', 'content': "The Message Content Here"}
+    // roles : 1. 'user' -> Message from the user  2. 'assistant': Message from the bot  3. 'system' ->  One initial message to set the tone of the bot
+    
+    let apiMessages = chatMessages.map((messageObject) => {
+      return { role: messageObject.sender, content: messageObject.content }
+    });
+
+    const systemMessage = {
+      role: 'system',
+      content: 'Speak like a Marriage Hall Booking Agent and be clear about every single thing related to Marriage and Wedding.'
+    }
+
+    const apiRequestBody = {
+      "model": "gpt-3.5-turbo",
+      "messages": [
+        systemMessage,
+        ...apiMessages
+      ]
+    }
+
+    await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + CHATBOT_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(apiRequestBody)
+    }).then((data)=> {
+      return data.json();
+    }).then((data)=> {
+      console.log(data.choices[0].message.content);
+      setMessages(...chatMessages, {content: data.choices[0].message.content, sender: "assistant"});
+    });
+  }
 
   const handleChatClose = () => {
     onChatClose();

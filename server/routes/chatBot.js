@@ -23,13 +23,13 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => {
 
-    const { sessionId, inputValue } = req.body;
+    const { sessionId, inputValue, sender } = req.body;
     console.log("SessionId",sessionId);
 
     try {
         const docRef = await addDoc(collection(firestore, `/chats/SessionID_${sessionId}/Messages/`), {
             content: inputValue,
-            sender: 'me',
+            sender ,
             timestamp: new Date().toISOString(),
           });
           console.log('Document written with ID: ', docRef.id);

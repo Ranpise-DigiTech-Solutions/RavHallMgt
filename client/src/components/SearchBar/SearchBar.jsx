@@ -35,7 +35,6 @@ export default function SearchBar() {
           .then((response) => {
             // Handle success
             setCities(response.data);
-            console.log("Response:", typeof cities);
           })
           .catch((error) => {
             // Handle error
@@ -56,7 +55,6 @@ export default function SearchBar() {
           .then((response) => {
             // Handle success
             setEventType(response.data);
-            console.log("Response:", typeof cities);
           })
           .catch((error) => {
             // Handle error
