@@ -7,6 +7,7 @@ import "react-multi-carousel/lib/styles.css";
 
 import { DestinationsCard } from "../../sub-components";
 import { MotionWrap } from '../../wrapper'
+import {Images} from '../../constants';
 
 const responsive = {
   desktop: {
@@ -30,6 +31,7 @@ const cardsData = {
     stars: 4,
     reviews: 2,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_01,
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -40,6 +42,7 @@ const cardsData = {
     stars: 4,
     reviews: 4,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_02,
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -50,6 +53,7 @@ const cardsData = {
     stars: 5,
     reviews: 5,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_03,
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -60,6 +64,7 @@ const cardsData = {
     stars: 4,
     reviews: 2,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_04,
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -70,6 +75,18 @@ const cardsData = {
     stars: 5,
     reviews: 10,
     title: "Autumn in USA | $8,500",
+    img: Images.Hall_05,
+    description:
+      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    deadline: "7 days",
+  },
+  card6: {
+    discount: "20% off",
+    new: true,
+    stars: 5,
+    reviews: 10,
+    title: "Autumn in USA | $8,500",
+    img: Images.Hall_06,
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",

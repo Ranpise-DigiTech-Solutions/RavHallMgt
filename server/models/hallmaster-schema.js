@@ -8,6 +8,7 @@ const hallMasterSchema = new mongoose.Schema({
     hall_nvrate: { type: Number},
     hall_mobcontact: { type: String},
     hall_landcontact: { type: String},
+    hall_eventtype: [{ type: mongoose.Schema.Types.ObjectId, ref: 'eventmasters'}], 
     hall_country: { type: String},
     hall_state: { type: String},
     hall_city: { type: String},

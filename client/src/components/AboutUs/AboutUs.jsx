@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import './AboutUs.scss';
 import { Images } from '../../constants';
 
@@ -23,37 +23,37 @@ export default function AboutUs() {
         <div className="sub__wrapper_2">
           <h3 className='sub_title'>our value</h3>
           <h2 className='title'>value we give you</h2>
-          <p className='description'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime assumenda officiis, qui recusandae voluptas totam at. Ut explicabo iusto placeat!</p>
+          <p className='description'>Experience seamless event planning with us! As part of Ranpise DigiTech, our platform offers a wide array of event halls and services worldwide. Navigate effortlessly through venues and vendors, ensuring every detail meets your requirements. From selecting venues based on location, rating, and capacity to hassle-free bookings, we simplify the process. Engage with our modern chatbot for instant assistance and explore vendors with ease. Elevate your event planning journey with us today!</p>
           <div className="wrapper">
             <div className={`content ${activeButton === 'btn_1' ? 'open' : 'closed'}`}>
               <div className="header">
                 <GppGoodIcon className='icon'/>
-                <h4>Best Rates on market</h4>
+                <h4>Seamless User Experience</h4>
                 <button onClick={() => handleToggleClass('btn_1')}>
                   <ArrowDropDownIcon className='icon pointy'/>
                 </button>
               </div>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Nostrum reiciendis iusto, accusantium quasi consequuntur quo, nesciunt ea distinctio repudiandae quisquam tempore, culpa deserunt illo! Sed.</p>
+              <p>Immerse yourself in an interface crafted for ease and elegance, where every click feels like a step closer to your dream event.</p>
             </div>
             <div className={`content ${activeButton === 'btn_2' ? 'open' : 'closed'}`}>
               <div className="header">
                 <CancelIcon className='icon'/>
-                <h4>Best Rates on market</h4>
+                <h4>Hassle Free Bookings</h4>
                 <button onClick={() => handleToggleClass('btn_2')}>
                   <ArrowDropDownIcon className='icon pointy'/>
                 </button>
               </div>
-              <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Fugiat mollitia laboriosam tempore fuga ad hic nisi, quibusdam harum rem facilis ipsam molestiae alias dignissimos nostrum.</p>
+              <p>Navigate effortlessly through our platform, where simplicity meets efficiency, making your booking experience a stress-free affair.</p>
             </div>
             <div className={`content ${activeButton === 'btn_3' ? 'open' : 'closed'}`}>
               <div className="header">
                 <AssessmentIcon className='icon'/>
-                <h4>Best Rates on market</h4>
+                <h4>Clear communication on event details</h4>
                 <button onClick={() => handleToggleClass('btn_3')}>
                   <ArrowDropDownIcon className='icon pointy'/>
                 </button>
               </div>
-              <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Corporis distinctio maxime officiis expedita aut laborum error modi autem, ratione accusantium doloribus nisi, labore quam laudantium totam soluta, repudiandae sunt illo?</p>
+              <p>Experience transparent communication at its finest, ensuring every detail of your event is conveyed with clarity and precision, leaving no room for confusion or uncertainty.</p>
             </div>
           </div>
         </div>

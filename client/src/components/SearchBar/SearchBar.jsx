@@ -5,7 +5,6 @@ import Select from "react-select";
 import axios from "axios";
 
 import SearchIcon from "@mui/icons-material/Search";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 
@@ -15,10 +14,10 @@ import "./SearchBar.scss";
 
 export default function SearchBar() {
   const [cities, setCities] = useState([]);
-  const [budget, setBudget] = useState([]);
+  const [eventType, setEventType] = useState([]);
   const [vendorType, setVendorType] = useState([]);
 
-  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter); // Redux Store which holds all the user selection info. which includes cityName, clientBudget, bookingDate and vendorType
+  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter); // Redux Store which holds all the user selection info. which includes cityName, eventType, bookingDate and vendorType
 
   const dispatch = useDispatch();
 
@@ -42,10 +41,32 @@ export default function SearchBar() {
             // Handle error
             console.error("Error:", error);
           });
+
       } catch (error) {
         console.error("Error fetching cities:", error);
       }
     };
+
+    const fetchEventTypes = async () => {
+      try {
+        const URL = "http://localhost:8000/eventify_server/eventMaster/";
+
+         await axios
+          .get(URL)
+          .then((response) => {
+            // Handle success
+            setEventType(response.data);
+            console.log("Response:", typeof cities);
+          })
+          .catch((error) => {
+            // Handle error
+            console.error("Error:", error);
+          });
+
+      } catch (error) {
+        console.error("Error Fetching Cities:", error);
+      }
+    }
 
     setVendorType([
       "All Categories",
@@ -63,9 +84,10 @@ export default function SearchBar() {
       "Pre Wedding Photographers",
     ]);
 
-    setBudget(["5L-10L", "10L-20L", "20L-30L"]);
+    // setEventType(["5L-10L", "10L-20L", "20L-30L"]);
 
     fetchCities();
+    fetchEventTypes();
   }, [cities]);
 
   const customStyles = {
@@ -129,20 +151,20 @@ export default function SearchBar() {
             </div>
           </div>
           <div className="wrapper">
-            <p>Budget</p>
+            <p>Event Type</p>
             <div className="input">
               <Select
                 styles={customStyles}
-                options={budget.map((val) => ({ value: val, label: val }))}
-                value={searchBoxFilterStore.clientBudget}
+                options={eventType.map((item) => ({ value: item.event_name, label: item.event_name }))}
+                value={searchBoxFilterStore.eventType}
                 onChange={(selectedOption) => {
                   dispatch(
-                    searchBoxFilterActions("clientBudget", selectedOption.value)
+                    searchBoxFilterActions("eventType", selectedOption.value)
                   ); // Update Details in 'SearchBoxFilter' Redux Store
                 }}
-                placeholder="Choose Your Budget..."
+                placeholder="Choose Event Type"
                 components={{
-                  DropdownIndicator: () => <CurrencyRupeeIcon />,
+                  DropdownIndicator: () => <KeyboardArrowDownIcon />,
                 }}
               />
             </div>
@@ -197,13 +219,13 @@ export default function SearchBar() {
               />
             </div>
           )}
-          {searchBoxFilterStore.clientBudget && (
+          {searchBoxFilterStore.eventType && (
             <div className="tag">
-              <p>{searchBoxFilterStore.clientBudget}</p>
+              <p>{searchBoxFilterStore.eventType}</p>
               <CloseIcon
                 className="icon"
                 onClick={() => {
-                  dispatch(searchBoxFilterActions("clientBudget", "")); // Update Details in 'SearchBoxFilter' Redux Store
+                  dispatch(searchBoxFilterActions("eventType", "")); // Update Details in 'SearchBoxFilter' Redux Store
                 }}
               />
             </div>

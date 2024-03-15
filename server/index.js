@@ -8,6 +8,7 @@ import Connection from './database/MongoDb.js';
 import hallMasterRoute from './routes/hallMaster.js';
 import countriesNowRoute from './routes/countriesNow.js';
 import chatBotRoute from './routes/chatBot.js';
+import eventMasterRoute from './routes/eventMaster.js';
 
 const app = express();
 app.use(cors());
@@ -24,5 +25,6 @@ Connection(USERNAME, PASSWORD);
 app.use('/eventify_server/hallMaster/', hallMasterRoute);
 app.use('/eventify_server/countriesNow/', countriesNowRoute);
 app.use('/eventify_server/chatBot', chatBotRoute);
+app.use('/eventify_server/eventMaster', eventMasterRoute);
 
 app.listen(PORT, () => console.log(`server running successfully on 8000`));

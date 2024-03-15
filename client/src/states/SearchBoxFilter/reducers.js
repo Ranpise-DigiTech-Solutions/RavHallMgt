@@ -3,7 +3,7 @@ import { SET_DATA } from "./actions";
 const initialState = {
     cityName: "",
     bookingDate: "",
-    clientBudget: "",
+    eventType: "",
     vendorType: "" 
   };
   

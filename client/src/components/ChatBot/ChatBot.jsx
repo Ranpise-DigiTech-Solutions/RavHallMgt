@@ -49,8 +49,8 @@ function ChatBot({ onChatClose }) {
   };
 
   return (
-    <div className="app-container">
-      <div className="header">
+    <div className="chatbot__container">
+      <div className="chatbot__header">
         <div className="logo-container">
           <img src={Images.logo} alt="Logo" className="logo" />
           <span className="brand-name"><strong>EventifyConnect</strong> is here to assist you</span>

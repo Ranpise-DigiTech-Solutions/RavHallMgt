@@ -15,8 +15,8 @@
     justify-content: space-between;
 
     background-color: rgba(26,26,26,0.25);
-    backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(4px);
     border: 1px solid rgba(255,255,255,0.18);
     position: fixed;
     z-index: 100;
@@ -41,6 +41,7 @@
 
         p{
             margin-left: 0.1rem;
+            font-family: var(--font-family-2);
             font-size: 18px;
             color: antiquewhite;
         }

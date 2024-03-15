@@ -24,7 +24,7 @@ router.get('/', async(req, res)=> {
 
 router.post('/', async (req, res) => {
     const newDocument = new hallMaster(req.body);
-    console.log(newDocument);
+
     try {
         const savedDocument = await newDocument.save();
         return res.status(200).json(savedDocument);
@@ -40,7 +40,7 @@ router.patch('/:id', async (req, res) => {
 
     try {
         const updatedResource = await hallMaster.findOneAndUpdate(
-            { _id: mongoose.Types.ObjectId(resourceId) },
+            { _id: resourceId },
             { $set: updatedFields },
             { new: true }
           );
@@ -51,7 +51,7 @@ router.patch('/:id', async (req, res) => {
       
           res.status(200).json(updatedResource);
     } catch(err) {
-        return res.status(500),json({message: err.message});
+        return res.status(500).json({message: err.message});
     }
 });
 

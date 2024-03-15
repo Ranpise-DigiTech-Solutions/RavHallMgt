@@ -1,4 +1,4 @@
-import React from "react";
+/* eslint-disable react/prop-types */
 import "./DestinationsCard.scss";
 import StarIcon from "@mui/icons-material/Star";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
@@ -6,8 +6,12 @@ import AccessTimeIcon from "@mui/icons-material/AccessTime";
 export default function DestinationsCard({ card }) {
   return (
     <div className="card__container">
-      <img
+      {/* <img
         src={`https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg`}
+        alt="banner"
+      /> */}
+      <img
+        src={`${card.img}`}
         alt="banner"
       />
       <div className="overlay"></div>

@@ -9,6 +9,7 @@ export default function Packages() {
 
   const [data, setData] = useState([]);
   const selectedCity = useSelector((state) => state.searchBoxFilter.cityName);
+  // const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
 
   useEffect(() => {
     const fetchData = async () => {
