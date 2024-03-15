@@ -3,10 +3,11 @@ import { default as dotenv } from 'dotenv';
 
 import cors from 'cors';
 import bodyParser from 'body-parser';
-import Connection from './database/db.js';
+import Connection from './database/MongoDb.js';
 
 import hallMasterRoute from './routes/hallMaster.js';
 import countriesNowRoute from './routes/countriesNow.js';
+import chatBotRoute from './routes/chatBot.js';
 
 const app = express();
 app.use(cors());
@@ -22,5 +23,6 @@ Connection(USERNAME, PASSWORD);
 
 app.use('/eventify_server/hallMaster/', hallMasterRoute);
 app.use('/eventify_server/countriesNow/', countriesNowRoute);
+app.use('/eventify_server/chatBot', chatBotRoute);
 
 app.listen(PORT, () => console.log(`server running successfully on 8000`));
