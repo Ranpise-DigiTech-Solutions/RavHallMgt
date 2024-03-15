@@ -3,38 +3,41 @@ import { Input } from 'antd';
 import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
-import { collection, addDoc, query, getDocs } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { firebaseDb } from '../../../../server/database/FirebaseDb.js'
+import axios from 'axios';
 
 import './ChatBot.scss'; // Import CSS file for styling
 
+// eslint-disable-next-line react/prop-types
 function ChatBot({ onChatClose }) {
   const [inputValue, setInputValue] = useState('');
-  const [sessionID, setSessionID] = useState(`SessionID_${Date.now()}`);
+  // eslint-disable-next-line no-unused-vars
+  const [sessionId, setsessionId] = useState(`${Date.now()}`);
   const [messages, setMessages] = useState([]);
 
   useEffect(() => {
     const loadMessages = async () => {
-      const messagesQuery = query(collection(firebaseDb, `chats/${sessionID}/Messages`));
-      const querySnapshot = await getDocs(messagesQuery);
-      const fetchedMessages = querySnapshot.docs.map((doc) => doc.data());
-      setMessages(fetchedMessages);
+      const response = await axios.get('http://localhost:8000/eventify_server/chatBot/', {
+        params: {
+          sessionId
+        }
+      });
+      setMessages(response.data);
     };
     loadMessages();
-  }, [sessionID]);
+  }, [sessionId]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+    console.log(sessionId);
     if (inputValue.trim() !== '') {
       try {
-        const docRef = await addDoc(collection(firebaseDb, `chats/${sessionID}/Messages`), {
-          content: inputValue,
-          sender: 'me',
-          timestamp: new Date().toISOString(),
+        const response = await axios.post('http://localhost:8000/eventify_server/chatBot/', {
+            sessionId ,
+            inputValue ,
         });
-        console.log('Document written with ID: ', docRef.id);
-        setInputValue('');
+        console.log(response.body);
         setMessages([...messages, { content: inputValue, sender: 'me', timestamp: new Date().toISOString() }]);
+        setInputValue('');
       } catch (e) {
         console.error('Error adding document: ', e);
       }
@@ -42,7 +45,6 @@ function ChatBot({ onChatClose }) {
   };
 
   const handleChatClose = () => {
-    console.log("Closing chatbot from ChatBot component");
     onChatClose();
   };
 
@@ -51,7 +53,7 @@ function ChatBot({ onChatClose }) {
       <div className="header">
         <div className="logo-container">
           <img src={Images.logo} alt="Logo" className="logo" />
-          <span className="brand-name"><strong>WedmeGood</strong> is here to assist you</span>
+          <span className="brand-name"><strong>EventifyConnect</strong> is here to assist you</span>
           <div className="close-icon" onClick={handleChatClose}>❌</div>
         </div>
       </div>
