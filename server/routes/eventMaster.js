@@ -6,6 +6,10 @@ import eventMaster from '../models/eventmaster-schema.js';
 router.post("/", async (req, res) => { 
     const newDocument = new eventMaster(req.body);
 
+    if(!newDocument) {
+        return res.status(404).json({message: "Request Body attachment not found!!"});
+    }
+
     try {
         const savedDocument = await newDocument.save();
         return res.status(200).json(savedDocument);
@@ -29,6 +33,10 @@ router.get("/", async (req, res) => {
 router.get("/getEventId", async (req, res) => {
 
     const { eventName } = req.query;
+
+    if (!eventName) {
+        return res.status(404).json({message: "No Records Found! Query parameters empty!!"});
+    }
 
     try {
         var document = await eventMaster.findOne({ "event_name": eventName });

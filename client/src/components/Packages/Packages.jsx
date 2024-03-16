@@ -8,22 +8,44 @@ import { PackagesCard } from '../../sub-components'
 export default function Packages() {
 
   const [data, setData] = useState([]);
-  const selectedCity = useSelector((state) => state.searchBoxFilter.cityName);
-  // const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
+  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
 
   useEffect(() => {
-    const fetchData = async () => {
+    const getEventId = async () => {
       try {
-        const response = await axios.get(`http://localhost:8000/eventify_server/hallMaster/?hallCity=${selectedCity}`);
-        setData(response.data);
-        console.log(response);
+        if(searchBoxFilterStore.eventType) {
+          const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
+            params: {
+              eventName: searchBoxFilterStore.eventType
+            }
+          });
+          return eventMasterResponse.data;
+        }
+        return null;
+      }
+     catch(error) {
+        console.error('Error fetching data:', error);
+        return null;
+      }
+    }
+
+    const fetchData = async () => {
+      const eventId = await getEventId();
+      try {
+        const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallMaster/`, {
+          params: {
+            hallCity: searchBoxFilterStore.cityName,
+            eventId: eventId
+          }
+        });
+        setData(hallMasterResponse.data);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
 
     fetchData();
-  }, [selectedCity]); 
+  }, [searchBoxFilterStore.cityName, searchBoxFilterStore.eventType]); 
 
   return (
     <div className="packages__container" id="packages">

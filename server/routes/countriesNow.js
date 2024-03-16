@@ -13,8 +13,7 @@ router.get('/', async(req, res)=> {
 
         const response = await axios.post(apiURL, postData);
         if (!response) {
-            console.log("Error!!");
-            return;
+            return res.status(502).json({message: "Bad Gateway! Received Invalid response from CountriesNow Server"});
         }
 
         return res.status(200).json(response.data.data); 

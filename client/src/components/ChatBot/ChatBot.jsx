@@ -43,7 +43,6 @@ function ChatBot({ onChatClose }) {
         setMessages([...messages, { content: inputValue, sender: 'user', timestamp: new Date().toISOString() }]);
         setInputValue('');
         // await processMessageToChatbot(messages);
-
       } catch (e) {
         console.error('Error adding document: ', e);
       }
