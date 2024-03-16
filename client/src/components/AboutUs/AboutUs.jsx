@@ -4,7 +4,7 @@ import { Images } from '../../constants';
 
 import GppGoodIcon from '@mui/icons-material/GppGood';
 import CancelIcon from '@mui/icons-material/Cancel';
-import AssessmentIcon from '@mui/icons-material/Assessment';
+import CampaignIcon from '@mui/icons-material/Campaign';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 
 export default function AboutUs() {
@@ -47,7 +47,7 @@ export default function AboutUs() {
             </div>
             <div className={`content ${activeButton === 'btn_3' ? 'open' : 'closed'}`}>
               <div className="header">
-                <AssessmentIcon className='icon'/>
+                <CampaignIcon className='icon'/>
                 <h4>Clear communication on event details</h4>
                 <button onClick={() => handleToggleClass('btn_3')}>
                   <ArrowDropDownIcon className='icon pointy'/>

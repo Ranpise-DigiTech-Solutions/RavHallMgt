@@ -110,7 +110,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="search__container">
+    <div className="search__container" id="searchBar">
       <div className="main__wrapper">
         <div className="title">search package</div>
         <div className="description">
