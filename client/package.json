@@ -25,6 +25,7 @@
     "dotenv-webpack": "^8.0.1",
     "firebase": "^10.8.1",
     "framer-motion": "^11.0.8",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-multi-carousel": "^2.8.4",
@@ -32,6 +33,7 @@
     "react-router-dom": "^6.22.2",
     "react-select": "^5.8.0",
     "react-spring": "^9.7.3",
+    "react-window": "^1.8.10",
     "redux-thunk": "^3.1.0",
     "scss": "^0.2.4"
   },

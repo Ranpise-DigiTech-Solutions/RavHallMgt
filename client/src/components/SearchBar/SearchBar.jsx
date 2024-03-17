@@ -1,5 +1,4 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
 import axios from "axios";
@@ -8,6 +7,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 
+import { VirtualizedSelect } from "../../sub-components";
 import { searchBoxFilterActions } from "../../states/SearchBoxFilter";
 
 import "./SearchBar.scss";
@@ -82,8 +82,6 @@ export default function SearchBar() {
       "Pre Wedding Photographers",
     ]);
 
-    // setEventType(["5L-10L", "10L-20L", "20L-30L"]);
-
     fetchCities();
     fetchEventTypes();
   }, [cities]);
@@ -120,8 +118,8 @@ export default function SearchBar() {
           <div className="wrapper">
             <p>Destination</p>
             <div className="input">
-              <Select
-                styles={customStyles}
+              <VirtualizedSelect 
+                customStyles={customStyles}
                 options={cities.map((city) => ({ value: city, label: city }))}
                 value={searchBoxFilterStore.cityName}
                 onChange={(selectedOption) => {
@@ -130,10 +128,6 @@ export default function SearchBar() {
                   ); // Update Details in 'SearchBoxFilter' Redux Store
                 }}
                 placeholder="Select or type a city..."
-                components={{
-                  DropdownIndicator: () => <SearchIcon />,
-                }}
-                isSearchable
               />
             </div>
           </div>

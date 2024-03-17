@@ -4,10 +4,10 @@ import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import './ChatBot.scss'; // Import CSS file for styling
 
-// eslint-disable-next-line react/prop-types
 function ChatBot({ onChatClose }) {
   const [inputValue, setInputValue] = useState('');
   // eslint-disable-next-line no-unused-vars
@@ -49,7 +49,6 @@ function ChatBot({ onChatClose }) {
     }
   };
 
-  // eslint-disable-next-line no-unused-vars
   const processMessageToChatbot = async (chatMessages) => {
     // apiMessage format : {'role': 'user' or 'assistant', 'content': "The Message Content Here"}
     // roles : 1. 'user' -> Message from the user  2. 'assistant': Message from the bot  3. 'system' ->  One initial message to set the tone of the bot
@@ -113,5 +112,9 @@ function ChatBot({ onChatClose }) {
     </div>
   );
 }
+
+ChatBot.PropTypes = {
+  onChatClose: PropTypes.func.isRequired,
+};
 
 export default ChatBot;

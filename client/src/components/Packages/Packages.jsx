@@ -9,13 +9,16 @@ import { PackagesCard } from '../../sub-components'
 export default function Packages() {
 
   const [data, setData] = useState([]);
+
   const [activeFilter, setActiveFilter] = useState("All");
   const [animateCard, setAnimateCard] = useState({ y: 0, opacity: 1 });
   const [filteredCards, setFilteredCards] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 6;
-  const [totalPages, setTotalPages] = useState(1);
+
   const wrapperRef = useRef(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const itemsPerPage = 6;
+  
   const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
 
   const handlePageChange = (pageNumber) => {
@@ -49,7 +52,7 @@ export default function Packages() {
       try {
         const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallMaster/`, {
           params: {
-            hallCity: searchBoxFilterStore.cityName,
+            hallCity: searchBoxFilterStore.cityName.split(',')[0].trim(),
             eventId: eventId
           }
         });
