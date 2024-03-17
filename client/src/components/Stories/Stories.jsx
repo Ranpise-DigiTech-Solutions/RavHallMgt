@@ -1,4 +1,3 @@
-import React from "react";
 import "./Stories.scss";
 
 import { Images } from "../../constants";
