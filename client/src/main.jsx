@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import App from './App.jsx'
 import './index.css'
 import { store } from './states';
+import { DescriptionPage } from './pages';
 
 const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -24,6 +25,10 @@ const ClerkProviderWithRoutes = () => {
         <Routes>
           <Route path="/" element={<App />} />
         </Routes>
+        <Routes>
+          <Route path="/DescriptionPage" element={<DescriptionPage />} />
+        </Routes>
+
       </ClerkProvider>
     );
 }
