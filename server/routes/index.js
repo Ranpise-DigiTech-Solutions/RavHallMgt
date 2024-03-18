@@ -6,3 +6,4 @@ export {default as bookingmasterRoute} from './bookingMaster.js';
 export {default as customermasterRoute} from './customerMaster.js';
 export {default as vendormasterRoute} from './vendorMaster.js';
 export {default as venuemasterRoute} from './venueMaster.js';
+export {default as hallBookingMasterRoute} from './hallBookingMaster.js';

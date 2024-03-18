@@ -4,6 +4,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
 import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
+import { motion } from "framer-motion";
 
 import { DestinationsCard } from "../../sub-components";
 // eslint-disable-next-line no-unused-vars
@@ -151,7 +152,7 @@ const Destinations = () => {
         </div>
         <div className="sub__wrapper_2">
             <Carousel
-            ref={carouselRef}
+              ref={carouselRef}
               responsive={responsive}
               dotListClass="custom-dot-list-style"
               itemClass="carousel-item-padding-40-px"
@@ -164,14 +165,15 @@ const Destinations = () => {
               slidesToSlide={1}
               arrows={false}
               renderButtonGroupOutside
+              containerClass="carousel-container"
             >
               {cardsArray.map((card, index) => (
-                <div
+                <motion.div
                   className="card"
-                  key={index}
+                  key={index}     
                 >
                   <DestinationsCard key={index} card={card} />
-                </div>
+                </motion.div>
               ))}
             </Carousel>
         </div>

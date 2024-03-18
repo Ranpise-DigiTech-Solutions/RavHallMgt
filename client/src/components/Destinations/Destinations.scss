@@ -94,13 +94,17 @@
     .sub__wrapper_2 {
       margin-top: 2rem;
       width: 100%;
-      overflow: hidden;
+      // padding: 2rem 0 0 0;
+      overflow: visible;
 
       .card {
         height: 400px;
         width: 700px;
-        transition: all 0.3s ease;
+        transition: all 0.4s ease-out;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        position: relative;
+        align-items: center;
+        z-index: 10;
 
         &:hover {
             height: 440px;
@@ -108,9 +112,10 @@
             margin-right: 5rem;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
             transform: translateY(-5px);
-        }
-          
-    }
+        }  
+
+      }
+
   }
 }
 }

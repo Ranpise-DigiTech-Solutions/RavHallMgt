@@ -4,7 +4,7 @@ import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import PropTypes from 'prop-types';
+import {PropTypes} from 'prop-types';
 
 import './ChatBot.scss'; // Import CSS file for styling
 

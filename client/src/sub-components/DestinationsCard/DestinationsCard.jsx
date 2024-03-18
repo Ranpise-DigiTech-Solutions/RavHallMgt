@@ -2,22 +2,30 @@
 import "./DestinationsCard.scss";
 import StarIcon from "@mui/icons-material/Star";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
-import {useState} from 'react'
+import { useState, useRef, useCallback } from 'react'
 
 export default function DestinationsCard({ card }) {
   
   const [isHovered, setIsHovered] = useState(false);
+  const hoverTimeoutRef = useRef(null);
+
+  const handleMouseEnter = useCallback(() => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setIsHovered(true);
+    }, 2000);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    clearTimeout(hoverTimeoutRef.current);
+    setIsHovered(false);
+  }, []); 
 
   return (
     <div
       className="card__container"
-      onMouseEnter={()=>{setIsHovered(true)}}
-      onMouseLeave={()=>{setIsHovered(false)}}  
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
-      {/* <img
-        src={`https://img.freepik.com/free-photo/painting-mountain-lake-with-mountain-background_188544-9126.jpg`}
-        alt="banner"
-      /> */}
       { !isHovered || !card.video ? (
         <>
           <img src={`${card.img}`} alt="banner" className="clip"/>
