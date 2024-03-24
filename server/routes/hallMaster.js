@@ -7,7 +7,7 @@ import hallMaster from "../models/hallmaster-schema.js";
 router.get('/', async(req, res)=> {
 
     const { hallCity, eventId } = req.query;
-    let specificObjectId = "";
+    let specificObjectId = ""; // Event Type Object ID in Str
 
     function isObjectIdFormat(str) {
         return /^[0-9a-fA-F]{24}$/.test(str);

@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { SendOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
 import Message from './Message';
@@ -113,7 +114,7 @@ function ChatBot({ onChatClose }) {
   );
 }
 
-ChatBot.PropTypes = {
+ChatBot.propTypes = {
   onChatClose: PropTypes.func.isRequired,
 };
 

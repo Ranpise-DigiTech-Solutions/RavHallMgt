@@ -2,6 +2,7 @@ import { default as express } from 'express';
 const router = express.Router();
 
 import hallBookingMaster from '../models/hall_bookmaster-schema.js';
+import hallMaster from '../models/hallmaster-schema.js';
 
 router.get("/", async (req, res) => {
     try {
@@ -10,6 +11,82 @@ router.get("/", async (req, res) => {
         return res.status(500).json({message: error.message});
     }
 });
+
+router.get("/getHallsAvailabilityStatus", async (req, res) => {
+
+    const { selectedDate, selectedCity, eventId } = req.query;
+    
+
+    try {
+        // Get all halls
+        const allHalls = await hallMaster.aggregate([
+                {
+                    $match: {
+                        hall_city: selectedCity, 
+                    }
+                }
+            ]
+        );
+
+        // Find bookings for the given date
+        const bookings = await hallBookingMaster.aggregate([
+            {
+                $match: {
+                    booking_timestamp: {
+                        $gte: new Date(selectedDate),
+                        $lt: new Date(selectedDate + 'T23:59:59.999Z')
+                    },
+                    hall_city: selectedCity,
+                },
+            },
+            {
+                $group: {
+                    _id: {
+                      hall_id: "$hall_id",
+                      hall_city: "$hall_city",   
+                    },
+                    totalDuration: { $sum: "$booking_duration" }
+                },
+            },
+            {
+                $project: {
+                    _id: 0,
+                    hall_id: "$_id.hall_id",
+                    hall_city: "$_id.hall_city",
+                    totalDuration: 1
+                }
+            }
+        ]);
+
+        // Group bookings by hall
+        const bookingsByHall = {};
+        bookings.forEach(booking => {
+            bookingsByHall[booking.hall_id] = booking;
+        });
+
+        // Calculate availability status for each hall
+        const hallAvailability = allHalls.map(hall => {
+            const isHallAvailable = !bookingsByHall[hall._id]; //check if the hall is booked atleast once
+            const checkAvailability = () => {
+                const hallBookingDetails = bookingsByHall[hall._id];
+                return hallBookingDetails.totalDuration > 8 ? "UNAVAILABLE" : "LIMITED AVAILABILITY";
+            }
+            const availabilityStatus = isHallAvailable ? 'AVAILABLE' : checkAvailability();
+            return {
+                hall_id: hall._id,
+                hall_name: hall.hall_name,
+                availability: availabilityStatus,
+                hall_city: hall.hall_city,
+                hall_image: hall.hall_image
+            };
+        });
+
+        return res.status(200).json(hallAvailability);
+    } catch (error) {
+        console.error("Error calculating available time slots:", error);
+        return res.status(500).json({message: error.message});
+    }
+})
 
 router.post("/", async (req, res) => { 
     const newDocument = new hallBookingMaster(req.body);

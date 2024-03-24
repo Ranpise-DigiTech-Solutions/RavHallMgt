@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import axios from 'axios'
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
+import { format } from 'date-fns';
 
 import "./Packages.scss";
 import { PackagesCard } from '../../sub-components'
@@ -10,9 +11,9 @@ export default function Packages() {
 
   const [data, setData] = useState([]);
 
-  const [activeFilter, setActiveFilter] = useState("All");
-  const [animateCard, setAnimateCard] = useState({ y: 0, opacity: 1 });
-  const [filteredCards, setFilteredCards] = useState([]);
+  const [activeFilter, setActiveFilter] = useState("All"); // Current Active Filter
+  const [animateCard, setAnimateCard] = useState({ y: 0, opacity: 1 }); // Card Animation when clicked on TAGS
+  const [filteredCards, setFilteredCards] = useState([]); // Filtering cards based on the TAGS..Ex: Most Popular, Top Rated etc..
 
   const wrapperRef = useRef(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -29,31 +30,35 @@ export default function Packages() {
   };
 
   useEffect(() => {
-    const getEventId = async () => {
-      try {
-        if(searchBoxFilterStore.eventType) {
-          const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
-            params: {
-              eventName: searchBoxFilterStore.eventType
-            }
-          });
-          return eventMasterResponse.data;
-        }
-        return null;
-      }
-     catch(error) {
-        console.error('Error fetching data:', error);
-        return null;
-      }
-    }
+    // const getEventId = async () => {
+    //   try {
+    //     if(searchBoxFilterStore.eventType) { // if user has chosen a event return its ID.. else return NULL
+    //       const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
+    //         params: {
+    //           eventName: searchBoxFilterStore.eventType
+    //         }
+    //       });
+    //       return eventMasterResponse.data;
+    //     }
+    //     return null; // if NULL is returned ...then the event filter wont be applied in the backend
+    //   }
+    //  catch(error) {
+    //     console.error('Error fetching data:', error);
+    //     return null;
+    //   }
+    // }
 
     const fetchData = async () => {
-      const eventId = await getEventId();
+      const today = new Date();
+      const formattedDate = format(today, "yyyy-MM-dd");
+      // const eventId = await getEventId();
+      const selectedCityName = searchBoxFilterStore.cityName.split(',')[0].trim();
+      const selectedDate = searchBoxFilterStore.bookingDate;
       try {
-        const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallMaster/`, {
+        const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallBookingMaster/getHallsAvailabilityStatus/`, {
           params: {
-            hallCity: searchBoxFilterStore.cityName.split(',')[0].trim(),
-            eventId: eventId
+            selectedCity: selectedCityName ? selectedCityName : "Udupi",
+            selectedDate: selectedDate ? selectedDate : formattedDate
           }
         });
         setData(hallMasterResponse.data);
@@ -64,7 +69,7 @@ export default function Packages() {
       }
     };
     fetchData();
-  }, [searchBoxFilterStore.cityName, searchBoxFilterStore.eventType]);
+  }, [searchBoxFilterStore]);
 
   // To provide the scroll effect when the cards change
   useEffect(() => {
@@ -75,13 +80,13 @@ export default function Packages() {
     }
   }, [currentPage]);
 
-  const handleCardFilter = (item) => {
-    setActiveFilter(item)
+  const handleCardFilter = (item) => { // Filtering Criteria to be passed in arguments ...Ex: Most Popular, Top Rated etc... 
+    setActiveFilter(item) // Set Active Filter
     setAnimateCard({y:100, opacity:0}) //to get the shuffled animation of the cards
     setTimeout(() => {
       setAnimateCard({y:0, opacity:1})
 
-      setFilteredCards(data);
+      setFilteredCards(data); // set data after applying the filter - INCOMPLETE AS OF NOW
     }, 500);
   };
   

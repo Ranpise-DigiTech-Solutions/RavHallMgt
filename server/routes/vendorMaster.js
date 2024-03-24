@@ -5,6 +5,8 @@ import vendorMaster from '../models/vendormaster-schema.js';
 
 router.get("/", async (req, res) => {
     try {
+        const filter = {}
+
         const vendorDetails = await vendorMaster.find(filter);
 
         if(!vendorDetails) {

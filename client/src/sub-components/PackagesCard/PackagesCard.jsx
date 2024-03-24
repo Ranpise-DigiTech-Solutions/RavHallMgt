@@ -1,11 +1,9 @@
-import React from 'react'
 import './PackagesCard.scss'
 
 import StarIcon from "@mui/icons-material/Star";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import MonetizationOnIcon from "@mui/icons-material/MonetizationOn";
-
-import { Images } from "../../constants";
+import PropTypes from 'prop-types'
 
 export default function PackagesCard({ card }) {
   return (
@@ -23,6 +21,9 @@ export default function PackagesCard({ card }) {
             </div>
             <div className="description">
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Quibusdam, cum?
+              {
+                card.availability
+              }
             </div>
             <div className="wrapper wrapper_2">
               <div className="sub__wrapper">
@@ -39,4 +40,8 @@ export default function PackagesCard({ card }) {
           </div>
         </div>
   )
+}
+
+PackagesCard.propTypes = {
+  card: PropTypes.object.isRequired
 }

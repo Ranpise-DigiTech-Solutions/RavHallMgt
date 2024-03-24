@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import "./Promotion.scss";
 
 import { useState, useEffect } from "react";
@@ -10,6 +11,8 @@ import Button from "@mui/material/Button";
 import { Images } from "../../constants";
 import NavigationDots from "../NavigationDots";
 import { AppWrap } from "../../wrapper";
+import PropTypes from 'prop-types';
+import { useDispatch, useSelector } from "react-redux";
 
 function Number({ n }) {
   const { number } = useSpring({
@@ -21,8 +24,16 @@ function Number({ n }) {
   return <animated.div>{number.to((n) => n.toFixed(0))}</animated.div>;
 }
 
+Number.propTypes = {
+  n: PropTypes.number.isRequired
+}
+
 const Promotion = () => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [cityName, setCityName] = useState("");
+  const dispatch = useDispatch();
+  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
+
   const imageList = [
     Images.wedding0,
     Images.wedding1,
@@ -37,6 +48,10 @@ const Promotion = () => {
 
     return () => clearInterval(intervalId);
   }, [imageList.length]);
+
+  const handleSearchClick = (e) => {
+    // dispatch(searchBoxFilterStore("cityName", cityName));
+  }
 
   return (
     <div className="main__container promotion__container">
@@ -74,9 +89,12 @@ const Promotion = () => {
               id="cityName"
               name="cityName"
               placeholder="Enter the city name"
+              onChange={(e) => setCityName(e.target.value)}
             />
-            <Button variant="contained" className="button">
-              Search
+            <Button variant="contained" className="button" onClick={handleSearchClick}>
+              <a href="#searchBar">
+                Search
+              </a>
             </Button>
           </div>
           <div className="views__wrapper">
