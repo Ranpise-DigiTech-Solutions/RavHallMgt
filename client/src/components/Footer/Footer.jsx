@@ -1,12 +1,43 @@
-import './Footer.scss'
-
+import './Footer.scss'; // Import your custom styles for the footer
+import React, { useRef ,useState} from 'react';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import InstagramIcon from '@mui/icons-material/Instagram';
-import XIcon from '@mui/icons-material/X';
-import PinterestIcon from '@mui/icons-material/Pinterest';
-import YouTubeIcon from '@mui/icons-material/YouTube';
+import playStoreIcon from '../../assets/Playstore_icon.png'; 
+import appStoreIcon from '../../assets/App_store_icon.png'; 
+import emailjs from 'emailjs-com';
+
 
 export default function Footer() {
+    const [isSuccess, setIsSuccess] = useState(false);
+    const handleLinkClick = (event) => {
+        event.preventDefault(); // Prevent default link behavior
+        alert('This section is under construction. We will provide details soon.');
+      };
+      const form = useRef();
+      const handleSubmit = (event) => {
+        event.preventDefault();
+    
+        // EmailJS sendForm method
+        emailjs.sendForm('service_nmoyi47', 'template_qa7a6rf', event.target, 'prncI_jPtqNaIhhhU')
+        .then(
+          () => {
+            setIsSuccess(true);
+                form.current.reset(); // Reset the form fields
+                console.log('SUCCESS!');
+                
+                // Hide the success message after 3 seconds
+                setTimeout(() => {
+                    setIsSuccess(false);
+                }, 3000);
+          },
+          (error) => {
+            console.log('FAILED...', error.text);
+          },
+        );
+      };
+      
+      
+  const mapLink = 'https://www.google.com/maps/place/Ranpise+DigiTech+Solutions+Private+Limited/@19.2604145,73.1332211,17z/data=!3m1!4b1!4m6!3m5!1s0x3be796881823811b:0xc9e1a4474c36940c!8m2!3d19.2604095!4d73.135796!16s%2Fg%2F11f3gcyxtv?entry=ttu';
   return (
     <div className='footer__container'>
       <div className='company__logo'>
@@ -16,10 +47,11 @@ export default function Footer() {
         <div className="sub__wrapper_1">
           <div className="links">
             <div className="link__grp_1">
-              <p>Careers</p>
-              <p>Our Blog</p>
-              <p>Contact Us</p>
-              <p>Our Service</p>
+              <p onClick={handleLinkClick}>Our Blog</p>
+              <p onClick={handleLinkClick}>Career</p>
+              <p><a href="#contact-form">Contact Us</a></p>
+              <p onClick={handleLinkClick}>Our Service</p>
+              <p>FAQs </p>
             </div>
             <div className="link__grp_2">
               <p>Privacy Policy</p>
@@ -29,34 +61,65 @@ export default function Footer() {
             </div>
           </div>
           <div className="icons">
-            <FacebookIcon className='icon'/>
-            <InstagramIcon className='icon'/>
-            <XIcon className='icon'/>
-            <PinterestIcon className='icon'/>
-            <YouTubeIcon className='icon'/>
+            <FacebookIcon className='icon' />
+            <InstagramIcon className='icon' />
           </div>
+          <div className="app_icon_description"> For better experience, download the <br/>eventifyConnect app now</div>
+          <div className="app__download__icons">
+                    <a href="https://play.google.com/store/apps/details?id=YOUR_APP_PACKAGE_NAME" >
+                        <img src={playStoreIcon} alt="Download from Play Store" class="playstore"  />
+                    </a>
+                    <a href="https://apps.apple.com/YOUR_APP_STORE_LINK" >
+                        <img  src={appStoreIcon} alt="Download from App Store" class="appstore"  />
+                    </a>
+           </div>
         </div>
-        <div className="sub__wrapper_2">
+        <div className="sub__wrapper_middle">
+        <div id="map-container">
+        <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.5045085375023!2d73.1332210737419!3d19.260414546160078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be796881823811b%3A0xc9e1a4474c36940c!2sRanpise%20DigiTech%20Solutions%20Private%20Limited!5e0!3m2!1sen!2sin!4v1711347263461!5m2!1sen!2sin" 
+        width="500"
+        height="450"
+        style={{border:0}}
+        allowFullScreen=""
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"></iframe>
+        
+      </div>
+      <div className="operating-hours">
+                <p> Open Hour 9.30 AM - 6.30 PM</p>
+      </div>
+      </div>
+      
+        <div className="sub__wrapper_2" id="contact-form">
           <div className="title">
-           Subscribe to our newsletter 
+          Contact Us
           </div>
-          <div className="email">
-            <input type="text" placeholder='Your email here' name='email'/>
-            <button>Subscribe</button>
-          </div>
-          <div className="agreement">
-            <input type="checkbox" />
-            <p>By checking the box, you agree to <br/> our terms and conditions. </p>
-          </div>
+          <form  ref={form} onSubmit={handleSubmit}>
+            <div className="email">
+            <input type="text" placeholder='Name' name='user_name' required />
+           <input type="email" placeholder='Email address' name='user_email' required />
+            <input type="text" placeholder='Subject' name='subject' required />
+            <textarea name="message" cols="30" rows="5" placeholder="Message" required></textarea>
+            </div>
+            <button type="submit">Send</button>
+          </form>
+          {isSuccess && (
+                    <div className="confirmation-message">
+                        <p>Thanks for connecting! We'll get back to you soon.</p>
+                    </div>
+                )}
         </div>
       </div>
+      
       <div className="wrapper_2">
         <div className="line__separator"></div>
         <div className="copyright__info">
-          <p>Copyright &copy;2024 All rights reserved</p>
-          <p>Made by Ranpise DigiTech Solutions</p>
+        <p>Copyright &copy;2024 All rights reserved</p>
+        <p>Made by Ranpise DigiTech Solutions</p>
         </div>
       </div>
+      
     </div>
-  )
+  );
 }
+
