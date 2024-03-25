@@ -1,18 +1,24 @@
-import React from 'react'
+import PropTypes from 'prop-types'
 
-export default function NavigationDots({active}) {
+export default function NavigationDots({active, imageList, className}) {
   return (
     <div>
       <div className="app__navigation">
-        {['wedding_img_0','wedding_img_1','wedding_img_2','wedding_img3'].map((item,index)=>(
+        {imageList.map((item,index)=>(
             <a
             href={`#`}
-            key={item+index}
-            className='app__navigation-dot'
+            key={"Image-" + index}
+            className={className}
             style={active===index? {backgroundColor:`#313bac`} : {}}
             />
         ))}
       </div>
     </div>
   )
+}
+
+NavigationDots.propTypes = {
+  active: PropTypes.number.isRequired,
+  imageList: PropTypes.array.isRequired,
+  className: PropTypes.string.isRequired
 }

@@ -54,6 +54,7 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
 
+    console.log("Entered")
     const resourceId = req.params.id;
     const updatedFields = req.body;
 

@@ -188,7 +188,7 @@
   align-items: center;
   flex-direction: row;
   height: 100%;
-  margin-top: -3.5rem;
+  // margin-top: -3.5rem;
 
   padding-left: 2rem;
   padding-right: 2rem;
@@ -209,6 +209,25 @@
     @media screen and (min-width: 2000px) {
       width: 20px;
       height: 20px;
+    }
+  }
+
+  .packageCard__navigation-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background-color: #cbcbcb;
+    margin: 0.5rem;
+
+    transition: background-color 0.2s ease-in-out;
+
+    &:hover {
+      background-color: var(--secondary-color);
+    }
+
+    @media screen and (min-width: 2000px) {
+      width: 10px;
+      height: 10px;
     }
   }
 }

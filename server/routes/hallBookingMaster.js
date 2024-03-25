@@ -77,7 +77,8 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
                 hall_name: hall.hall_name,
                 availability: availabilityStatus,
                 hall_city: hall.hall_city,
-                hall_image: hall.hall_image
+                hall_images: hall.hall_images,
+                hall_description: hall.hall_description,
             };
         });
 

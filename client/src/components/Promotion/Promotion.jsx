@@ -137,7 +137,11 @@ const Promotion = () => {
         </div>
       </div>
       <div className="navigation__dots">
-        <NavigationDots active={currentImageIndex} />
+        <NavigationDots
+          active={currentImageIndex}
+          imageList={imageList}
+          className='app__navigation-dot'
+        />
       </div>
     </div>
   );

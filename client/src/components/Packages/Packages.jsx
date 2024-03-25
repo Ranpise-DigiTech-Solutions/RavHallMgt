@@ -11,7 +11,7 @@ export default function Packages() {
 
   const [data, setData] = useState([]);
 
-  const [activeFilter, setActiveFilter] = useState("All"); // Current Active Filter
+  const [activeFilter, setActiveFilter] = useState("Available"); // Current Active Filter
   const [animateCard, setAnimateCard] = useState({ y: 0, opacity: 1 }); // Card Animation when clicked on TAGS
   const [filteredCards, setFilteredCards] = useState([]); // Filtering cards based on the TAGS..Ex: Most Popular, Top Rated etc..
 
@@ -28,6 +28,42 @@ export default function Packages() {
       setCurrentPage(pageNumber);
     }
   };
+
+  function mergeSort(arr) {
+    if (arr.length <= 1) {
+        return arr;
+    }
+
+    const mid = Math.floor(arr.length / 2);
+    const left = arr.slice(0, mid);
+    const right = arr.slice(mid);
+
+    return merge(mergeSort(left), mergeSort(right));
+  }
+
+  function merge(left, right) {
+    let result = [];
+    let leftIndex = 0;
+    let rightIndex = 0;
+
+    while (leftIndex < left.length && rightIndex < right.length) {
+        if (left[leftIndex].availability === 'AVAILABLE' && right[rightIndex].availability !== 'AVAILABLE') {
+            result.push(left[leftIndex]);
+            leftIndex++;
+        } else if (left[leftIndex].availability !== 'AVAILABLE' && right[rightIndex].availability === 'AVAILABLE') {
+            result.push(right[rightIndex]);
+            rightIndex++;
+        } else if (left[leftIndex].availability === 'LIMITED AVAILABILITY' && right[rightIndex].availability === 'UNAVAILABLE') {
+            result.push(left[leftIndex]);
+            leftIndex++;
+        } else {
+            result.push(right[rightIndex]);
+            rightIndex++;
+        }
+    }
+
+    return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+  }
 
   useEffect(() => {
     // const getEventId = async () => {
@@ -61,14 +97,17 @@ export default function Packages() {
             selectedDate: selectedDate ? selectedDate : formattedDate
           }
         });
+
         setData(hallMasterResponse.data);
-        setFilteredCards(hallMasterResponse.data);
+        const filteredCardsBasedOnAvailability = mergeSort(hallMasterResponse.data);
+        setFilteredCards(filteredCardsBasedOnAvailability);
         setTotalPages(Math.ceil(Object.values(hallMasterResponse.data).length / itemsPerPage));
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
     fetchData();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchBoxFilterStore]);
 
   // To provide the scroll effect when the cards change
@@ -83,10 +122,13 @@ export default function Packages() {
   const handleCardFilter = (item) => { // Filtering Criteria to be passed in arguments ...Ex: Most Popular, Top Rated etc... 
     setActiveFilter(item) // Set Active Filter
     setAnimateCard({y:100, opacity:0}) //to get the shuffled animation of the cards
+    if(item === "Available") {
+      setFilteredCards(mergeSort(data));
+     }else {
+      setFilteredCards(data);
+    }
     setTimeout(() => {
       setAnimateCard({y:0, opacity:1})
-
-      setFilteredCards(data); // set data after applying the filter - INCOMPLETE AS OF NOW
     }, 500);
   };
   
@@ -191,7 +233,7 @@ export default function Packages() {
   return (
     <div className="packages__container" id="packages" ref={wrapperRef}>
       <div className="tags__wrapper">
-        {["Most Popular", "Top Rated", "Most Liked", "Oldest", "All"].map(
+        {["Top Rated", "Most Popular", "Most Liked", "Oldest" ,"Available"].map(
           (item, index) => (
             <div
               key={index}

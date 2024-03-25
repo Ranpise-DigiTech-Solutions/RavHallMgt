@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const hallMasterSchema = new mongoose.Schema({
     hall_name: { type: String, required: true, unique:true},
+    hall_description: { type: String },
     hall_age: { type: Number},
     hall_nrooms: { type: Number},
     hall_vrate: { type: Number},
@@ -16,7 +17,7 @@ const hallMasterSchema = new mongoose.Schema({
     hall_pincd: { type: Number},
     hall_mgrnm: { type: String},     
     hall_email: { type: String},
-    hall_image: { type: String},
+    hall_images: [{ type: String}],
     hall_description: {type: String}
 }, { timestamps: true });
 
