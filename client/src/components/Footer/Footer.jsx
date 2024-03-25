@@ -105,7 +105,7 @@ export default function Footer() {
           </form>
           {isSuccess && (
                     <div className="confirmation-message">
-                        <p>Thanks for connecting! We'll get back to you soon.</p>
+                        <p><strong>hanks for connecting! We'll get back to you soon.</strong>T</p>
                     </div>
                 )}
         </div>
