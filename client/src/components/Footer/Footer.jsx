@@ -77,8 +77,8 @@ export default function Footer() {
         <div className="sub__wrapper_middle">
         <div id="map-container">
         <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3766.5045085375023!2d73.1332210737419!3d19.260414546160078!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be796881823811b%3A0xc9e1a4474c36940c!2sRanpise%20DigiTech%20Solutions%20Private%20Limited!5e0!3m2!1sen!2sin!4v1711347263461!5m2!1sen!2sin" 
-        width="500"
-        height="450"
+        width="370"
+        height="350"
         style={{border:0}}
         allowFullScreen=""
         loading="lazy"

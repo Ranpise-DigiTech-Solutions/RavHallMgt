@@ -37,7 +37,7 @@
         margin-bottom: 2rem;
 
         .sub__wrapper_1 {
-            
+            width:30%;
             .links {
                 width: 100%;
                 display: flex;
@@ -103,7 +103,7 @@
         /* Styles for the email sending division */
 .sub__wrapper_2 {
 
-   width:40%;
+   width:36%;
   
     .title {
       /* Existing styles (if any) */
@@ -142,7 +142,6 @@
     }
   
     .agreement {
-      /* Existing styles (if any) */
   
       /* Optional: Adjust spacing between checkbox and text */
       display: flex;
@@ -156,7 +155,6 @@
     }
   
     button {
-      /* Existing styles (if any) */
   
       /* Optional: Customize button appearance (background, hover effects, etc.) */
       background-color: #007bff; /* Example blue button background */
@@ -173,7 +171,6 @@
     }
   
     .confirmation-message {
-      /* Existing styles (if any) */
   
       /* Optional: Style the confirmation message */
       color: green; /* Example green color */
