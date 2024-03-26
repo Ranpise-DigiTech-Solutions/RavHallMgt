@@ -13,6 +13,7 @@ import {
 
 import { store } from './states';
 
+
 function App() {
 
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
@@ -66,9 +67,6 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/DescriptionPage" element={<DescriptionPage />} />
-          </Routes>
-          <Routes>
-            <Route path="/UserProfilePage" element={<UserProfilePage />} />
           </Routes>
         </ClerkProvider>
       );
