@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import bookingMaster from '../models/bookingmaster-schema.js';
+import { bookingMaster } from '../models/index.js';
 
 router.get("/", async (req, res) => {
     try {

@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import venueMaster from '../models/venuemaster-schema.js';
+import { venueMaster } from '../models/index.js';
 
 router.get("/", async (req, res) => {
     try {

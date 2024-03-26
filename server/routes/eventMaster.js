@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import eventMaster from '../models/eventmaster-schema.js';
+import { eventMaster } from '../models/index.js';
 
 router.post("/", async (req, res) => { 
     const newDocument = new eventMaster(req.body);

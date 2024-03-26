@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import './PackagesCard.scss'
 
 import Tooltip from '@mui/material/Tooltip';
@@ -20,6 +20,15 @@ import NavigationDots from '../../components/NavigationDots';
 export default function PackagesCard({ card }) {
 
   const [animateCalanderIcon, setAnimateCalenderIcon] = useState({x:0, opacity: 0});
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      setCurrentImageIndex((prevIndex) => (prevIndex + 1) % card.hall_images.length);
+    }, 4000);
+
+    return () => clearInterval(intervalId);
+  }, [card.hall_images]);
 
   const responsive = {
     desktop: {
@@ -35,6 +44,13 @@ export default function PackagesCard({ card }) {
       items: 1,
     },
   };
+
+  // const CustomButtonGroup = ({ next, previous }) => (
+  //   <div>
+  //     <button onClick={() => previous()}>Previous</button>
+  //     <button onClick={() => next()}>Next</button>
+  //   </div>
+  // );
 
   return (
     <div className="box__wrapper">
@@ -81,7 +97,7 @@ export default function PackagesCard({ card }) {
                   </motion.span>
                 </div>
                 <NavigationDots
-                  active={2}
+                  active={currentImageIndex}
                   imageList={card.hall_images}
                   className='packageCard__navigation-dot'
                 />

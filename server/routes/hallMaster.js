@@ -2,7 +2,7 @@ import { default as express } from 'express';
 const router = express.Router();
 import { ObjectId } from 'mongodb';
 
-import hallMaster from "../models/hallmaster-schema.js";
+import { hallMaster } from '../models/index.js';
 
 router.get('/', async(req, res)=> {
 

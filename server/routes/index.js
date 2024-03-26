@@ -7,3 +7,4 @@ export {default as customermasterRoute} from './customerMaster.js';
 export {default as vendormasterRoute} from './vendorMaster.js';
 export {default as venuemasterRoute} from './venueMaster.js';
 export {default as hallBookingMasterRoute} from './hallBookingMaster.js';
+export {default as geoLocationTrackerRoute} from './geoLocationTracker.js';

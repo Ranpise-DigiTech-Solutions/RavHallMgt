@@ -1,8 +1,11 @@
 import { default as express } from 'express';
 const router = express.Router();
+import { ObjectId } from 'mongodb';
 
-import hallBookingMaster from '../models/hall_bookmaster-schema.js';
-import hallMaster from '../models/hallmaster-schema.js';
+import {
+    hallMaster,
+    hallBookingMaster
+} from '../models/index.js';
 
 router.get("/", async (req, res) => {
     try {
@@ -15,14 +18,29 @@ router.get("/", async (req, res) => {
 router.get("/getHallsAvailabilityStatus", async (req, res) => {
 
     const { selectedDate, selectedCity, eventId } = req.query;
-    
 
+    let eventObjectId = ""; // Event Type Object ID in Str
+
+    function isObjectIdFormat(str) {
+        return /^[0-9a-fA-F]{24}$/.test(str);
+    }
+
+    if (eventId && isObjectIdFormat(eventId)) {
+        eventObjectId = new ObjectId(eventId);
+        if (!ObjectId.isValid(eventObjectId)) {
+            eventObjectId = null;
+        }
+    } else {
+        eventObjectId = null;    
+    }
+    
     try {
         // Get all halls
         const allHalls = await hallMaster.aggregate([
                 {
                     $match: {
-                        hall_city: selectedCity, 
+                        hall_city: selectedCity ? selectedCity : {$exists: true}, 
+                        hall_eventtype : eventObjectId ? { $in: [eventObjectId] } : { $exists: true },
                     }
                 }
             ]
@@ -36,7 +54,8 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
                         $gte: new Date(selectedDate),
                         $lt: new Date(selectedDate + 'T23:59:59.999Z')
                     },
-                    hall_city: selectedCity,
+                    hall_city: selectedCity ? selectedCity : {$exists: true}, 
+                    event_id : eventObjectId ? eventObjectId : { $exists: true },
                 },
             },
             {

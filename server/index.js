@@ -15,6 +15,7 @@ import {
     vendormasterRoute,
     venuemasterRoute,
     hallBookingMasterRoute,
+    geoLocationTrackerRoute,
 } from './routes/index.js';
 
 const app = express();
@@ -39,5 +40,7 @@ app.use('/eventify_server/customerMaster', customermasterRoute);
 app.use('/eventify_server/venueMaster', venuemasterRoute);
 app.use('/eventify_server/vendorMaster', vendormasterRoute);
 app.use('/eventify_server/hallBookingMaster', hallBookingMasterRoute);
+app.use('/eventify_server/geoLocationTracker', geoLocationTrackerRoute);
+
 
 app.listen(PORT, () => console.log(`server running successfully on 8000`));

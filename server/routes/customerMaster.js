@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import customerMaster from '../models/customermaster-schema.js';
+import { customerMaster } from '../models/index.js';
 
 router.get("/", async (req, res) => {
     const filter = {};

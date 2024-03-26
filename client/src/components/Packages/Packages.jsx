@@ -66,35 +66,36 @@ export default function Packages() {
   }
 
   useEffect(() => {
-    // const getEventId = async () => {
-    //   try {
-    //     if(searchBoxFilterStore.eventType) { // if user has chosen a event return its ID.. else return NULL
-    //       const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
-    //         params: {
-    //           eventName: searchBoxFilterStore.eventType
-    //         }
-    //       });
-    //       return eventMasterResponse.data;
-    //     }
-    //     return null; // if NULL is returned ...then the event filter wont be applied in the backend
-    //   }
-    //  catch(error) {
-    //     console.error('Error fetching data:', error);
-    //     return null;
-    //   }
-    // }
+    const getEventId = async () => {
+      try {
+        if(searchBoxFilterStore.eventType) { // if user has chosen a event return its ID.. else return NULL
+          const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
+            params: {
+              eventName: searchBoxFilterStore.eventType
+            }
+          });
+          return eventMasterResponse.data;
+        }
+        return null; // if NULL is returned ...then the event filter wont be applied in the backend
+      }
+     catch(error) {
+        console.error('Error fetching data:', error);
+        return null;
+      }
+    }
 
     const fetchData = async () => {
       const today = new Date();
       const formattedDate = format(today, "yyyy-MM-dd");
-      // const eventId = await getEventId();
+      const eventId = await getEventId();
       const selectedCityName = searchBoxFilterStore.cityName.split(',')[0].trim();
       const selectedDate = searchBoxFilterStore.bookingDate;
       try {
         const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallBookingMaster/getHallsAvailabilityStatus/`, {
           params: {
             selectedCity: selectedCityName ? selectedCityName : "Udupi",
-            selectedDate: selectedDate ? selectedDate : formattedDate
+            selectedDate: selectedDate ? selectedDate : formattedDate,
+            eventId: eventId
           }
         });
 

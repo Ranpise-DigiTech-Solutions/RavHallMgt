@@ -1,7 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import vendorMaster from '../models/vendormaster-schema.js';
+import { vendorMaster } from '../models/index.js';
 
 router.get("/", async (req, res) => {
     try {

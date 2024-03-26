@@ -16,7 +16,7 @@ function App() {
 
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
   const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
-  const hereApiId = import.meta.env.GOOGLE_MAPS_API_KEY;
+  const hereAppId = import.meta.env.GOOGLE_MAPS_APP_ID;
   const hereApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
 
   if (!publishableKey) {
@@ -24,29 +24,7 @@ function App() {
   }
 
   useEffect(() => {
-    function getCityName(latitude, longitude) {
-      const apiUrl = `https://reverse.geocode.search.hereapi.com/v1/revgeocode?at=${latitude},${longitude}&apiKey=${hereApiId}&appCode=${hereApiKey}`;
-      fetch(apiUrl)
-        .then(response => response.json())
-        .then(data => {
-          // if (data.results && data.results.length > 0) {
-          //   const addressComponents = data.results[0];
-          //   console.log(addressComponents);
-          //   // const cityName = addressComponents.find(component => component.types.includes('locality')).long_name;
-          //   // const countryName = addressComponents.find(component => component.types.includes('country')).long_name;
-          //   // console.log('City Name:', cityName);
-          //   // console.log('Country Name:', countryName);
-          // } else {
-          //   console.error('No address components found in the API response.');
-          // }
-          const location = data.items[0].address;
-          const city = location.city;
-          const country = location.countryName;
-
-          console.log(`City: ${city}, Country: ${country}`);
-        })
-        .catch(error => console.error('Error:', error));
-    }
+    
 
     const getLocation = () => {
       if ('geolocation' in navigator) {
@@ -54,11 +32,15 @@ function App() {
           (position) => {
             const { latitude, longitude } = position.coords;
             console.log(latitude, " " ,longitude)
-            // getCityName(latitude, longitude);
+            
+            // GET CITY NAME USING HERE API
+            // const data = getCityName(12.9141, 74.8560);
+            // return res.status(200).json(data);
+            // STORE LOCATION IN DATABASE
             // storeLocationInDatabase(latitude, longitude);
           },
           (error) => {
-            // console.error('Error getting location:', error);
+            console.error('Error getting location:'+ error.message);
           }
         );
       } else {
