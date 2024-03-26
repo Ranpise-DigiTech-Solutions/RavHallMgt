@@ -50,8 +50,12 @@ export default function NavBar() {
       <div className={`navbar__wrapper ${scrolled ? 'scrolled' : ''}`}>
         <div className="logo__wrapper">
           <img src={Images.logo} alt="logo" className="logo" />
+          <div className="logodescription">
           <p className="title">EventifyConnect</p>
+          <p className="tagline">- Connecting people together</p>
+          </div>
         </div>
+       
         <div className="container">
           <a href="#" className="tag">
             Venues

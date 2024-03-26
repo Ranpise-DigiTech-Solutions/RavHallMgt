@@ -17,7 +17,7 @@
     "@emotion/styled": "^11.11.0",
     "@fontsource/roboto": "^5.0.12",
     "@mui/icons-material": "^5.15.12",
-    "@mui/material": "^5.15.12",
+    "@mui/material": "^5.15.14",
     "@reduxjs/toolkit": "^2.2.1",
     "antd": "^5.15.2",
     "axios": "^1.6.7",
@@ -35,9 +35,11 @@
     "react-router-dom": "^6.22.2",
     "react-select": "^5.8.0",
     "react-spring": "^9.7.3",
+    "react-stars": "^2.2.5",
     "react-window": "^1.8.10",
     "redux-thunk": "^3.1.0",
-    "scss": "^0.2.4"
+    "scss": "^0.2.4",
+    "yet-another-react-lightbox": "^3.17.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.56",
