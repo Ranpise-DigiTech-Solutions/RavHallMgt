@@ -3,55 +3,98 @@ import { Input } from 'antd';
 import Message from './Message';
 import { Images } from '../../constants';
 import { useEffect, useState } from 'react';
-import { collection, addDoc, query, getDocs } from 'https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore.js';
-import { db } from '../../../../server/firebase/firebase';
+import axios from 'axios';
+import PropTypes from 'prop-types';
 
 import './ChatBot.scss'; // Import CSS file for styling
 
 function ChatBot({ onChatClose }) {
   const [inputValue, setInputValue] = useState('');
-  const [sessionID, setSessionID] = useState(`SessionID_${Date.now()}`);
+  // eslint-disable-next-line no-unused-vars
+  const [sessionId, setsessionId] = useState(`${Date.now()}`);
   const [messages, setMessages] = useState([]);
+
+  // const CHATBOT_API_KEY = import.meta.env.CHATBOT_API_KEY;
+  const CHATBOT_API_KEY = "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";
 
   useEffect(() => {
     const loadMessages = async () => {
-      const messagesQuery = query(collection(db, `chats/${sessionID}/Messages`));
-      const querySnapshot = await getDocs(messagesQuery);
-      const fetchedMessages = querySnapshot.docs.map((doc) => doc.data());
-      setMessages(fetchedMessages);
+      const response = await axios.get('http://localhost:8000/eventify_server/chatBot/', {
+        params: {
+          sessionId
+        }
+      });
+      setMessages(response.data);
     };
     loadMessages();
-  }, [sessionID]);
+  }, [sessionId]);
 
   const handleSubmit = async (event) => {
+
     event.preventDefault();
     if (inputValue.trim() !== '') {
       try {
-        const docRef = await addDoc(collection(db, `chats/${sessionID}/Messages`), {
-          content: inputValue,
-          sender: 'me',
-          timestamp: new Date().toISOString(),
+        const response = await axios.post('http://localhost:8000/eventify_server/chatBot/', {
+            sessionId ,
+            sender: "user",
+            inputValue ,
         });
-        console.log('Document written with ID: ', docRef.id);
+        console.log(response.body);
+        setMessages([...messages, { content: inputValue, sender: 'user', timestamp: new Date().toISOString() }]);
         setInputValue('');
-        setMessages([...messages, { content: inputValue, sender: 'me', timestamp: new Date().toISOString() }]);
+        // await processMessageToChatbot(messages);
       } catch (e) {
         console.error('Error adding document: ', e);
       }
     }
   };
 
+  const processMessageToChatbot = async (chatMessages) => {
+    // apiMessage format : {'role': 'user' or 'assistant', 'content': "The Message Content Here"}
+    // roles : 1. 'user' -> Message from the user  2. 'assistant': Message from the bot  3. 'system' ->  One initial message to set the tone of the bot
+    
+    let apiMessages = chatMessages.map((messageObject) => {
+      return { role: messageObject.sender, content: messageObject.content }
+    });
+
+    const systemMessage = {
+      role: 'system',
+      content: 'Speak like a Marriage Hall Booking Agent and be clear about every single thing related to Marriage and Wedding.'
+    }
+
+    const apiRequestBody = {
+      "model": "gpt-3.5-turbo",
+      "messages": [
+        systemMessage,
+        ...apiMessages
+      ]
+    }
+
+    await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Authorization": "Bearer " + CHATBOT_API_KEY,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(apiRequestBody)
+    }).then((data)=> {
+      return data.json();
+    }).then((data)=> {
+      console.log(data.choices[0].message.content);
+      setMessages(...chatMessages, {content: data.choices[0].message.content, sender: "assistant"});
+    });
+  }
+
   const handleChatClose = () => {
-    console.log("Closing chatbot from ChatBot component");
     onChatClose();
   };
 
   return (
-    <div className="app-container">
-      <div className="header">
+    <div className="chatbot__container">
+      <div className="chatbot__header">
         <div className="logo-container">
           <img src={Images.logo} alt="Logo" className="logo" />
-          <span className="brand-name"><strong>WedmeGood</strong> is here to assist you</span>
+          <span className="brand-name"><strong>EventifyConnect</strong> is here to assist you</span>
           <div className="close-icon" onClick={handleChatClose}>❌</div>
         </div>
       </div>
@@ -69,5 +112,9 @@ function ChatBot({ onChatClose }) {
     </div>
   );
 }
+
+ChatBot.PropTypes = {
+  onChatClose: PropTypes.func.isRequired,
+};
 
 export default ChatBot;

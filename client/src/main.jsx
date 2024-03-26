@@ -1,38 +1,40 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ClerkProvider, RedirectToSignIn, SignIn, SignUp, SignedOut, SignedIn, UserButton } from "@clerk/clerk-react";
-import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+// import { ClerkProvider } from "@clerk/clerk-react";
+// import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
+// import { Provider } from 'react-redux';
+
 import App from './App.jsx'
 import './index.css'
-import ProtectedPage from './ProtectedPage.jsx';
-import UserProfilePage from './user-profile.jsx';
-import { HomePage } from './pages/index.js';
-import { NavBar } from './components/index.js';
- 
-const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
+// import { store } from './states';
+// import { DescriptionPage } from './pages';
 
-if (!publishableKey) {
-  throw new Error("Missing Publishable Key")
-}
+// const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
-const ClerkProviderWithRoutes = () => {
-  const navigate = useNavigate();
+// if (!publishableKey) {
+//   throw new Error("Missing Publishable Key")
+// }
 
-  return (
-    <ClerkProvider
-      publishableKey={publishableKey}
-      navigate={(to) => navigate(to)}>
-        <Routes>
-          <Route path="/" element={<App />} />
-        </Routes>
-      </ClerkProvider>
-    );
-}
+// const ClerkProviderWithRoutes = () => {
+//   const navigate = useNavigate();
+
+//   return (
+//     <ClerkProvider
+//       publishableKey={publishableKey}
+//       navigate={(to) => navigate(to)}>
+//         <Routes>
+//           <Route path="/" element={<App />} />
+//         </Routes>
+//         <Routes>
+//           <Route path="/DescriptionPage" element={<DescriptionPage />} />
+//         </Routes>
+
+//       </ClerkProvider>
+//     );
+// }
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
-    <BrowserRouter>
-      <ClerkProviderWithRoutes />
-    </BrowserRouter>
+    <App />
   </React.StrictMode>,
 )

@@ -7,3 +7,4 @@ export {default as AboutUs} from './AboutUs/AboutUs';
 export {default as Stories} from './Stories/Stories';
 export {default as Blogs} from './Blogs/Blogs';
 export {default as Footer} from './Footer/Footer';
+export {default as ChatBot} from './ChatBot/ChatBot';

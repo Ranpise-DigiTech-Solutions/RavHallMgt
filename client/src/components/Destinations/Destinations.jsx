@@ -6,7 +6,9 @@ import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 
 import { DestinationsCard } from "../../sub-components";
+// eslint-disable-next-line no-unused-vars
 import { MotionWrap } from '../../wrapper'
+import {Images} from '../../constants';
 
 const responsive = {
   desktop: {
@@ -30,6 +32,8 @@ const cardsData = {
     stars: 4,
     reviews: 2,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_01,
+    video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -40,6 +44,8 @@ const cardsData = {
     stars: 4,
     reviews: 4,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_02,
+    video: "",
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -50,6 +56,8 @@ const cardsData = {
     stars: 5,
     reviews: 5,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_03,
+    video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -60,6 +68,8 @@ const cardsData = {
     stars: 4,
     reviews: 2,
     title: "Autumn in Japan | $3,500",
+    img: Images.Hall_04,
+    video: "",
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
@@ -70,6 +80,20 @@ const cardsData = {
     stars: 5,
     reviews: 10,
     title: "Autumn in USA | $8,500",
+    img: Images.Hall_05,
+    video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
+    description:
+      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    deadline: "7 days",
+  },
+  card6: {
+    discount: "20% off",
+    new: true,
+    stars: 5,
+    reviews: 10,
+    title: "Autumn in USA | $8,500",
+    img: Images.Hall_06,
+    video: "",
     description:
       "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
