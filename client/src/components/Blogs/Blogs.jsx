@@ -1,4 +1,3 @@
-import React from 'react'
 import './Blogs.scss'
 import { BlogsCard } from '../../sub-components'
 

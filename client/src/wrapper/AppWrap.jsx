@@ -1,17 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ChatBot from '../components/ChatBot/ChatBot';
+import { ChatBot } from '../components';
 
 const AppWrap = (Component, idName, classNames) => function HOC() {
   const [showChatBot, setShowChatBot] = useState(false);
 
   const handleChatBotClick = () => {
-    console.log("Chatbot icon clicked");
     setShowChatBot(prevState => !prevState);
   };
 
   const handleChatClose = () => {
-    console.log("Closing chatbot");
     setShowChatBot(false);
   };
 
@@ -19,7 +17,7 @@ const AppWrap = (Component, idName, classNames) => function HOC() {
 
   return (
     <div id={idName} className={`appwrap__container ${classNames}`}>
-      <Component onChatClose={handleChatClose} />
+      <Component />
       <WhatsAppIcon
         className='chatbot__icon'
         onClick={handleChatBotClick}

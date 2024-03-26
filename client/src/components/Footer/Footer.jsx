@@ -1,4 +1,3 @@
-import React from 'react'
 import './Footer.scss'
 
 import FacebookIcon from '@mui/icons-material/Facebook';
@@ -11,22 +10,22 @@ export default function Footer() {
   return (
     <div className='footer__container'>
       <div className='company__logo'>
-        <h2>WedMe</h2>
+        <h2>EventifyConnect</h2>
       </div>
       <div className="wrapper_1">
         <div className="sub__wrapper_1">
           <div className="links">
             <div className="link__grp_1">
               <p>Careers</p>
-              <p>Our Cafe</p>
-              <p>Chobani</p>
-              <p>Food Service</p>
+              <p>Our Blog</p>
+              <p>Contact Us</p>
+              <p>Our Service</p>
             </div>
             <div className="link__grp_2">
-              <p>Consumer care</p>
-              <p>Alumni</p>
-              <p>Chobani Canada</p>
-              <p>Chobani Mexico</p>
+              <p>Privacy Policy</p>
+              <p>Registered Address</p>
+              <p>Cancellation Policy</p>
+              <p>Terms and Conditions</p>
             </div>
           </div>
           <div className="icons">
@@ -55,7 +54,7 @@ export default function Footer() {
         <div className="line__separator"></div>
         <div className="copyright__info">
           <p>Copyright &copy;2024 All rights reserved</p>
-          <p>Made by Ranpise Solutions</p>
+          <p>Made by Ranpise DigiTech Solutions</p>
         </div>
       </div>
     </div>

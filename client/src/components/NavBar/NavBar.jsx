@@ -1,6 +1,6 @@
 import "./NavBar.scss"
 
-import React, { useState, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import Button from '@mui/material/Button';
 
 import { Images } from '../../constants';
@@ -50,8 +50,12 @@ export default function NavBar() {
       <div className={`navbar__wrapper ${scrolled ? 'scrolled' : ''}`}>
         <div className="logo__wrapper">
           <img src={Images.logo} alt="logo" className="logo" />
-          <p className="title">Wed-Me</p>
+          <div className="logodescription">
+          <p className="title">EventifyConnect</p>
+          <p className="tagline">- Connecting people together</p>
+          </div>
         </div>
+       
         <div className="container">
           <a href="#" className="tag">
             Venues
