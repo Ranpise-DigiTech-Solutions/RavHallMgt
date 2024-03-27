@@ -1,4 +1,11 @@
-.dialog__container {
-    background-color: var(--primary-color);
-    padding: 1rem 0;
+.signInDialog__Container {
+    
+    .icon {
+        color: white;
+    }
+
+    .contents__wrapper {
+        background-color: var(--primary-color);
+        padding: 1rem 0;
+    }
 }

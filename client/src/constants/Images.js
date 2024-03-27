@@ -15,6 +15,7 @@ import Hall_06 from '../assets/Hall_06.jpg';
 import Hall_07 from '../assets/Hall_07.jpg';
 import Hall_08 from '../assets/Hall_08.jpg';
 import Modal_01 from '../assets/Modal_01.png';
+import loginPageBg from '../assets/loginPageBg.jpg';
 
 export default {
     logo,
@@ -33,5 +34,6 @@ export default {
     Hall_06,
     Hall_07,
     Hall_08,
-    Modal_01
+    Modal_01,
+    loginPageBg,
 };

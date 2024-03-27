@@ -24,7 +24,6 @@ function App() {
   }
 
   useEffect(() => {
-    
 
     const getLocation = () => {
       if ('geolocation' in navigator) {
@@ -73,11 +72,11 @@ function App() {
 
   return (
     <>
-    <Provider store={store}>
-      <BrowserRouter>
-        <ClerkProviderWithRoutes />
-      </BrowserRouter>
-    </Provider>
+      <Provider store={store}>
+        <BrowserRouter>
+          <ClerkProviderWithRoutes />
+        </BrowserRouter>
+      </Provider>
     </>
     )
 }
