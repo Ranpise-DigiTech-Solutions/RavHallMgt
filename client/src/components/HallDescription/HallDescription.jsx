@@ -4,12 +4,19 @@ import './HallDescription.scss'; // Import SCSS file
 import ReactStars from 'react-stars';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import Button from '@mui/material/Button';
-
+import BookingConfirmation from '../BookingConfirmationPage/BookingConfirmation';
 // Define Slider component
 const Slider = () => {
   // State for current slide
   const [curSlide, setCurSlide] = useState(0);
+  const [showPopup, setShowPopup] = useState(false);
+  const [bookingDetails, setBookingDetails] = useState({
+    // Populate with initial booking details or fetch them as required
+  });
 
+  const handleBooking = () => {
+    setShowPopup(true); // This should set showPopup state to true when "Book Now" button is clicked
+  };
   // Array of slide image URLs
   const slideImages = [
     "https://source.unsplash.com/random?venue hall",
@@ -73,6 +80,7 @@ const Slider = () => {
         />
 
         <Button
+          onClick={handleBooking}
           variant="contained"
           className="button"
           sx={{
@@ -84,7 +92,11 @@ const Slider = () => {
         >
           Book Now
         </Button>
-
+        <BookingConfirmation
+        isOpen={showPopup}
+        details={bookingDetails}
+        onClose={() => setShowPopup(false)}
+      />
       </div>
     </div>
   );

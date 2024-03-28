@@ -6,6 +6,7 @@ import Location from '../../components/Location/Location'
 import FAQ from '../../components/FAQ/Faq'
 import HallDescription from '../../components/HallDescription/HallDescription'
 
+
 import './DescriptionPage.scss'
 import Gallery from '../../components/Gallery/Gallery'
 import HallInformation from '../../components/HallInformation/HallInformation'
