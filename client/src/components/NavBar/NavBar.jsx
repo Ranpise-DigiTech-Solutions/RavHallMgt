@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import Button from '@mui/material/Button';
 
 import { Images } from '../../constants';
-import { SignInDialog } from '../../ui';
+import { UserAuthDialog } from '../../sub-components';
 // import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
 
 export default function NavBar() {
@@ -97,7 +97,7 @@ export default function NavBar() {
       </div>
         {isSignInDialogOpen && (
           <div className="signInDialog">
-            <SignInDialog
+            <UserAuthDialog
               open={isSignInDialogOpen}
               handleClose={handleSignInDialogClose}
             />

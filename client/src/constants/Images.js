@@ -16,6 +16,7 @@ import Hall_07 from '../assets/Hall_07.jpg';
 import Hall_08 from '../assets/Hall_08.jpg';
 import Modal_01 from '../assets/Modal_01.png';
 import loginPageBg from '../assets/loginPageBg.jpg';
+import microsoft from '../assets/microsoft.svg';
 
 export default {
     logo,
@@ -36,4 +37,5 @@ export default {
     Hall_08,
     Modal_01,
     loginPageBg,
+    microsoft,
 };

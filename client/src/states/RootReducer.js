@@ -1,6 +1,6 @@
 import { combineReducers } from 'redux';
 import { searchBoxFilterReducer } from './SearchBoxFilter';
-import { userInfoReducer } from './userInfo';
+import { userInfoReducer } from './UserInfo';
 
 const rootReducer = combineReducers({
   searchBoxFilter: searchBoxFilterReducer,
