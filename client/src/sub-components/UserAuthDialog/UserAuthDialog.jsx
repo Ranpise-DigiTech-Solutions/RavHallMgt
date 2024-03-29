@@ -1,9 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import Select from 'react-select';
 import 'react-phone-input-2/lib/style.css';
 import PhoneInput from 'react-phone-input-2';
-
-// import { SignIn } from "@clerk/clerk-react";
-// import {dark} from "@clerk/themes";
 
 import Dialog from "@mui/material/Dialog";
 import Slide from "@mui/material/Slide";
@@ -18,11 +17,21 @@ import EmailIcon from '@mui/icons-material/Email';
 import LockIcon from '@mui/icons-material/Lock';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import VisibilityOffIcon from '@mui/icons-material/VisibilityOff';
+import BusinessIcon from '@mui/icons-material/Business';
+import PlaceIcon from '@mui/icons-material/Place';
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import LibraryAddCheckIcon from '@mui/icons-material/LibraryAddCheck';
+import DriveFileRenameOutlineIcon from '@mui/icons-material/DriveFileRenameOutline';
 import { FcGoogle } from "react-icons/fc";
 import { FaUserAlt } from "react-icons/fa";
 
 import "./UserAuthDialog.scss";
 import { Images } from "../../constants";
+import { 
+  fetchCitiesData,
+  fetchEventTypesData,
+  fetchVendorTypesData,
+} from '../../states/Data';
 import PropTypes from 'prop-types'
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -30,6 +39,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function UserAuthDialog({ open, handleClose }) {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -37,8 +47,11 @@ export default function UserAuthDialog({ open, handleClose }) {
   const [inputError, setInputError] = useState('');
   const [inputType, setInputType] = useState("EMAIL"); // "EMAIL" or "PHONE"
   const [passwordVisibility, setPasswordVisibility] = useState(false);
+  const [updateVendorRegistrationForm, setUpdateVendorRegistrationForm] = useState(false); // The Vendor's Registration form will be displayed in two phases.. 1st page requests for user details...2nd page requests for business details. 
   const [userType, setUserType] = useState("CUSTOMER"); // "CUSTOMER" or "VENDOR"
   const [authType, setAuthType] = useState("LOGIN"); // "LOGIN" or "REGISTER"
+
+  const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
 
   const [customerInfo, setCustomerInfo] = useState({
     fullName: "",
@@ -52,6 +65,7 @@ export default function UserAuthDialog({ open, handleClose }) {
     brandName: "",
     cityName: "",
     vendorType: "",
+    eventTypes: [],
     phone: "",
     password: "",
   });
@@ -62,6 +76,47 @@ export default function UserAuthDialog({ open, handleClose }) {
       [key]: value
     }))
   }
+
+  const handleVendorInfo = (key, value) => {
+    setVendorInfo(previousInfo => ({
+      ...previousInfo,
+      [key]: value
+    }))
+  }
+
+  const customSelectStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      border: "none",
+      padding: 0,
+      margin: 0,
+      cursor: "pointer",
+      boxShadow: state.isFocused ? "none" : provided.boxShadow,
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      "& svg": {
+        display: "none", // Hide the default arrow icon
+      },
+      padding: 0,
+    }),
+  }
+
+  useEffect(()=> {
+    try {
+      const fetchData = ()=> {
+        dispatch(fetchCitiesData);
+        dispatch(fetchEventTypesData);
+        dispatch(fetchVendorTypesData);
+      };
+      fetchData();
+    } catch(error) {
+      console.error(error.message);
+    }
+  }, [dispatch]);
 
   const validateInputValue = () => {
     if(inputType === "EMAIL") {
@@ -86,7 +141,13 @@ export default function UserAuthDialog({ open, handleClose }) {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleContinue = () => {
+    if(userType === "VENDOR" && authType === "REGISTER" && !updateVendorRegistrationForm) {
+      setUpdateVendorRegistrationForm(true);
+    }
+  }
+
+  const handleFormSubmit = (e) => {
     console.log(inputValue);
     validateInputValue();
     e.preventDefault();
@@ -130,40 +191,58 @@ export default function UserAuthDialog({ open, handleClose }) {
             </h2>
             <p className="description">
               {
-                authType === "LOGIN"
+                userType === "CUSTOMER"
                 ?
-                  <span>Welcome back! Please sign in to continue</span>
-                : 
-                  <span>Join Us Today! Create your account to get started</span>
+                  (
+                    authType === "LOGIN"
+                    ?
+                      <span>Welcome back! Please sign in to continue</span>
+                    : 
+                      <span>Join Us Today! Create your account to get started</span>
+                  )
+                :
+                  (
+                    authType === "LOGIN"
+                    ?
+                      <span>Welcome back! Sign in to access your dashboard</span>
+                    : 
+                      <span>Join Us Today! Connect with clients & grow your business</span>
+                  )
               }
             </p>
-            <div
-              className="otherSignInOptions__wrapper"
-              style={authType === "LOGIN" ? {marginBottom: "2rem"} : {marginBottom: "1rem"}}
-            >
-              <div className="googleSignIn box">
-                <FcGoogle className="googleIcon icon" />
-                <p>Google</p>
-              </div>
-              <div className="facebookSignIn box">
-                <FacebookIcon className="fbIcon icon" />
-                <p>Facebook</p>
-              </div>
-              {/* <div className="microsoftSignIn box">
-                <img src={Images.microsoft} alt="" className="microsoftIcon icon"/>
-                <p>Microsoft</p>
-              </div> */}
-            </div>
-            <div 
-              className="line__separators"
-              style={authType === "LOGIN" ? {marginBottom: "1.5rem"} : {marginBottom: "1rem"}}  
-            >
-              <div className="line__sep"></div>
-              <p>or</p>
-              <div className="line__sep"></div>
-            </div>
+            {
+              !updateVendorRegistrationForm
+                &&
+              <>
+                <div
+                  className="otherSignInOptions__wrapper"
+                  style={authType === "LOGIN" ? {marginBottom: "2rem"} : {marginBottom: "1rem"}}
+                >
+                  <div className="googleSignIn box">
+                    <FcGoogle className="googleIcon icon" />
+                    <p>Google</p>
+                  </div>
+                  <div className="facebookSignIn box">
+                    <FacebookIcon className="fbIcon icon" />
+                    <p>Facebook</p>
+                  </div>
+                  {/* <div className="microsoftSignIn box">
+                    <img src={Images.microsoft} alt="" className="microsoftIcon icon"/>
+                    <p>Microsoft</p>
+                  </div> */}
+                </div>
+                <div 
+                  className="line__separators"
+                  style={authType === "LOGIN" ? {marginBottom: "1.5rem"} : {marginBottom: "1rem"}}  
+                >
+                  <div className="line__sep"></div>
+                  <p>or</p>
+                  <div className="line__sep"></div>
+                </div>
+              </>
+            }
             <form 
-              onSubmit={handleSubmit}
+              onSubmit={handleFormSubmit}
               className="userInput__wrapper"  
             >
               {
@@ -237,75 +316,172 @@ export default function UserAuthDialog({ open, handleClose }) {
               {
                 authType === "REGISTER"
                   &&
-                <>
-                  <div className="inputField__wrapper wrapper">
-                    <FaUserAlt className="icon" />
-                    <div className="vertical-line"></div>
-                    <input
-                      type="text"
-                      name="fullName"
-                      spellCheck="false"
-                      value={customerInfo.fullName}
-                      placeholder="Enter your name"
-                      onChange={(e) => handleCustomerInfo("fullName", e.target.value)}
-                      className="input"
-                    />
-                  </div>
-                  <div className="inputField__wrapper wrapper">
-                    <EmailIcon className="icon"/>
-                    <div className="vertical-line"></div>
-                    <input
-                      type="email"
-                      name="email"
-                      spellCheck="false"
-                      value={customerInfo.email}
-                      placeholder="username@gmail.com"
-                      onChange={(e) => handleCustomerInfo("email", e.target.value)}
-                      className={`input`}
-                    />
-                  </div>
-                  <div className="inputField__wrapper wrapper">
-                    <PhoneInput
-                      country={'us'}
-                      value={inputValue}
-                      // eslint-disable-next-line no-unused-vars
-                      onChange={(value, country) => setInputValue("+" + value)}
-                      inputStyle={inputError ? {border: "2px solid red"} : {}}
-                      inputProps={{
-                        name: 'phone',
-                        required: true,
-                        autoFocus: true,
-                        placeholder: 'Enter phone number'
-                      }}
-                    />
-                  </div>
-                  <div className="inputField__wrapper wrapper">
-                    <LockIcon className="icon"/>
-                    <div className="vertical-line"></div>
-                    <input
-                      type={passwordVisibility ? "text" : "password"}
-                      name="password"
-                      spellCheck="false"
-                      value={customerInfo.password}
-                      placeholder="Enter your password"
-                      onChange={(e) => handleCustomerInfo("password", e.target.value)}
-                      className={`input`}
-                    />
-                    <a onClick={()=> setPasswordVisibility(!passwordVisibility)}>
-                      {
-                        passwordVisibility
-                        ?
-                          <VisibilityIcon className="icon visibilityIcon"/>
-                        :
-                          <VisibilityOffIcon className="icon visibilityIcon"/>
-                      }
-                    </a>
-                  </div>
-                </>
+                (
+                  !updateVendorRegistrationForm
+                  ?
+                    <>
+                      <div className="inputField__wrapper wrapper">
+                        <FaUserAlt className="icon" />
+                        <div className="vertical-line"></div>
+                        <input
+                          type="text"
+                          name="fullName"
+                          spellCheck="false"
+                          value={userType === "CUSTOMER" ? customerInfo.fullName : vendorInfo.fullName}
+                          placeholder="Enter your name"
+                          onChange={(e) => userType === "CUSTOMER" ? handleCustomerInfo("fullName", e.target.value) : handleVendorInfo("fullName", e.target.value)}
+                          className="input"
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <EmailIcon className="icon"/>
+                        <div className="vertical-line"></div>
+                        <input
+                          type="email"
+                          name="email"
+                          spellCheck="false"
+                          value={customerInfo.email}
+                          placeholder="username@gmail.com"
+                          onChange={(e) => handleCustomerInfo("email", e.target.value)}
+                          className={`input`}
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <PhoneInput
+                          country={'us'}
+                          value={inputValue}
+                          // eslint-disable-next-line no-unused-vars
+                          onChange={(value, country) => setInputValue("+" + value)}
+                          inputStyle={inputError ? {border: "2px solid red"} : {}}
+                          inputProps={{
+                            name: 'phone',
+                            required: true,
+                            autoFocus: true,
+                            placeholder: 'Enter phone number'
+                          }}
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <LockIcon className="icon"/>
+                        <div className="vertical-line"></div>
+                        <input
+                          type={passwordVisibility ? "text" : "password"}
+                          name="password"
+                          spellCheck="false"
+                          value={customerInfo.password}
+                          placeholder="Enter your password"
+                          onChange={(e) => handleCustomerInfo("password", e.target.value)}
+                          className={`input`}
+                        />
+                        <a onClick={()=> setPasswordVisibility(!passwordVisibility)}>
+                          {
+                            passwordVisibility
+                            ?
+                              <VisibilityIcon className="icon visibilityIcon"/>
+                            :
+                              <VisibilityOffIcon className="icon visibilityIcon"/>
+                          }
+                        </a>
+                      </div>
+                    </>
+                  :
+                    <>
+                      <div className="inputField__wrapper wrapper">
+                        <DriveFileRenameOutlineIcon className="icon" />
+                        <div className="vertical-line"></div>
+                        <input
+                          type="text"
+                          name="brandName"
+                          spellCheck="false"
+                          value={vendorInfo.brandName}
+                          placeholder="Enter brand name"
+                          onChange={(e) => handleVendorInfo("brandName", e.target.value)}
+                          className="input"
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <PlaceIcon className="icon" />
+                        <div className="vertical-line"></div>
+                        <Select
+                          styles={customSelectStyles}
+                          options={data.cities.data.map((city)=>({
+                            value: city,
+                            label: city
+                          }))}
+                          value={vendorInfo.cityName ? { value: vendorInfo.cityName, label: vendorInfo.cityName } : null}
+                          onChange={(selectedOption)=> handleVendorInfo("cityName", selectedOption.value)}
+                          placeholder="Choose a location *"
+                          className="input select"
+                          components={{
+                            DropdownIndicator: () => <KeyboardArrowDownIcon style={{color: "#007bff"}} />
+                          }}
+                          menuShouldScrollIntoView={false}
+                          hideSelectedOptions={false}
+                          closeMenuOnSelect
+                          isClearable={false}
+                          isSearchable
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <BusinessIcon className="icon" />
+                        <div className="vertical-line"></div>
+                        <Select
+                          styles={customSelectStyles}
+                          options={data.vendorTypes.data.map((val)=>({
+                            value: val.vendor_type,
+                            label: val.vendor_type
+                          }))}
+                          value={vendorInfo.vendorType ? {value: vendorInfo.vendorType, label: vendorInfo.vendorType} : null}
+                          onChange={(selectedOption) => handleVendorInfo("vendorType", selectedOption.value)}
+                          placeholder="Choose business type *"
+                          className="input select"
+                          components={{
+                            DropdownIndicator: () => <KeyboardArrowDownIcon style={{color: "#007bff"}} />
+                          }}
+                          menuShouldScrollIntoView={false}
+                          hideSelectedOptions={false}
+                          closeMenuOnSelect
+                          isClearable={false}
+                          isSearchable
+                        />
+                      </div>
+                      <div className="inputField__wrapper wrapper">
+                        <LibraryAddCheckIcon className="icon" />
+                        <div className="vertical-line"></div>
+                        <Select
+                          styles={customSelectStyles}
+                          value={vendorInfo.eventTypes ? vendorInfo.eventTypes.map(optionValue => ({
+                            value: optionValue,
+                            label: optionValue
+                          })) : null}
+                          onChange={(selectedOption)=> {
+                            const updatedEventTypes = selectedOption.map(option => option.value);
+                            handleVendorInfo("eventTypes", updatedEventTypes);
+                          }}
+                          options={data.eventTypes.data.map((item)=>({
+                            value: item.event_name,
+                            label: item.event_name
+                          }))}
+                          placeholder="Select all event types *"
+                          className="input select"
+                          components={{
+                            DropdownIndicator: () => <KeyboardArrowDownIcon style={{color: "#007bff"}} />
+                          }}
+                          menuShouldScrollIntoView={false}
+                          hideSelectedOptions={false}
+                          closeMenuOnSelect
+                          isSearchable
+                          isClearable={false}
+                          isMulti
+                        />
+                      </div>
+                    </>
+                )
               }
               <button 
-                type="submit"
+                type={`${(userType === "VENDOR" && authType === "REGISTER" && !updateVendorRegistrationForm) ? "button" : "submit"}`}
                 style={authType === "LOGIN" ? {marginBottom: "2rem"} : {marginBottom: "1rem"}}    
+                onClick={handleContinue}
               >
                 <p>Continue</p>
                 <ArrowRightIcon className="icon"/>
@@ -330,8 +506,32 @@ export default function UserAuthDialog({ open, handleClose }) {
             </div>
             <div className="bottomLine__Sep"></div>
             <div className="switchUser__wrapper">
-              <p>Are you a vendor?</p>
-              <button>Business Sign-In</button>
+              <p>
+                {
+                  userType === "CUSTOMER"
+                  ?
+                    <span>Are you a vendor?</span>
+                  :
+                    <span>Are you a customer?</span>
+                  }
+              </p>
+              <button onClick={()=> {
+                if(userType==="CUSTOMER") {
+                  setUpdateVendorRegistrationForm(false);
+                  setUserType("VENDOR")
+                } else {
+                  setUpdateVendorRegistrationForm(false);
+                  setUserType("CUSTOMER")
+                }
+              }}>
+                {
+                  userType === "CUSTOMER"
+                  ?
+                    <span>Business Sign-In</span>
+                  :
+                    <span>Customer Sign-In</span>
+                }
+              </button>
             </div>
           </div>
         </div>
