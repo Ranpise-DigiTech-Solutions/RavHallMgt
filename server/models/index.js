@@ -1,7 +1,8 @@
-export {default as bookingMaster} from './bookingmaster-schema.js';
-export {default as customerMaster} from './customermaster-schema.js';
-export {default as eventMaster} from './eventmaster-schema.js';
-export {default as hallBookingMaster} from './hall_bookmaster-schema.js';
-export {default as hallMaster} from './hallmaster-schema.js'
-export {default as vendorMaster} from './vendormaster-schema.js';
-export {default as venueMaster} from './venuemaster-schema.js';
+export {default as bookingMaster} from './BookingMasterSchema.js';
+export {default as customerMaster} from './CustomerMasterSchema.js';
+export {default as eventMaster} from './EventMasterSchema.js';
+export {default as hallBookingMaster} from './HallBookingMasterSchema.js';
+export {default as hallMaster} from './HallMasterSchema.js'
+export {default as vendorMaster} from './VendorMasterSchema.js';
+export {default as venueMaster} from './VenueMasterSchema.js';
+// export {default as }

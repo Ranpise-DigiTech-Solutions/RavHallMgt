@@ -8,3 +8,6 @@ export {default as vendormasterRoute} from './vendorMaster.js';
 export {default as venuemasterRoute} from './venueMaster.js';
 export {default as hallBookingMasterRoute} from './hallBookingMaster.js';
 export {default as geoLocationTrackerRoute} from './geoLocationTracker.js';
+export {default as userAuthenticationRoute} from './userAuthentication.js';
+export {default as serviceProviderMasterRoute} from './serviceProviderMaster.js';
+export {default as vendorBusinessMasterRoute} from './vendorBusinessMaster.js';

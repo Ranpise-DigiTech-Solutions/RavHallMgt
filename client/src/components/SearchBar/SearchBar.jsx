@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import Select from "react-select";
-import axios from "axios";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
@@ -11,21 +10,24 @@ import DialogTitle from "@mui/material/DialogTitle";
 
 import SearchIcon from "@mui/icons-material/Search";
 // import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import WarningIcon from '@mui/icons-material/Warning';
+import WarningIcon from "@mui/icons-material/Warning";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
 
 import { VirtualizedSelect } from "../../sub-components";
 import { searchBoxFilterActions } from "../../states/SearchBoxFilter";
 
+import {
+  fetchCitiesData,
+  fetchEventTypesData,
+  fetchVendorTypesData,
+} from "../../states/Data";
 import "./SearchBar.scss";
 
 export default function SearchBar() {
-  const [cities, setCities] = useState([]);
-  const [eventTypes, setEventTypes] = useState([]);
-  const [vendorTypes, setVendorTypes] = useState([]);
+  const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
   const [eventNotSelectedWarning, setEventNotSelectedWarning] = useState(false);
-  
+
   const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter); // Redux Store which holds all the user selection info. which includes cityName, eventType, bookingDate and vendorType
 
   const dispatch = useDispatch();
@@ -35,61 +37,17 @@ export default function SearchBar() {
   };
 
   useEffect(() => {
-    const fetchCities = async () => {
-      try {
-        const URL = "http://localhost:8000/eventify_server/countriesNow/";
-
-        await axios
-          .get(URL)
-          .then((response) => {
-            setCities(response.data);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      } catch (error) {
-        console.error("Error fetching cities:", error);
-      }
-    };
-
-    const fetchEventTypes = async () => {
-      try {
-        const URL = "http://localhost:8000/eventify_server/eventMaster/";
-
-        await axios
-          .get(URL)
-          .then((response) => {
-            setEventTypes(response.data);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      } catch (error) {
-        console.error("Error Fetching Cities:", error);
-      }
-    };
-
-    const fetchVendorTypes = async () => {
-      try {
-        const URL = "http://localhost:8000/eventify_server/vendorMaster";
-
-        await axios
-          .get(URL)
-          .then((response) => {
-            setVendorTypes(response.data);
-          })
-          .catch((error) => {
-            console.error("Error:", error);
-          });
-      } catch (error) {
-        console.error("Error:", error);
-      }
-    };
-
-    fetchCities();
-    fetchEventTypes();
-    fetchVendorTypes();
-  }, []);
+    try {
+      const fetchData = () => {
+        dispatch(fetchCitiesData);
+        dispatch(fetchEventTypesData);
+        dispatch(fetchVendorTypesData);
+      };
+      fetchData();
+    } catch (error) {
+      console.error(error.message);
+    }
+  }, [dispatch]);
 
   const customStyles = {
     control: (provided, state) => ({
@@ -125,8 +83,22 @@ export default function SearchBar() {
             <div className="input">
               <VirtualizedSelect
                 customStyles={customStyles}
-                options={cities.map((city) => ({ value: city, label: city }))}
-                value={searchBoxFilterStore.cityName}
+                options={
+                  Array.isArray(data.cities.data)
+                    ? data.cities.data.map((city) => ({
+                        value: city,
+                        label: city,
+                      }))
+                    : null
+                }
+                value={
+                  searchBoxFilterStore.cityName
+                    ? {
+                        label: searchBoxFilterStore.cityName,
+                        value: searchBoxFilterStore.cityName,
+                      }
+                    : null
+                }
                 onChange={(selectedOption) => {
                   dispatch(
                     searchBoxFilterActions("cityName", selectedOption.value)
@@ -152,15 +124,26 @@ export default function SearchBar() {
             <div className="input">
               <Select
                 styles={customStyles}
-                options={eventTypes.map((item) => ({
-                  value: item.event_name,
-                  label: item.event_name,
-                }))}
-                value={searchBoxFilterStore.eventType}
+                options={
+                  Array.isArray(data.eventTypes.data)
+                    ? data.eventTypes.data.map((item) => ({
+                        value: item.event_name,
+                        label: item.event_name,
+                      }))
+                    : null
+                }
+                value={
+                  searchBoxFilterStore.eventType
+                    ? {
+                        label: searchBoxFilterStore.eventType,
+                        value: searchBoxFilterStore.eventType,
+                      }
+                    : null
+                }
                 onChange={(selectedOption) => {
                   dispatch(
                     searchBoxFilterActions("eventType", selectedOption.value)
-                    ); // Update Details in 'SearchBoxFilter' Redux Store
+                  ); // Update Details in 'SearchBoxFilter' Redux Store
                 }}
                 placeholder="Choose Event Type"
                 components={{
@@ -168,7 +151,7 @@ export default function SearchBar() {
                 }}
                 menuShouldScrollIntoView={false}
                 closeMenuOnSelect
-                isSearchable  
+                isSearchable
               />
             </div>
           </div>
@@ -177,11 +160,22 @@ export default function SearchBar() {
             <div className="input">
               <Select
                 styles={customStyles}
-                options={vendorTypes.map((val) => ({
-                  value: val.vendor_type,
-                  label: val.vendor_type,
-                }))}
-                value={searchBoxFilterStore.vendorType}
+                options={
+                  Array.isArray(data.vendorTypes.data)
+                    ? data.vendorTypes.data.map((val) => ({
+                        value: val.vendor_type,
+                        label: val.vendor_type,
+                      }))
+                    : null
+                }
+                value={
+                  searchBoxFilterStore.vendorType
+                    ? {
+                        label: searchBoxFilterStore.vendorType,
+                        value: searchBoxFilterStore.vendorType,
+                      }
+                    : null
+                }
                 onChange={(selectedOption) => {
                   if (searchBoxFilterStore.eventType) {
                     dispatch(
@@ -200,7 +194,7 @@ export default function SearchBar() {
                 }}
                 menuShouldScrollIntoView={false}
                 closeMenuOnSelect
-                isSearchable  
+                isSearchable
               />
             </div>
           </div>
@@ -266,10 +260,8 @@ export default function SearchBar() {
           className="warningDialog__container"
         >
           <DialogTitle id="alert-dialog-title">
-            <WarningIcon className="warning__icon"/>
-            <p>
-              Warning!
-            </p>
+            <WarningIcon className="warning__icon" />
+            <p>Warning!</p>
           </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
@@ -278,7 +270,12 @@ export default function SearchBar() {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={()=> setEventNotSelectedWarning(false)} color="primary" autoFocus className="agree__btn">
+            <Button
+              onClick={() => setEventNotSelectedWarning(false)}
+              color="primary"
+              autoFocus
+              className="agree__btn"
+            >
               ok
             </Button>
           </DialogActions>

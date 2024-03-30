@@ -13,17 +13,17 @@ import {
 // initial state
 const initialState = {
     cities: {
-        data: {},
+        data: [],
         loading: false,
         error: null
     },
     eventTypes: {
-        data: {},
+        data: [],
         loading: false,
         error: null
     },
     vendorTypes: {
-        data: {},
+        data: [],
         loading: false,
         error: null
     }

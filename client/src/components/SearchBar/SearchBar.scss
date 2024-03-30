@@ -10,6 +10,8 @@
     max-width: 100%;
     background: linear-gradient(to bottom, #1A1A1A 0%, #1A1A1A 50%,#f7f7f7 50%, #f7f7f7 100%);
     padding-bottom: 5rem;
+
+    user-select: none;
     
     .main__wrapper {
         width: 100%;
