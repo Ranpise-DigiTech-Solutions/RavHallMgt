@@ -2,15 +2,18 @@
 import { useEffect, useState } from 'react'
 import { ClerkProvider } from "@clerk/clerk-react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
-import { Provider } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 import './App.scss'
 import { 
   HomePage,
   DescriptionPage,
 } from './pages'
-
-import { store } from './states';
+import {
+  fetchCitiesData,
+  fetchEventTypesData,
+  fetchVendorTypesData,
+} from "./states/Data";
 
 function App() {
 
@@ -18,6 +21,8 @@ function App() {
   const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
   const hereAppId = import.meta.env.GOOGLE_MAPS_APP_ID;
   const hereApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
+
+  const dispatch = useDispatch();
 
   if (!publishableKey) {
     throw new Error("Missing Publishable Key")
@@ -53,6 +58,21 @@ function App() {
     }
   }, []);
 
+  useEffect(()=> {
+
+    try {
+      const fetchData = () => {
+        dispatch(fetchCitiesData);
+        dispatch(fetchEventTypesData);
+        dispatch(fetchVendorTypesData);
+      };
+      fetchData();
+    } catch(error) {
+      console.error("Couldn't fetch data :- ", error.message);
+    }
+
+  }, [dispatch]);
+
   const ClerkProviderWithRoutes = () => {
     const navigate = useNavigate();
   
@@ -72,11 +92,9 @@ function App() {
 
   return (
     <>
-      <Provider store={store}>
         <BrowserRouter>
           <ClerkProviderWithRoutes />
         </BrowserRouter>
-      </Provider>
     </>
     )
 }

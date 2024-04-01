@@ -1,5 +1,7 @@
-import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+/* eslint-disable no-unused-vars */
+import React, { useState, useRef, useEffect } from "react";
+import { useSelector } from "react-redux";
+import axios from "axios";
 import Select from "react-select";
 import "react-phone-input-2/lib/style.css";
 import PhoneInput from "react-phone-input-2";
@@ -23,16 +25,12 @@ import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import LibraryAddCheckIcon from "@mui/icons-material/LibraryAddCheck";
 import DriveFileRenameOutlineIcon from "@mui/icons-material/DriveFileRenameOutline";
 import ReplyAllIcon from "@mui/icons-material/ReplyAll";
+import PersonIcon from "@mui/icons-material/Person";
 import { FcGoogle } from "react-icons/fc";
-import { FaUserAlt } from "react-icons/fa";
+import { FaUserAlt, FaEdit } from "react-icons/fa";
 
 import "./UserAuthDialog.scss";
 import { Images } from "../../constants";
-import {
-  fetchCitiesData,
-  fetchEventTypesData,
-  fetchVendorTypesData,
-} from "../../states/Data";
 import PropTypes from "prop-types";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -40,7 +38,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function UserAuthDialog({ open, handleClose }) {
-  const dispatch = useDispatch();
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
@@ -50,8 +47,12 @@ export default function UserAuthDialog({ open, handleClose }) {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [updateVendorRegistrationForm, setUpdateVendorRegistrationForm] =
     useState(false); // The Vendor's Registration form will be displayed in two phases.. 1st page requests for user details...2nd page requests for business details.
+  const [verificationForm, setVerificationForm] = useState(false); // to display form requesting OTP for verification
   const [userType, setUserType] = useState("CUSTOMER"); // "CUSTOMER" or "VENDOR"
   const [authType, setAuthType] = useState("LOGIN"); // "LOGIN" or "REGISTER"
+  const [otp, setOTP] = useState(["", "", "", "", "", ""]);
+  const [otpFieldFocused, setOtpFieldFocused] = useState(null);
+  const inputRefs = useRef([]);
 
   const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
 
@@ -97,6 +98,85 @@ export default function UserAuthDialog({ open, handleClose }) {
     }));
   };
 
+  const handleOtpChange = (index, value) => {
+    // OTP
+    const newOTP = [...otp];
+    newOTP[index] = value;
+    setOTP(newOTP);
+
+    // Automatically focus on the next input field
+    if (value !== "" && index < otp.length - 1) {
+      inputRefs.current[index + 1].focus();
+    }
+  };
+
+  const handleKeyDown = (event, index) => {
+    // OTP
+    // Move to the previous input field if backspace is pressed and the current field is empty
+    if ((event.key === "Backspace" || event.key === "ArrowLeft") && otp[index] === "" && index > 0) {
+      inputRefs.current[index - 1].focus();
+    }
+  };
+
+  const handleSignIn = async ()=> {
+
+    const postData = {
+      inputType,  // PHONE or EMAIL
+      inputValue,
+      userType,   // CUSTOMER or VENDOR
+    } 
+    
+    try {
+      const response = await axios.post("http://localhost:8000/eventify_server/userAuthentication/passwordlessSignIn/", postData);
+      console.log(response.data);
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
+
+//   useEffect(() => {
+//   const loadGoogleSignIn = () => {
+//     // Load Google Sign-In client library
+//     const script = document.createElement("script");
+//     script.src = "https://accounts.google.com/gsi/client";
+//     script.async = true;
+//     document.body.appendChild(script);
+
+//     // Initialize Google Sign-In once script is loaded
+//     script.onload = () => {
+//       // Initialize Google Sign-In with your client ID
+//       window.google.accounts.id.initialize({
+//         client_id: "630074237475-7u0bccftjs2r8vc04vq9228791v6tfs8.apps.googleusercontent.com",
+//         callback: handleCredentialResponse
+//       });
+//     };
+//   };
+
+//   loadGoogleSignIn();
+
+//   return () => {
+//     // Find the script tag in the DOM
+//     const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+//     if (script && script.parentNode) {
+//       // Remove the script if it exists and is appended to a parent node
+//       script.parentNode.removeChild(script);
+//     }
+//   };
+// }, []);
+
+
+//   const handleCredentialResponse = (response) => {
+//     console.log("Encoded JWT ID token: " + response.credential);
+//     // Handle the response here, such as sending it to your server for authentication
+//   };
+
+//   const handleGoogleSignIn = () => {
+//     // Display the Google One Tap dialog
+//     window.google.accounts.id.prompt({
+//       callback: handleCredentialResponse
+//     });
+//   };
+
   const customSelectStyles = {
     control: (provided, state) => ({
       ...provided,
@@ -117,19 +197,6 @@ export default function UserAuthDialog({ open, handleClose }) {
       padding: 0,
     }),
   };
-
-  useEffect(() => {
-    try {
-      const fetchData = () => {
-        dispatch(fetchCitiesData);
-        dispatch(fetchEventTypesData);
-        dispatch(fetchVendorTypesData);
-      };
-      fetchData();
-    } catch (error) {
-      console.error(error.message);
-    }
-  }, [dispatch]);
 
   const validateInputValue = () => {
     if (inputType === "EMAIL") {
@@ -164,9 +231,14 @@ export default function UserAuthDialog({ open, handleClose }) {
     }
   };
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     console.log(inputValue);
+    setVerificationForm(true);
     validateInputValue();
+
+    const response = await axios.post("http://localhost:8000/eventify_server/userAuthentication/googleSignIn/");
+    console.log(response.data);
+
     e.preventDefault();
   };
 
@@ -185,7 +257,9 @@ export default function UserAuthDialog({ open, handleClose }) {
         <div
           className="signInDialogMain__container"
           style={
-            authType === "LOGIN" ? { height: "85vh" } : { height: "100vh" }
+            authType === "LOGIN" || verificationForm
+              ? { height: "85vh" }
+              : { height: "100vh" }
           }
         >
           <div className="img__wrapper">
@@ -225,437 +299,501 @@ export default function UserAuthDialog({ open, handleClose }) {
                 </span>
               )}
             </p>
-            {!updateVendorRegistrationForm && (
+            {!verificationForm ? (
               <>
+                {!updateVendorRegistrationForm && (
+                  <>
+                    <div
+                      className="otherSignInOptions__wrapper"
+                      style={
+                        authType === "LOGIN"
+                          ? { marginBottom: "2rem" }
+                          : { marginBottom: "1rem" }
+                      }
+                    >
+                      <div className="googleSignIn box" >
+                        <FcGoogle className="googleIcon icon" />
+                        <p>Google</p>
+                      </div>
+                      <div className="facebookSignIn box">
+                        <FacebookIcon className="fbIcon icon" />
+                        <p>Facebook</p>
+                      </div>
+                      {/* <div className="microsoftSignIn box">
+                          <img src={Images.microsoft} alt="" className="microsoftIcon icon"/>
+                          <p>Microsoft</p>
+                        </div> */}
+                    </div>
+                    <div
+                      className="line__separators"
+                      style={
+                        authType === "LOGIN"
+                          ? { marginBottom: "1.5rem" }
+                          : { marginBottom: "1rem" }
+                      }
+                    >
+                      <div className="line__sep"></div>
+                      <p>or</p>
+                      <div className="line__sep"></div>
+                    </div>
+                  </>
+                )}
+                <form
+                  onSubmit={handleFormSubmit}
+                  className="userInput__wrapper"
+                >
+                  {authType === "LOGIN" && (
+                    <div className="inputField__wrapper">
+                      <div className="title">
+                        <p>
+                          {inputType === "EMAIL" ? (
+                            <span>Email address</span>
+                          ) : (
+                            <span>Phone number</span>
+                          )}
+                        </p>
+                        <p>
+                          {inputType === "EMAIL" ? (
+                            <span
+                              onClick={() => {
+                                setInputValue("91");
+                                setInputType("PHONE");
+                                setInputError("");
+                              }}
+                            >
+                              Use phone
+                            </span>
+                          ) : (
+                            <span
+                              onClick={() => {
+                                setInputValue("");
+                                setInputType("EMAIL");
+                                setInputError("");
+                              }}
+                            >
+                              Use email
+                            </span>
+                          )}
+                        </p>
+                      </div>
+                      {inputType === "EMAIL" ? (
+                        <input
+                          type="email"
+                          name="email"
+                          value={inputValue}
+                          placeholder="username@gmail.com"
+                          onChange={(e) => setInputValue(e.target.value)}
+                          className={`input ${
+                            inputError && "input__errorInfo"
+                          }`}
+                        />
+                      ) : (
+                        <PhoneInput
+                          country={"us"}
+                          value={inputValue}
+                          // eslint-disable-next-line no-unused-vars
+                          onChange={(value, country) =>
+                            setInputValue("+" + value)
+                          }
+                          inputStyle={
+                            inputError ? { border: "2px solid red" } : {}
+                          }
+                          inputProps={{
+                            name: "phone",
+                            required: true,
+                            autoFocus: true,
+                            placeholder: "Enter phone number",
+                          }}
+                        />
+                      )}
+                      {inputError && (
+                        <div className="inputError">
+                          <ErrorIcon className="icon" />
+                          <p>{inputError}</p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {authType === "REGISTER" &&
+                    (!updateVendorRegistrationForm ? (
+                      <>
+                        <div className="inputField__wrapper wrapper">
+                          <FaUserAlt className="icon" />
+                          <div className="vertical-line"></div>
+                          <input
+                            type="text"
+                            name="fullName"
+                            spellCheck="false"
+                            value={
+                              userType === "CUSTOMER"
+                                ? customerInfo.fullName
+                                : vendorInfo.fullName
+                            }
+                            placeholder="Enter your name"
+                            onChange={(e) =>
+                              userType === "CUSTOMER"
+                                ? handleCustomerInfo("fullName", e.target.value)
+                                : handleVendorInfo("fullName", e.target.value)
+                            }
+                            className="input"
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <EmailIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <input
+                            type="email"
+                            name="email"
+                            spellCheck="false"
+                            value={customerInfo.email}
+                            placeholder="username@gmail.com"
+                            onChange={(e) =>
+                              handleCustomerInfo("email", e.target.value)
+                            }
+                            className={`input`}
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <PhoneInput
+                            country={"us"}
+                            value={inputValue}
+                            // eslint-disable-next-line no-unused-vars
+                            onChange={(value, country) =>
+                              setInputValue("+" + value)
+                            }
+                            inputStyle={
+                              inputError ? { border: "2px solid red" } : {}
+                            }
+                            inputProps={{
+                              name: "phone",
+                              required: true,
+                              autoFocus: true,
+                              placeholder: "Enter phone number",
+                            }}
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <LockIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <input
+                            type={passwordVisibility ? "text" : "password"}
+                            name="password"
+                            spellCheck="false"
+                            value={customerInfo.password}
+                            placeholder="Enter your password"
+                            onChange={(e) =>
+                              handleCustomerInfo("password", e.target.value)
+                            }
+                            className={`input`}
+                          />
+                          <a
+                            onClick={() =>
+                              setPasswordVisibility(!passwordVisibility)
+                            }
+                          >
+                            {passwordVisibility ? (
+                              <VisibilityIcon className="icon visibilityIcon" />
+                            ) : (
+                              <VisibilityOffIcon className="icon visibilityIcon" />
+                            )}
+                          </a>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div
+                          className="backBtn"
+                          onClick={() =>
+                            setUpdateVendorRegistrationForm(
+                              !updateVendorRegistrationForm
+                            )
+                          }
+                        >
+                          <ReplyAllIcon className="icon" />
+                          <span> Back </span>
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <DriveFileRenameOutlineIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <input
+                            type="text"
+                            name="brandName"
+                            spellCheck="false"
+                            value={vendorInfo.brandName}
+                            placeholder="Enter brand name"
+                            onChange={(e) =>
+                              handleVendorInfo("brandName", e.target.value)
+                            }
+                            className="input"
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <PlaceIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <Select
+                            styles={customSelectStyles}
+                            options={
+                              Array.isArray(data.cities.data)
+                                ? data.cities.data.map((city) => ({
+                                    value: city,
+                                    label: city,
+                                  }))
+                                : null
+                            }
+                            value={
+                              vendorInfo.cityName
+                                ? {
+                                    value: vendorInfo.cityName,
+                                    label: vendorInfo.cityName,
+                                  }
+                                : null
+                            }
+                            onChange={(selectedOption) =>
+                              handleVendorInfo("cityName", selectedOption.value)
+                            }
+                            placeholder="Choose a location"
+                            className="input select"
+                            components={{
+                              DropdownIndicator: () => (
+                                <KeyboardArrowDownIcon
+                                  style={{ color: "#007bff" }}
+                                />
+                              ),
+                            }}
+                            menuShouldScrollIntoView={false}
+                            hideSelectedOptions={false}
+                            closeMenuOnSelect
+                            isClearable={false}
+                            isSearchable
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <BusinessIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <Select
+                            styles={customSelectStyles}
+                            options={
+                              Array.isArray(data.vendorTypes.data)
+                                ? data.vendorTypes.data.map((val) => ({
+                                    value: val.vendor_type,
+                                    label: val.vendor_type,
+                                  }))
+                                : null
+                            }
+                            value={
+                              vendorInfo.vendorType
+                                ? {
+                                    value: vendorInfo.vendorType,
+                                    label: vendorInfo.vendorType,
+                                  }
+                                : null
+                            }
+                            onChange={(selectedOption) =>
+                              handleVendorInfo(
+                                "vendorType",
+                                selectedOption.value
+                              )
+                            }
+                            placeholder="Choose business type"
+                            className="input select"
+                            components={{
+                              DropdownIndicator: () => (
+                                <KeyboardArrowDownIcon
+                                  style={{ color: "#007bff" }}
+                                />
+                              ),
+                            }}
+                            menuShouldScrollIntoView={false}
+                            hideSelectedOptions={false}
+                            closeMenuOnSelect
+                            isClearable={false}
+                            isSearchable
+                          />
+                        </div>
+                        <div className="inputField__wrapper wrapper">
+                          <LibraryAddCheckIcon className="icon" />
+                          <div className="vertical-line"></div>
+                          <Select
+                            styles={customSelectStyles}
+                            value={
+                              vendorInfo.eventTypes
+                                ? vendorInfo.eventTypes.map((optionValue) => ({
+                                    value: optionValue,
+                                    label: optionValue,
+                                  }))
+                                : null
+                            }
+                            onChange={(selectedOption) => {
+                              const updatedEventTypes = selectedOption.map(
+                                (option) => option.value
+                              );
+                              handleVendorInfo("eventTypes", updatedEventTypes);
+                            }}
+                            options={
+                              Array.isArray(data.eventTypes.data)
+                                ? data.eventTypes.data.map((item) => ({
+                                    value: item.event_name,
+                                    label: item.event_name,
+                                  }))
+                                : null
+                            }
+                            placeholder="Select all event types"
+                            className="input select"
+                            components={{
+                              DropdownIndicator: () => (
+                                <KeyboardArrowDownIcon
+                                  style={{ color: "#007bff" }}
+                                />
+                              ),
+                            }}
+                            menuShouldScrollIntoView={false}
+                            hideSelectedOptions={false}
+                            closeMenuOnSelect
+                            isSearchable
+                            isClearable={false}
+                            isMulti
+                          />
+                        </div>
+                        <div className="userAgreement__wrapper">
+                          <div className="sub__wrapper">
+                            <input
+                              type="checkbox"
+                              checked={userRegAgreement.termsAndConditions}
+                              onChange={() =>
+                                handleUserRegAgreement(
+                                  "termsAndConditions",
+                                  !userRegAgreement.termsAndConditions
+                                )
+                              }
+                            />
+                            <p>
+                              I accept all the <span>Terms and Conditions</span>{" "}
+                              *
+                            </p>
+                          </div>
+                          <div className="sub__wrapper">
+                            <input
+                              type="checkbox"
+                              checked={userRegAgreement.privacyPolicy}
+                              onChange={() =>
+                                handleUserRegAgreement(
+                                  "privacyPolicy",
+                                  !userRegAgreement.privacyPolicy
+                                )
+                              }
+                            />
+                            <p>
+                              I have read the <span>Privacy Policy</span> *
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    ))}
+                  <button
+                    type={`${
+                      userType === "VENDOR" &&
+                      authType === "REGISTER" &&
+                      !updateVendorRegistrationForm
+                        ? "button"
+                        : "submit"
+                    }`}
+                    disabled={
+                      authType === "REGISTER" &&
+                      userType === "VENDOR" &&
+                      updateVendorRegistrationForm &&
+                      (!userRegAgreement.privacyPolicy ||
+                        !userRegAgreement.termsAndConditions)
+                    }
+                    style={{
+                      marginBottom: authType === "LOGIN" ? "2rem" : "1rem",
+                      cursor:
+                        authType === "REGISTER" &&
+                        userType === "VENDOR" &&
+                        updateVendorRegistrationForm &&
+                        (!userRegAgreement.privacyPolicy ||
+                          !userRegAgreement.termsAndConditions)
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
+                    onClick={handleContinue}
+                  >
+                    <p>Continue</p>
+                    <ArrowRightIcon className="icon" />
+                  </button>
+                </form>
                 <div
-                  className="otherSignInOptions__wrapper"
+                  className="signUp__link"
                   style={
                     authType === "LOGIN"
-                      ? { marginBottom: "2rem" }
+                      ? { marginBottom: "3.5rem" }
                       : { marginBottom: "1rem" }
                   }
                 >
-                  <div className="googleSignIn box">
-                    <FcGoogle className="googleIcon icon" />
-                    <p>Google</p>
-                  </div>
-                  <div className="facebookSignIn box">
-                    <FacebookIcon className="fbIcon icon" />
-                    <p>Facebook</p>
-                  </div>
-                  {/* <div className="microsoftSignIn box">
-                    <img src={Images.microsoft} alt="" className="microsoftIcon icon"/>
-                    <p>Microsoft</p>
-                  </div> */}
+                  {authType === "LOGIN" ? (
+                    <>
+                      <p>
+                        New to <span>EventifyConnect?</span>
+                      </p>
+                      <a onClick={() => setAuthType("REGISTER")}>Sign Up</a>
+                    </>
+                  ) : (
+                    <>
+                      <p>
+                        Have an <span>account?</span>
+                      </p>
+                      <a onClick={() => setAuthType("LOGIN")}>Sign In</a>
+                    </>
+                  )}
                 </div>
-                <div
-                  className="line__separators"
-                  style={
-                    authType === "LOGIN"
-                      ? { marginBottom: "1.5rem" }
-                      : { marginBottom: "1rem" }
-                  }
-                >
-                  <div className="line__sep"></div>
-                  <p>or</p>
-                  <div className="line__sep"></div>
+              </>
+            ) : (
+              <>
+                <div className="verificationForm__wrapper">
+                  <div className="line__separator"></div>
+                  <div className="wrapper">
+                    <h2 className="form__title">Check your email</h2>
+                    <p className="form__desc">to continue to EventifyConnect</p>
+                    <div className="editInfo">
+                      <div className="userIcon">
+                        <PersonIcon className="icon" />
+                      </div>
+                      <p>adikrishna1972@gmail.com</p>
+                      <button className="editBtn" onClick={()=> setVerificationForm(false)}>
+                        <FaEdit className="icon" />
+                      </button>
+                    </div>
+                    <div className="sub__title">Verification code</div>
+                    <div className="sub__desc">
+                      Enter the code sent to your email address
+                    </div>
+                    <div className="otp__wrapper">
+                      {otp.map((value, index) => (
+                        <>
+                          <input
+                            type="digit"
+                            key={index}
+                            className={`otp-digit ${otpFieldFocused === index && "currentInputBox" }`}
+                            maxLength={1}
+                            onChange={(e) => handleOtpChange(index, e.target.value)}
+                            onKeyDown={(e) => handleKeyDown(e, index)}
+                            onFocus={()=> setOtpFieldFocused(index)}
+                            onBlur={()=> setOtpFieldFocused(null)}
+                            ref={(input) => (inputRefs.current[index] = input)}
+                          />
+                          &nbsp;
+                        </>
+                      ))}
+                    </div>
+                    <div className="comment">
+                      Didn&apos;t receive a code? <span>Resend (12)</span>
+                    </div>
+                    <div className="methodSwitch__wrapper">
+                      Use another method
+                    </div>
+                  </div>
                 </div>
               </>
             )}
-            <form onSubmit={handleFormSubmit} className="userInput__wrapper">
-              {authType === "LOGIN" && (
-                <div className="inputField__wrapper">
-                  <div className="title">
-                    <p>
-                      {inputType === "EMAIL" ? (
-                        <span>Email address</span>
-                      ) : (
-                        <span>Phone number</span>
-                      )}
-                    </p>
-                    <p>
-                      {inputType === "EMAIL" ? (
-                        <span
-                          onClick={() => {
-                            setInputValue("91");
-                            setInputType("PHONE");
-                            setInputError("");
-                          }}
-                        >
-                          Use phone
-                        </span>
-                      ) : (
-                        <span
-                          onClick={() => {
-                            setInputValue("");
-                            setInputType("EMAIL");
-                            setInputError("");
-                          }}
-                        >
-                          Use email
-                        </span>
-                      )}
-                    </p>
-                  </div>
-                  {inputType === "EMAIL" ? (
-                    <input
-                      type="email"
-                      name="email"
-                      value={inputValue}
-                      placeholder="username@gmail.com"
-                      onChange={(e) => setInputValue(e.target.value)}
-                      className={`input ${inputError && "input__errorInfo"}`}
-                    />
-                  ) : (
-                    <PhoneInput
-                      country={"us"}
-                      value={inputValue}
-                      // eslint-disable-next-line no-unused-vars
-                      onChange={(value, country) => setInputValue("+" + value)}
-                      inputStyle={inputError ? { border: "2px solid red" } : {}}
-                      inputProps={{
-                        name: "phone",
-                        required: true,
-                        autoFocus: true,
-                        placeholder: "Enter phone number",
-                      }}
-                    />
-                  )}
-                  {inputError && (
-                    <div className="inputError">
-                      <ErrorIcon className="icon" />
-                      <p>{inputError}</p>
-                    </div>
-                  )}
-                </div>
-              )}
-              {authType === "REGISTER" &&
-                (!updateVendorRegistrationForm ? (
-                  <>
-                    <div className="inputField__wrapper wrapper">
-                      <FaUserAlt className="icon" />
-                      <div className="vertical-line"></div>
-                      <input
-                        type="text"
-                        name="fullName"
-                        spellCheck="false"
-                        value={
-                          userType === "CUSTOMER"
-                            ? customerInfo.fullName
-                            : vendorInfo.fullName
-                        }
-                        placeholder="Enter your name"
-                        onChange={(e) =>
-                          userType === "CUSTOMER"
-                            ? handleCustomerInfo("fullName", e.target.value)
-                            : handleVendorInfo("fullName", e.target.value)
-                        }
-                        className="input"
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <EmailIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <input
-                        type="email"
-                        name="email"
-                        spellCheck="false"
-                        value={customerInfo.email}
-                        placeholder="username@gmail.com"
-                        onChange={(e) =>
-                          handleCustomerInfo("email", e.target.value)
-                        }
-                        className={`input`}
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <PhoneInput
-                        country={"us"}
-                        value={inputValue}
-                        // eslint-disable-next-line no-unused-vars
-                        onChange={(value, country) =>
-                          setInputValue("+" + value)
-                        }
-                        inputStyle={
-                          inputError ? { border: "2px solid red" } : {}
-                        }
-                        inputProps={{
-                          name: "phone",
-                          required: true,
-                          autoFocus: true,
-                          placeholder: "Enter phone number",
-                        }}
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <LockIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <input
-                        type={passwordVisibility ? "text" : "password"}
-                        name="password"
-                        spellCheck="false"
-                        value={customerInfo.password}
-                        placeholder="Enter your password"
-                        onChange={(e) =>
-                          handleCustomerInfo("password", e.target.value)
-                        }
-                        className={`input`}
-                      />
-                      <a
-                        onClick={() =>
-                          setPasswordVisibility(!passwordVisibility)
-                        }
-                      >
-                        {passwordVisibility ? (
-                          <VisibilityIcon className="icon visibilityIcon" />
-                        ) : (
-                          <VisibilityOffIcon className="icon visibilityIcon" />
-                        )}
-                      </a>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div
-                      className="backBtn"
-                      onClick={() =>
-                        setUpdateVendorRegistrationForm(
-                          !updateVendorRegistrationForm
-                        )
-                      }
-                    >
-                      <ReplyAllIcon className="icon" />
-                      <span> Back </span>
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <DriveFileRenameOutlineIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <input
-                        type="text"
-                        name="brandName"
-                        spellCheck="false"
-                        value={vendorInfo.brandName}
-                        placeholder="Enter brand name"
-                        onChange={(e) =>
-                          handleVendorInfo("brandName", e.target.value)
-                        }
-                        className="input"
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <PlaceIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <Select
-                        styles={customSelectStyles}
-                        options={
-                          Array.isArray(data.cities.data)
-                            ? data.cities.data.map((city) => ({
-                                value: city,
-                                label: city,
-                              }))
-                            : null
-                        }
-                        value={
-                          vendorInfo.cityName
-                            ? {
-                                value: vendorInfo.cityName,
-                                label: vendorInfo.cityName,
-                              }
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          handleVendorInfo("cityName", selectedOption.value)
-                        }
-                        placeholder="Choose a location"
-                        className="input select"
-                        components={{
-                          DropdownIndicator: () => (
-                            <KeyboardArrowDownIcon
-                              style={{ color: "#007bff" }}
-                            />
-                          ),
-                        }}
-                        menuShouldScrollIntoView={false}
-                        hideSelectedOptions={false}
-                        closeMenuOnSelect
-                        isClearable={false}
-                        isSearchable
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <BusinessIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <Select
-                        styles={customSelectStyles}
-                        options={
-                          Array.isArray(data.vendorTypes.data)
-                            ? data.vendorTypes.data.map((val) => ({
-                                value: val.vendor_type,
-                                label: val.vendor_type,
-                              }))
-                            : null
-                        }
-                        value={
-                          vendorInfo.vendorType
-                            ? {
-                                value: vendorInfo.vendorType,
-                                label: vendorInfo.vendorType,
-                              }
-                            : null
-                        }
-                        onChange={(selectedOption) =>
-                          handleVendorInfo("vendorType", selectedOption.value)
-                        }
-                        placeholder="Choose business type"
-                        className="input select"
-                        components={{
-                          DropdownIndicator: () => (
-                            <KeyboardArrowDownIcon
-                              style={{ color: "#007bff" }}
-                            />
-                          ),
-                        }}
-                        menuShouldScrollIntoView={false}
-                        hideSelectedOptions={false}
-                        closeMenuOnSelect
-                        isClearable={false}
-                        isSearchable
-                      />
-                    </div>
-                    <div className="inputField__wrapper wrapper">
-                      <LibraryAddCheckIcon className="icon" />
-                      <div className="vertical-line"></div>
-                      <Select
-                        styles={customSelectStyles}
-                        value={
-                          vendorInfo.eventTypes
-                            ? vendorInfo.eventTypes.map((optionValue) => ({
-                                value: optionValue,
-                                label: optionValue,
-                              }))
-                            : null
-                        }
-                        onChange={(selectedOption) => {
-                          const updatedEventTypes = selectedOption.map(
-                            (option) => option.value
-                          );
-                          handleVendorInfo("eventTypes", updatedEventTypes);
-                        }}
-                        options={
-                          Array.isArray(data.eventTypes.data)
-                            ? data.eventTypes.data.map((item) => ({
-                                value: item.event_name,
-                                label: item.event_name,
-                              }))
-                            : null
-                        }
-                        placeholder="Select all event types"
-                        className="input select"
-                        components={{
-                          DropdownIndicator: () => (
-                            <KeyboardArrowDownIcon
-                              style={{ color: "#007bff" }}
-                            />
-                          ),
-                        }}
-                        menuShouldScrollIntoView={false}
-                        hideSelectedOptions={false}
-                        closeMenuOnSelect
-                        isSearchable
-                        isClearable={false}
-                        isMulti
-                      />
-                    </div>
-                    <div className="userAgreement__wrapper">
-                      <div className="sub__wrapper">
-                        <input
-                          type="checkbox"
-                          checked={userRegAgreement.termsAndConditions}
-                          onChange={() =>
-                            handleUserRegAgreement(
-                              "termsAndConditions",
-                              !userRegAgreement.termsAndConditions
-                            )
-                          }
-                        />
-                        <p>
-                          I accept all the <span>Terms and Conditions</span> *
-                        </p>
-                      </div>
-                      <div className="sub__wrapper">
-                        <input
-                          type="checkbox"
-                          checked={userRegAgreement.privacyPolicy}
-                          onChange={() =>
-                            handleUserRegAgreement(
-                              "privacyPolicy",
-                              !userRegAgreement.privacyPolicy
-                            )
-                          }
-                        />
-                        <p>
-                          I have read the <span>Privacy Policy</span> *
-                        </p>
-                      </div>
-                    </div>
-                  </>
-                ))}
-              <button
-                type={`${
-                  userType === "VENDOR" &&
-                  authType === "REGISTER" &&
-                  !updateVendorRegistrationForm
-                    ? "button"
-                    : "submit"
-                }`}
-                disabled={
-                  authType === "REGISTER" &&
-                  userType === "VENDOR" &&
-                  updateVendorRegistrationForm &&
-                  (!userRegAgreement.privacyPolicy ||
-                    !userRegAgreement.termsAndConditions)
-                }
-                style={{
-                  marginBottom: authType === "LOGIN" ? "2rem" : "1rem",
-                  cursor:
-                    authType === "REGISTER" &&
-                    userType === "VENDOR" &&
-                    updateVendorRegistrationForm &&
-                    (!userRegAgreement.privacyPolicy ||
-                      !userRegAgreement.termsAndConditions)
-                      ? "not-allowed"
-                      : "pointer",
-                }}
-                onClick={handleContinue}
-              >
-                <p>Continue</p>
-                <ArrowRightIcon className="icon" />
-              </button>
-            </form>
-            <div
-              className="signUp__link"
-              style={
-                authType === "LOGIN"
-                  ? { marginBottom: "3.5rem" }
-                  : { marginBottom: "1rem" }
-              }
-            >
-              {authType === "LOGIN" ? (
-                <>
-                  <p>
-                    New to <span>EventifyConnect?</span>
-                  </p>
-                  <a onClick={() => setAuthType("REGISTER")}>Sign Up</a>
-                </>
-              ) : (
-                <>
-                  <p>
-                    Have an <span>account?</span>
-                  </p>
-                  <a onClick={() => setAuthType("LOGIN")}>Sign In</a>
-                </>
-              )}
-            </div>
             <div className="bottomLine__Sep"></div>
             <div className="switchUser__wrapper">
               <p>

@@ -5,4 +5,5 @@ export {default as hallBookingMaster} from './HallBookingMasterSchema.js';
 export {default as hallMaster} from './HallMasterSchema.js'
 export {default as vendorMaster} from './VendorMasterSchema.js';
 export {default as venueMaster} from './VenueMasterSchema.js';
-// export {default as }
+export {default as vendorBusinessMaster} from './VendorBusinessMasterSchema.js';
+export {default as serviceProviderMaster} from './ServiceProviderMasterSchema.js';

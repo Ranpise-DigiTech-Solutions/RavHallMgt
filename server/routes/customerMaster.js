@@ -13,7 +13,7 @@ router.get("/", async (req, res) => {
             return res.status(404).json({message: "No Records Found"});
         }
 
-        return res.status(200).json(eventDetails); 
+        return res.status(200).json(customerDetails); 
     } catch(error) {
         return res.status(500).json({message: error.message});
     }

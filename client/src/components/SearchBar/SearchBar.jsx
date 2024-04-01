@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import Select from "react-select";
 import Button from "@mui/material/Button";
 import Dialog from "@mui/material/Dialog";
@@ -17,11 +17,6 @@ import CloseIcon from "@mui/icons-material/Close";
 import { VirtualizedSelect } from "../../sub-components";
 import { searchBoxFilterActions } from "../../states/SearchBoxFilter";
 
-import {
-  fetchCitiesData,
-  fetchEventTypesData,
-  fetchVendorTypesData,
-} from "../../states/Data";
 import "./SearchBar.scss";
 
 export default function SearchBar() {
@@ -35,19 +30,6 @@ export default function SearchBar() {
   const handleDateChange = (event) => {
     dispatch(searchBoxFilterActions("bookingDate", event.target.value));
   };
-
-  useEffect(() => {
-    try {
-      const fetchData = () => {
-        dispatch(fetchCitiesData);
-        dispatch(fetchEventTypesData);
-        dispatch(fetchVendorTypesData);
-      };
-      fetchData();
-    } catch (error) {
-      console.error(error.message);
-    }
-  }, [dispatch]);
 
   const customStyles = {
     control: (provided, state) => ({
