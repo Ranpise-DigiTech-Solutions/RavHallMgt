@@ -4,6 +4,29 @@ import { ObjectId } from 'mongodb';
 
 import { hallMaster } from '../models/index.js';
 
+router.get("/getHallDetails", async (req, res) => {
+
+    const { hallId } = req.query;
+    const filter = {};
+
+    if (hallId) {
+        filter["_id"] = hallId;
+    }
+
+    try {
+        const hallDetails = await hallMaster.find(filter);
+
+        if(!hallDetails) {
+            return res.status(404).json({message: "No Records Found"});
+        }
+
+        return res.status(200).json(hallDetails);
+    } catch (error) {
+        return res.status(500).json({message: "Error" + error.message});
+    }
+});
+
+
 router.get('/', async(req, res)=> {
 
     const { hallCity, eventId } = req.query;
@@ -51,6 +74,7 @@ router.post('/', async (req, res) => {
         return res.status(500).json(err);
     }
 });
+
 
 router.patch('/:id', async (req, res) => {
 

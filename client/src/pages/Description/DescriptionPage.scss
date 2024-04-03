@@ -1,10 +1,27 @@
-// * {
-//     margin: 0 ;
-//     padding: 0;
-// }
-// .Detailedinfo
-// {
-//     margin: 100px 80px;
-//     border-radius: 25px; /* Border radius of 25px */
-//     border: 2px solid orange; /* Solid pink border */
-// }
+* {
+    margin: 0 ;
+    padding: 0;
+}
+.DescriptionPage__container
+{
+    width: 100%;
+
+    .main__wrapper {
+        margin: 100px 60px;
+        border-radius: 25px; /* Border radius of 25px */
+        border: 2px solid orange; /* Solid pink border */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+    
+        .column1 {
+            width: 70%;
+        }
+    
+        .column2 {
+            width: 30%;
+        }
+    }
+
+}

@@ -3,6 +3,7 @@ import axios from 'axios'
 import { useSelector } from "react-redux";
 import { motion } from "framer-motion";
 import { format } from 'date-fns';
+import { Link } from "react-router-dom";
 
 import "./Packages.scss";
 import { PackagesCard } from '../../sub-components'
@@ -139,8 +140,16 @@ export default function Packages() {
     const slicedData = Object.values(filteredCards).slice(startIndex, endIndex);
 
     return slicedData.map((card, index) => (
-      <div className="card" key={index}>
-        <PackagesCard card={card} key={index} />
+      <div className="card" key={index} >
+        <Link 
+          to={{
+            pathname: "/DescriptionPage",
+            search: `?hall_id=${card.hall_id}`
+          }}
+          target="_blank"
+        >
+          <PackagesCard card={card} key={index} />
+        </Link>
       </div>
     ));
   };

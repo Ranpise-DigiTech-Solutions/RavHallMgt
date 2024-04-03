@@ -4,6 +4,7 @@ import { getDatabase, ref, set, get } from 'firebase/database';
 import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth';
 import { firebaseAuth, firebaseDb } from '../database/FirebaseDb.js';
 import { v4 as uuidv4 } from 'uuid';
+import { serviceProviderMaster, customerMaster } from '../models/index.js';
 
 import axios from 'axios';
 
@@ -121,6 +122,43 @@ router.post("/passwordlessSignIn/", async (req, res) => {
 
 });
 
+router.post("/loginWithPassword", async (req, res) => {
+
+    const { email, password, userType } = req.body;
+
+    try {
+        const user = userType === "CUSTOMER" ? await customerMaster.findOne({"customer_email": email}) : await serviceProviderMaster.findOne({"vendor_email": email});
+
+        if(!user){
+            return res.status(401).json("Wrong username");
+        }
+
+        const originalPassword = CryptoJS.AES.decrypt(userType === "CUSTOMER" ? user.customer_password : user.vendor_password, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+
+        if(originalPassword !== req.body.password) {
+            res.status(401).json("Wrong password");
+            return;
+        }
+
+        const userCredential = await firebaseAuth.signInWithEmailAndPassword(req.body.email, req.body.password);
+        const userDetails = userCredential.user;
+
+
+        const accessToken = jwt.sign(
+            { id: user._id },
+                process.env.SECRET_KEY, 
+                { expiresIn: "5d"}
+        );
+
+        const {password, ...info} = user._doc
+
+        res.status(200).json({ ...info, accessToken, userDetails});
+
+    } catch(error) {
+        return res.status(500).json({message: error.message});
+    }
+});
+
 router.post("/registerUser", async (req, res) => {
 
     const { userType, data } = req.body;
@@ -128,11 +166,24 @@ router.post("/registerUser", async (req, res) => {
     var cipherText = CryptoJS.AES.encrypt(data.password, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString();
 
     try {
-        const existingUsers = await fetchSignInMethodsForEmail(firebaseAuth, data.email);
+        // const existingUsers = await fetchSignInMethodsForEmail(firebaseAuth, data.email);
 
-        if (existingUsers.length > 0) {
+        const existingCustomers = await customerMaster.find({
+            $or: [
+              { "customer_email": data.email },
+              { "customer_contact": data.phone }
+            ]
+          });
+        const existingVedors = await serviceProviderMaster.find({
+            $or: [
+              { "vendor_email": data.email },
+              { "vendor_contact": data.phone }
+            ]
+          });
+
+        if (existingCustomers.length > 0 || existingVedors.length > 0) {
             console.log('User already exists with this email. Operation canceled!!');
-            return response.status(401).json({ message: 'User already exists!!' });
+            return res.status(401).json({ message: 'User already exists!!' });
         }
 
         const userCredential = await createUserWithEmailAndPassword(firebaseAuth, data.email, data.password);

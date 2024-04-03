@@ -5,7 +5,7 @@ export default function NavigationDots({active, imageList, className}) {
     <div>
       <div className="app__navigation">
         {imageList.map((item,index)=>(
-            <a
+            <div
             href={`#`}
             key={"Image-" + index}
             className={className}

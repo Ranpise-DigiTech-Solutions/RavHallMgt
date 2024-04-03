@@ -1,6 +1,7 @@
 import { default as express } from 'express';
 const router = express.Router();
 import { ObjectId } from 'mongodb';
+import mongoose from 'mongoose';
 
 import {
     hallMaster,
@@ -51,8 +52,8 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
             {
                 $match: {
                     booking_timestamp: {
-                        $gte: new Date(selectedDate),
-                        $lt: new Date(selectedDate + 'T23:59:59.999Z')
+                        $gte: new Date(selectedDate + 'T00:00:00.000Z'),
+                        $lte: new Date(selectedDate + 'T23:59:59.999Z')
                     },
                     hall_city: selectedCity ? selectedCity : {$exists: true}, 
                     event_id : eventObjectId ? eventObjectId : { $exists: true },
@@ -106,7 +107,48 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
         console.error("Error calculating available time slots:", error);
         return res.status(500).json({message: error.message});
     }
-})
+});
+
+router.get("/getHallAvailability", async (req, res) => {
+
+    const { hallId, startDate, endDate } = req.query; 
+    const hallObjectId = new mongoose.Types.ObjectId(hallId);
+    console.log("ENTERED")
+    console.log(hallId)
+    console.log(startDate)
+    console.log(endDate)
+    try {
+
+        const hallBookings = await hallBookingMaster.aggregate([
+            {
+                $match: {
+                    hall_id: hallObjectId,
+                    booking_timestamp: {
+                        $gte: new Date(startDate + 'T00:00:00.000Z'),
+                        $lte: new Date(endDate + 'T23:59:59.999Z')
+                    },
+                }     
+            },
+            {
+                $project: {
+                    _id: 1,
+                    hall_id: 1,
+                    booking_timestamp: 1,
+                    booking_duration: 1
+                }
+            }
+        ]);
+
+        if(!hallBookings) {
+            return res.status(404).json({message: "No data found!!"});
+        }
+
+        return res.status(200).json(hallBookings);
+
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+});
 
 router.post("/", async (req, res) => { 
     const newDocument = new hallBookingMaster(req.body);
