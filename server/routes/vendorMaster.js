@@ -34,4 +34,27 @@ router.post("/", async (req, res) => {
     }
 });
 
+router.get("/getVendorId", async (req, res) => {
+
+    const { vendorType } = req.query;
+
+    if (!vendorType) {
+        return res.status(404).json({message: "No Records Found! Query parameters empty!!"});
+    }
+
+    try {
+        var document = await vendorMaster.findOne({ "vendor_type": vendorType });
+
+        if (document) {
+            var documentId = document._id;
+            return res.status(200).json(documentId);
+        } else {
+            return res.status(404).json({message: "Not Found! No documents match your condition!"});
+        }
+
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+}); 
+
 export default router;

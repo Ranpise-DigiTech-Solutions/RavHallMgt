@@ -147,7 +147,16 @@ router.post("/registerUser", async (req, res) => {
             customer_contact: data.phone,
             customer_location: data.location,
         }) : await axios.post("http://localhost:8000/eventify_server/serviceProviderMaster/", {
-            
+            vendor_uid: user.uid,
+            vendor_name: data.fullName,
+            vendor_id: data.vendorTypeInfo,
+            vendor_location: data.location,
+            vendor_contact: data.phone,
+            vendor_email: data.email,
+            vendor_password: cipherText,
+            service_brandName: data.brandName,
+            service_location: data.cityName,
+            event_types: data.eventTypesInfo
         });
 
         const userRef = ref(firebaseDb, 'Users/' + user.uid);

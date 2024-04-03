@@ -58,4 +58,35 @@ router.get("/getEventId", async (req, res) => {
     }
 });
 
+router.get("/getEventIds", async (req, res) => {
+
+    const { eventNames } = req.body;
+
+    if (!eventNames || !Array.isArray(eventNames)) {
+        return res.status(400).json({ message: "Invalid or missing eventNames parameter" });
+    }
+
+    try {
+        const documents = await eventMaster.find({ "event_name": { $in: eventNames } });
+
+        if (documents.length === 0) {
+            return res.status(404).json({ message: "No documents found for the provided event names" });
+        }
+
+        // Create an object mapping event names to event IDs
+        const eventIdsMap = {};
+        documents.forEach((document) => {
+            eventIdsMap[document.event_name] = document._id;
+        });
+
+        // Create an array of event IDs in the same order as the input event names
+        const eventIds = eventNames.map((eventName) => eventIdsMap[eventName]);
+
+        return res.status(200).json(eventIds);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+
+});
+
 export default router;

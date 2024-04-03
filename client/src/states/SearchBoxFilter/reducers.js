@@ -4,7 +4,9 @@ const initialState = {
     cityName: "",
     bookingDate: "",
     eventType: "",
-    vendorType: "" 
+    eventId: "",
+    vendorType: "",
+    vendorId: ""
   };
   
 export default function SearchBoxFilterReducer(state = initialState, action) {

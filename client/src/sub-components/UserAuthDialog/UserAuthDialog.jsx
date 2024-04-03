@@ -1,5 +1,15 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef } from "react";
+import { firebaseAuth } from "../../firebaseConfig";
+import {
+  sendSignInLinkToEmail,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
+  FacebookAuthProvider,
+  RecaptchaVerifier,
+  signInWithPhoneNumber
+} from "firebase/auth";
 import { useSelector } from "react-redux";
 import axios from "axios";
 import Select from "react-select";
@@ -60,21 +70,31 @@ export default function UserAuthDialog({ open, handleClose }) {
     termsAndConditions: false,
     privacyPolicy: false,
   });
+
   const [customerInfo, setCustomerInfo] = useState({
     fullName: "",
     email: "",
     phone: "",
     password: "",
+    location: null  // User's location
   });
+
   const [vendorInfo, setVendorInfo] = useState({
     fullName: "",
     email: "",
     brandName: "",
     cityName: "",
-    vendorType: "",
-    eventTypes: [],
+    vendorTypeInfo: {
+      vendorType: null,
+      vendorId: null
+    },
+    eventTypesInfo: [{
+      eventType: null,
+      eventId: null
+    },],
     phone: "",
     password: "",
+    location: null  // User's location
   });
 
   const handleUserRegAgreement = (key, value) => {
@@ -134,48 +154,154 @@ export default function UserAuthDialog({ open, handleClose }) {
     }
   }
 
-//   useEffect(() => {
-//   const loadGoogleSignIn = () => {
-//     // Load Google Sign-In client library
-//     const script = document.createElement("script");
-//     script.src = "https://accounts.google.com/gsi/client";
-//     script.async = true;
-//     document.body.appendChild(script);
+  const handleEmailLinkSignIn = async (inputType, inputValue) => {
+    try {
+      await sendSignInLinkToEmail(firebaseAuth, "adikrishna197@gmail.com", {
+        url: 'http://localhost:5173/', // The URL where the user will be redirected after sign-in
+        handleCodeInApp: true, // Allow the sign-in link to be handled in the app
+      });
+      alert('An email has been sent with a sign-in link.');
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
 
-//     // Initialize Google Sign-In once script is loaded
-//     script.onload = () => {
-//       // Initialize Google Sign-In with your client ID
-//       window.google.accounts.id.initialize({
-//         client_id: "630074237475-7u0bccftjs2r8vc04vq9228791v6tfs8.apps.googleusercontent.com",
-//         callback: handleCredentialResponse
-//       });
-//     };
-//   };
+  const handleGoogleAuthentication = async ()=> {
 
-//   loadGoogleSignIn();
+    const provider = new GoogleAuthProvider();
+    provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
+    firebaseAuth.languageCode = 'it';
 
-//   return () => {
-//     // Find the script tag in the DOM
-//     const script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-//     if (script && script.parentNode) {
-//       // Remove the script if it exists and is appended to a parent node
-//       script.parentNode.removeChild(script);
-//     }
-//   };
-// }, []);
+    try {
+      signInWithRedirect(firebaseAuth, provider);
+      getRedirectResult(firebaseAuth)
+      .then((result) => {
+        // This gives you a Google Access Token. You can use it to access Google APIs.
+        const credential = GoogleAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+
+        // The signed-in user info.
+        const user = result.user;
+        // IdP data available using getAdditionalUserInfo(result)
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        console.log(errorMessage);
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // The AuthCredential type that was used.
+        const credential = GoogleAuthProvider.credentialFromError(error);
+      });
+    } catch (error ) {
+      console.error(error.message);
+    }
+  }
+
+  const handleFacebookAuthentication = async ()=> {
+
+    const provider = new FacebookAuthProvider();
+    firebaseAuth.languageCode = 'it';
+    // provider.setCustomParameters({
+    //   'display': 'popup'
+    // });
+    
+    try {
+      signInWithRedirect(firebaseAuth, provider);
+      getRedirectResult(firebaseAuth)
+      .then((result) => {
+        // This gives you a Facebook Access Token. You can use it to access the Facebook API.
+        const credential = FacebookAuthProvider.credentialFromResult(result);
+        const token = credential.accessToken;
+
+        const user = result.user;
+        console.log(user.email)
+        // IdP data available using getAdditionalUserInfo(result)
+        // ...
+      }).catch((error) => {
+        // Handle Errors here.
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // The email of the user's account used.
+        const email = error.customData.email;
+        // AuthCredential type that was used.
+        const credential = FacebookAuthProvider.credentialFromError(error);
+        // ...
+      });
+
+    } catch (error) {
+      console.error(error.message);
+    }
+  }
+
+  const phoneNumberAuthentication = async (inputValue) => {
+    firebaseAuth.languageCode = 'it';
+    try {
+        const onCaptchaVerification = () => {
+            console.log("ENTERED");
+            signInWithPhoneNumber(firebaseAuth, "+919740605350", reCaptchaVerifier)
+                .then((confirmationResult) => {
+                    // Store confirmationResult for later use
+                    console.log(confirmationResult);
+                    // Prompt user to enter verification code
+                    // Handle the confirmation code from the user
+                    // const verificationCode = prompt('Enter the verification code sent to your phone:');
+                    // if (verificationCode) {
+                    //     // Confirm the verification code
+                    //     confirmationResult.confirm(verificationCode)
+                    //         .then((result) => {
+                    //             // User successfully signed in
+                    //             console.log("User signed in successfully:", result.user);
+                    //         })
+                    //         .catch((error) => {
+                    //             // Error confirming verification code
+                    //             console.error("Error confirming verification code:", error);
+                    //         });
+                    // } else {
+                    //     console.log("No verification code entered.");
+                    // }
+                })
+                .catch((error) => {
+                    // Error sending SMS
+                    console.error("Error sending SMS:", error);
+                });
+        };
+
+        const reCaptchaVerifier = new RecaptchaVerifier(firebaseAuth, 'recaptcha-container', {
+            'size': 'invisible',
+        });
+        onCaptchaVerification();
+    } catch (error) {
+        console.error("Error:", error);
+    }
+  };
 
 
-//   const handleCredentialResponse = (response) => {
-//     console.log("Encoded JWT ID token: " + response.credential);
-//     // Handle the response here, such as sending it to your server for authentication
-//   };
+  const handleSignUp = async () => {
 
-//   const handleGoogleSignIn = () => {
-//     // Display the Google One Tap dialog
-//     window.google.accounts.id.prompt({
-//       callback: handleCredentialResponse
-//     });
-//   };
+    // here the postdata will be customerInfo and vendorInfo Object defined above
+    try {
+      const url = "http://localhost:8000/eventify_server/userAuthentication/registerUser";
+      let postData = {
+        userType: userType,
+        data: customerInfo, // Default data for CUSTOMER user type
+      };
+      
+      if (userType === "VENDOR") {
+        postData.data = {
+          ...vendorInfo,
+          vendorTypeInfo: vendorInfo.vendorTypeInfo.vendorId,
+          eventTypesInfo: vendorInfo.eventTypesInfo.map((item) => item.eventId),
+        };
+      }
+      
+      const response = await axios.post(url, postData);
+      console.log(response.data);
+      
+    } catch(error) {
+      console.error(error.message);
+    }
+  }
 
   const customSelectStyles = {
     control: (provided, state) => ({
@@ -232,18 +358,25 @@ export default function UserAuthDialog({ open, handleClose }) {
   };
 
   const handleFormSubmit = async (e) => {
-    console.log(inputValue);
     setVerificationForm(true);
     validateInputValue();
 
-    const response = await axios.post("http://localhost:8000/eventify_server/userAuthentication/googleSignIn/");
-    console.log(response.data);
+    if(authType === "REGISTER") {
+      await handleSignUp();
+    } else if (authType === "LOGIN") {
+      if(inputType === "EMAIL") {
+        await handleEmailLinkSignIn(inputType, inputValue);
+      } else if (inputType === "PHONE") {
+        await phoneNumberAuthentication();
+      }
+    }
 
     e.preventDefault();
   };
 
   return (
     <div className="signInDialog__Container">
+      <div id="recaptcha-container"></div> {/* RE-CAPTCHA */} 
       <Dialog
         fullScreen={fullScreen}
         open={open}
@@ -311,11 +444,11 @@ export default function UserAuthDialog({ open, handleClose }) {
                           : { marginBottom: "1rem" }
                       }
                     >
-                      <div className="googleSignIn box" >
+                      <div className="googleSignIn box" onClick={handleGoogleAuthentication}>
                         <FcGoogle className="googleIcon icon" />
                         <p>Google</p>
                       </div>
-                      <div className="facebookSignIn box">
+                      <div className="facebookSignIn box" onClick={handleFacebookAuthentication}>
                         <FacebookIcon className="fbIcon icon" />
                         <p>Facebook</p>
                       </div>
@@ -414,6 +547,7 @@ export default function UserAuthDialog({ open, handleClose }) {
                       )}
                     </div>
                   )}
+
                   {authType === "REGISTER" &&
                     (!updateVendorRegistrationForm ? (
                       <>
@@ -445,10 +579,15 @@ export default function UserAuthDialog({ open, handleClose }) {
                             type="email"
                             name="email"
                             spellCheck="false"
-                            value={customerInfo.email}
+                            value={
+                              userType === "CUSTOMER" 
+                                ? customerInfo.email
+                                : vendorInfo.email
+                            }
                             placeholder="username@gmail.com"
-                            onChange={(e) =>
-                              handleCustomerInfo("email", e.target.value)
+                            onChange={(e) => userType === "CUSTOMER" ?
+                              handleCustomerInfo("email", e.target.value) :
+                              handleVendorInfo("email", e.target.value)
                             }
                             className={`input`}
                           />
@@ -456,10 +595,12 @@ export default function UserAuthDialog({ open, handleClose }) {
                         <div className="inputField__wrapper wrapper">
                           <PhoneInput
                             country={"us"}
-                            value={inputValue}
+                            value={userType === "CUSTOMER" ? customerInfo.phone : vendorInfo.phone}
                             // eslint-disable-next-line no-unused-vars
                             onChange={(value, country) =>
-                              setInputValue("+" + value)
+                              userType === "CUSTOMER" ?
+                              handleCustomerInfo("phone", "+" + value) :
+                              handleVendorInfo("phone", "+" + value)
                             }
                             inputStyle={
                               inputError ? { border: "2px solid red" } : {}
@@ -479,10 +620,12 @@ export default function UserAuthDialog({ open, handleClose }) {
                             type={passwordVisibility ? "text" : "password"}
                             name="password"
                             spellCheck="false"
-                            value={customerInfo.password}
+                            value={userType === "CUSTOMER" ? customerInfo.password : vendorInfo.password}
                             placeholder="Enter your password"
                             onChange={(e) =>
+                              userType === "CUSTOMER" ?
                               handleCustomerInfo("password", e.target.value)
+                              : handleVendorInfo("password", e.target.value)
                             }
                             className={`input`}
                           />
@@ -575,24 +718,25 @@ export default function UserAuthDialog({ open, handleClose }) {
                             options={
                               Array.isArray(data.vendorTypes.data)
                                 ? data.vendorTypes.data.map((val) => ({
-                                    value: val.vendor_type,
+                                    value: val._id,
                                     label: val.vendor_type,
                                   }))
                                 : null
                             }
                             value={
-                              vendorInfo.vendorType
+                              vendorInfo.vendorTypeInfo && vendorInfo.vendorTypeInfo.vendorId
                                 ? {
-                                    value: vendorInfo.vendorType,
-                                    label: vendorInfo.vendorType,
+                                    value: vendorInfo.vendorTypeInfo.vendorId,
+                                    label: vendorInfo.vendorTypeInfo.vendorType,
                                   }
                                 : null
                             }
-                            onChange={(selectedOption) =>
-                              handleVendorInfo(
-                                "vendorType",
-                                selectedOption.value
-                              )
+                            onChange={(selectedOption) => {
+                                handleVendorInfo(
+                                  "vendorTypeInfo",
+                                  {"vendorType": selectedOption.label, "vendorId": selectedOption.value}
+                                );
+                              }
                             }
                             placeholder="Choose business type"
                             className="input select"
@@ -616,23 +760,23 @@ export default function UserAuthDialog({ open, handleClose }) {
                           <Select
                             styles={customSelectStyles}
                             value={
-                              vendorInfo.eventTypes
-                                ? vendorInfo.eventTypes.map((optionValue) => ({
-                                    value: optionValue,
-                                    label: optionValue,
+                              vendorInfo.eventTypesInfo && vendorInfo.eventTypesInfo[0].eventId
+                                ? vendorInfo.eventTypesInfo.map((option) => ({
+                                    value: option.eventId,
+                                    label: option.eventType,
                                   }))
                                 : null
                             }
-                            onChange={(selectedOption) => {
-                              const updatedEventTypes = selectedOption.map(
-                                (option) => option.value
-                              );
-                              handleVendorInfo("eventTypes", updatedEventTypes);
+                            onChange={(selectedOptions) => {
+                              const updatedEventInfo = selectedOptions.map(
+                                (option) => ({"eventType": option.label, "eventId": option.value})
+                              )
+                              handleVendorInfo("eventTypesInfo", updatedEventInfo);
                             }}
                             options={
                               Array.isArray(data.eventTypes.data)
                                 ? data.eventTypes.data.map((item) => ({
-                                    value: item.event_name,
+                                    value: item._id,
                                     label: item.event_name,
                                   }))
                                 : null
@@ -768,20 +912,20 @@ export default function UserAuthDialog({ open, handleClose }) {
                     </div>
                     <div className="otp__wrapper">
                       {otp.map((value, index) => (
-                        <>
+                        <React.Fragment key={`${index}-${Date.now()}`}>
                           <input
                             type="digit"
-                            key={index}
                             className={`otp-digit ${otpFieldFocused === index && "currentInputBox" }`}
                             maxLength={1}
+                            value={value}
                             onChange={(e) => handleOtpChange(index, e.target.value)}
                             onKeyDown={(e) => handleKeyDown(e, index)}
                             onFocus={()=> setOtpFieldFocused(index)}
                             onBlur={()=> setOtpFieldFocused(null)}
                             ref={(input) => (inputRefs.current[index] = input)}
                           />
-                          &nbsp;
-                        </>
+                        &nbsp;
+                      </React.Fragment>
                       ))}
                     </div>
                     <div className="comment">
