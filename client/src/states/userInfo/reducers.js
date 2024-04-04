@@ -2,6 +2,7 @@ import { SET_DATA } from "./actions";
 
 const initialState = {
     userLocation: "",
+    userDetails: {},
   };
   
 export default function userInfoReducer(state = initialState, action) {

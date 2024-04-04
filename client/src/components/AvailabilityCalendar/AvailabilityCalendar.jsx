@@ -143,6 +143,7 @@ export default function AvailabilityCalendar({ hallData }) {
             const bookingDuration = booking.booking_duration;
             for (var i = 0; i < bookingDuration; i++) {
               const hour = ( bookingHour + i ) % 24;
+              console.log("HOUR" + hour);
               tempCalendar[dayOfWeek]["timeSlots"][hour] = true;
             }
           });
@@ -170,6 +171,7 @@ export default function AvailabilityCalendar({ hallData }) {
     }
   }, [startDateOfWeek, endDateOfWeek]);
 
+  // eslint-disable-next-line no-unused-vars
   const rearrangeContent = () => {
     const container = containerRef.current;
     const contentHeight = container.scrollHeight;
@@ -198,15 +200,15 @@ export default function AvailabilityCalendar({ hallData }) {
   //   }
   // };
   
-  useEffect(() => {
-    const container = containerRef.current;
-    // Add scroll event listener
-    container.addEventListener('scroll', rearrangeContent);
-    // Remove scroll event listener on component unmount
-    return () => {
-      container.removeEventListener('scroll', rearrangeContent);
-    };
-  }, []); // Run only once on component mount
+  // useEffect(() => {
+  //   const container = containerRef.current;
+  //   // Add scroll event listener
+  //   container.addEventListener('scroll', rearrangeContent);
+  //   // Remove scroll event listener on component unmount
+  //   return () => {
+  //     container.removeEventListener('scroll', rearrangeContent);
+  //   };
+  // }, []); // Run only once on component mount
   
   const handlePrevWeek = () => {
     setAvailabilityCalendar(calendar);

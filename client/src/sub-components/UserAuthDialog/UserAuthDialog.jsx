@@ -1,6 +1,8 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef } from "react";
-import { firebaseAuth } from "../../firebaseConfig";
+import React, { useState, useRef, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import PropTypes from "prop-types";
 import {
   sendSignInLinkToEmail,
   GoogleAuthProvider,
@@ -9,8 +11,9 @@ import {
   FacebookAuthProvider,
   RecaptchaVerifier,
   signInWithPhoneNumber,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
 } from "firebase/auth";
-import { useSelector } from "react-redux";
 import axios from "axios";
 import Select from "react-select";
 import "react-phone-input-2/lib/style.css";
@@ -23,6 +26,7 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slide from "@mui/material/Slide";
+import Alert from '@mui/material/Alert';
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { useTheme } from "@mui/material/styles";
 
@@ -46,34 +50,43 @@ import { FaUserAlt, FaEdit } from "react-icons/fa";
 
 import "./UserAuthDialog.scss";
 import { Images } from "../../constants";
-import PropTypes from "prop-types";
+import { firebaseAuth } from "../../firebaseConfig.js";
+import { userInfoActions } from "../../states/UserInfo";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function UserAuthDialog({ open, handleClose }) {
+export default function UserAuthDialog({ open, handleClose, setUserAuthStateChangeFlag }) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
+  const [loginFormErrorUpdateFlag, setLoginFormErrorUpdateFlag] =
+    useState(false); // to trigger forceful re-render of useEffect whenever input field is validated
+  const [regFormErrorUpdateFlag, setRegFormErrorUpdateFlag] = useState(false); // to trigger forceful re-render of useEffect whenever input field is validated
   const [inputType, setInputType] = useState("EMAIL"); // "EMAIL" or "PHONE"
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [updateVendorRegistrationForm, setUpdateVendorRegistrationForm] =
     useState(false); // The Vendor's Registration form will be displayed in two phases.. 1st page requests for user details...2nd page requests for business details.
-  const [verificationForm, setVerificationForm] = useState(false); // to display form requesting OTP for verification
+  const [otpVerificationForm, setOtpVerificationForm] = useState(false); // to display form requesting OTP for verification
+  const [passwordVerificationForm, setPasswordVerificationForm] =
+    useState(false); // to display form requesting password for verification
   const [userType, setUserType] = useState("CUSTOMER"); // "CUSTOMER" or "VENDOR"
   const [authType, setAuthType] = useState("LOGIN"); // "LOGIN" or "REGISTER"
   const [otp, setOTP] = useState(["", "", "", "", "", ""]);
   const [otpFieldFocused, setOtpFieldFocused] = useState(null);
   const [alertDialog, setAlertDialog] = useState(false); // used to show the error code and message to the user on register or login
 
-  const [signInPassword, setSignInPassword] = useState(""); 
-  const [signInPasswordError, setSignInPasswordError] = useState(""); 
+  const [signInPasswordValue, setSignInPasswordValue] = useState("");
+  const [signInPasswordError, setSignInPasswordError] = useState("");
+  const [signInPasswordErrorUpdateFlag, setSignInPasswordErrorUpdateFlag] =
+    useState(false); // to trigger forceful re-render of useEffect whenever input field is validated
+  const [signInError, setSignInError] = useState(false);
 
   const inputRefs = useRef([]);
-
+  const dispatch = useDispatch();
   const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
 
   const [userRegAgreement, setUserRegAgreement] = useState({
@@ -150,47 +163,95 @@ export default function UserAuthDialog({ open, handleClose }) {
   };
 
   const handleOtpChange = (index, value) => {
-    // OTP
     const newOTP = [...otp];
     newOTP[index] = value;
     setOTP(newOTP);
 
     // Automatically focus on the next input field
     if (value !== "" && index < otp.length - 1) {
-      inputRefs.current[index + 1].focus();
+      inputRefs.current[index + 1]?.focus();
     }
   };
 
   const handleKeyDown = (event, index) => {
-    // OTP
-    // Move to the previous input field if backspace is pressed and the current field is empty
-    if (
-      (event.key === "Backspace" || event.key === "ArrowLeft") &&
-      otp[index] === "" &&
-      index > 0
-    ) {
-      inputRefs.current[index - 1].focus();
+    switch (event.key) {
+      case "Backspace":
+        // Move to the previous input field if backspace is pressed and the current field is empty
+        if (index > 0 && otp[index] === "") {
+          inputRefs.current[index - 1]?.focus();
+        }
+        break;
+      case "ArrowLeft":
+        // Move to the previous input field if left arrow is pressed
+        if (index > 0) {
+          inputRefs.current[index - 1]?.focus();
+        }
+        break;
+      case "ArrowRight":
+        // Move to the next input field if right arrow is pressed
+        if (index < otp.length - 1) {
+          inputRefs.current[index + 1]?.focus();
+        }
+        break;
+      // Handle other keys if needed
+      default:
+        break;
     }
   };
 
-  const handleSignIn = async () => {
-    const postData = {
-      //, // PHONE or EMAIL
-      email: inputValue,
-      password: signInPassword, // CUSTOMER or VENDOR
-      userType: userType
-    };
-
-    try {
-      const response = await axios.post(
-        "http://localhost:8000/eventify_server/userAuthentication/loginWithPassword/",
-        postData
+  const validatePassword = (signInPasswordValue) => {
+    if (!signInPasswordValue) {
+      setSignInPasswordError("Password is Required");
+    } else if (
+      !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/.test(signInPasswordValue)
+    ) {
+      setSignInPasswordError(
+        "Password must contain at least one digit, one lowercase character, one uppercase character, one special character, and have a minimum length of 8 characters"
       );
-      console.log(response.data);
+    } else {
+      setSignInPasswordError("");
+    }
+    setSignInPasswordErrorUpdateFlag((prevFlag) => !prevFlag);
+  };
+
+  const handleSignInWithPassword = async () => {
+    if(inputValue && signInPasswordValue && !inputError && !signInPasswordError) {
+      const postData = {
+        // PHONE or EMAIL
+        userEmail: inputValue,
+        userPassword: signInPasswordValue, // CUSTOMER or VENDOR
+        userType: userType,
+      };
+      try {
+        // verify wether user exists and verify his password before signing-in
+        const response = await axios.post(
+          "http://localhost:8000/eventify_server/userAuthentication/loginWithPassword/",
+          postData
+        );
+        const userCredential = await signInWithEmailAndPassword(firebaseAuth, inputValue, signInPasswordValue);
+        const userDetails = userCredential.user;
+        // UPDATE USER DATA IN REDUX STORE
+        dispatch(userInfoActions("userDetails", {message: {"UID": userDetails.uid, "Document": response.data}}));
+        setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+        handleClose(); // Close the Entire Login/Register Dialog after Sign-In
+      } catch (error) {
+        console.error("SIGN-IN ERR: " + error.message);
+        setSignInError(true);
+      }
+    }
+  };
+
+  useEffect(() => {
+    try {
+      if (signInPasswordValue && !signInPasswordError) {
+        handleSignInWithPassword();
+      } else {
+        // Handle Error condition if any
+      }
     } catch (error) {
       console.error(error.message);
     }
-  };
+  }, [signInPasswordError, signInPasswordErrorUpdateFlag]);
 
   const handleEmailLinkSignIn = async (inputType, inputValue) => {
     try {
@@ -320,11 +381,15 @@ export default function UserAuthDialog({ open, handleClose }) {
   const handleSignUp = async () => {
     // here the postdata will be customerInfo and vendorInfo Object defined above
     try {
+      const userCredential = userType === "CUSTOMER" ? await createUserWithEmailAndPassword(firebaseAuth, customerInfo.email, customerInfo.password) : await createUserWithEmailAndPassword(firebaseAuth, vendorInfo.email, vendorInfo.password);
+      const user = userCredential.user;
+      
       const url =
         "http://localhost:8000/eventify_server/userAuthentication/registerUser";
       let postData = {
-        userType: userType,
+        userType,
         data: customerInfo, // Default data for CUSTOMER user type
+        user,
       };
 
       if (userType === "VENDOR") {
@@ -336,12 +401,24 @@ export default function UserAuthDialog({ open, handleClose }) {
       }
 
       const response = await axios.post(url, postData);
-      console.log(response.data);
+      // UPDATE USER DATA IN REDUX STORE
+      dispatch(userInfoActions("userDetails", response.data));
+      setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      handleClose(); // Close the Entire Login/Register Dialog after Sign-In
+
     } catch (error) {
       setAlertDialog(true);
       console.error("ERROR :- ", error.message);
     }
   };
+
+  useEffect(()=> {
+    try {
+      console.log("USERAUTHDIALOG " + firebaseAuth.currentUser)
+    } catch(error) {
+      console.log(error);
+    }
+  },[])
 
   const customSelectStyles = {
     control: (provided, state) => ({
@@ -385,6 +462,7 @@ export default function UserAuthDialog({ open, handleClose }) {
         setInputError("");
       }
     }
+    setLoginFormErrorUpdateFlag((prevFlag) => !prevFlag);
   };
 
   const registrationFormValidation = () => {
@@ -490,193 +568,115 @@ export default function UserAuthDialog({ open, handleClose }) {
         handleErrorInfo("password", "");
       }
     }
+    setRegFormErrorUpdateFlag((prevFlag) => !prevFlag);
   };
 
-  const handleContinue = () => {
-    if (authType === "REGISTER") {
-      // registrationFormValidation();
-      if (userType === "VENDOR") {
-        if (!updateVendorRegistrationForm) {
-          if (!vendorInfo.fullName) {
-            handleErrorInfo("fullName", "Name is Required");
-          } else {
-            handleErrorInfo("fullName", "");
-          }
-          if (!vendorInfo.email) {
-            handleErrorInfo("email", "Email is Required");
-          } else if (!/\S+@\S+\.\S+/.test(vendorInfo.email)) {
-            handleErrorInfo("email", "Please enter a valid email address");
-          } else if (!vendorInfo.email.endsWith("@gmail.com")) {
-            handleErrorInfo("email", "Couldn't find your account");
-          } else {
-            handleErrorInfo("email", "");
-          }
-          if (!vendorInfo.phone) {
-            handleErrorInfo("phone", "Phone number is Required");
-          } else if (!/^\+(?:[0-9] ?){6,14}[0-9]$/.test(vendorInfo.phone)) {
-            handleErrorInfo("phone", "Please enter a valid phone number");
-          } else {
-            handleErrorInfo("phone", "");
-          }
-          if (!vendorInfo.password) {
-            handleErrorInfo("password", "Password is Required");
-          } else if (
-            !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/.test(
-              vendorInfo.password
-            )
-          ) {
-            handleErrorInfo(
-              "password",
-              "Password must contain at least one digit, one lowercase character, one uppercase character, one special character, and have a minimum length of 8 characters"
-            );
-          } else {
-            handleErrorInfo("password", "");
-          }
-        } else {
-          if (!vendorInfo.brandName) {
-            handleErrorInfo("brandName", "Brand name is required");
-          } else {
-            handleErrorInfo("brandName", "");
-          }
-          if (!vendorInfo.cityName) {
-            handleErrorInfo("cityName", "City name is required");
-          } else {
-            handleErrorInfo("cityName", "");
-          }
-          if (
-            !vendorInfo.vendorTypeInfo.vendorId ||
-            !vendorInfo.vendorTypeInfo.vendorType
-          ) {
-            handleErrorInfo("vendorTypeInfo", "Vendor type details required");
-          } else {
-            handleErrorInfo("vendorTypeInfo", "");
-          }
-          if (
-            !vendorInfo.eventTypesInfo[0].eventId ||
-            !vendorInfo.eventTypesInfo[0].eventType
-          ) {
-            handleErrorInfo("eventTypesInfo", "Choose atleast one event type");
-          } else {
-            handleErrorInfo("eventTypesInfo", "");
-          }
-        }
-      } else if (userType === "CUSTOMER") {
-        if (!customerInfo.fullName) {
-          handleErrorInfo("fullName", "Name is Required");
-        } else {
-          handleErrorInfo("fullName", "");
-        }
-        if (!customerInfo.email) {
-          handleErrorInfo("email", "Email is Required");
-        } else if (!/\S+@\S+\.\S+/.test(customerInfo.email)) {
-          handleErrorInfo("email", "Please enter a valid email address");
-        } else if (!customerInfo.email.endsWith("@gmail.com")) {
-          handleErrorInfo("email", "Couldn't find your account");
-        } else {
-          handleErrorInfo("email", "");
-        }
-        if (!customerInfo.phone) {
-          handleErrorInfo("phone", "Phone number is Required");
-        } else if (!/^\+(?:[0-9] ?){6,14}[0-9]$/.test(customerInfo.phone)) {
-          handleErrorInfo("phone", "Please enter a valid phone number");
-        } else {
-          handleErrorInfo("phone", "");
-        }
-        if (!customerInfo.password) {
-          handleErrorInfo("password", "Password is Required");
-        } else if (
-          !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/.test(
-            customerInfo.password
-          )
-        ) {
-          handleErrorInfo(
-            "password",
-            "Password must contain at least one digit, one lowercase character, one uppercase character, one special character, and have a minimum length of 8 characters"
-          );
-        } else {
-          handleErrorInfo("password", "");
-        }
+  // to be executed each time otp verification page is brought up
+  // useEffect(()=> {
+  //   try {
+
+  //   } catch (error) {
+  //     console.error(error.message);
+  //   }
+  // }, [otpVerificationForm])
+
+  // To be executed everytime login validation is done
+  useEffect(() => {
+    try {
+      if (inputValue && !inputError) {
+        // ensuring that the form is filled before doing validation
+        setOtpVerificationForm(true);
+        setPasswordVerificationForm(true);
+      } else {
+        setOtpVerificationForm(false);
       }
-    } else if (authType === "LOGIN") {
-      // validateLoginForm();
-      if (inputType === "EMAIL") {
-        if (!inputValue) {
-          setInputError("Email address is required");
-        } else if (!/\S+@\S+\.\S+/.test(inputValue)) {
-          setInputError("Please enter a valid email address");
-        } else if (!inputValue.endsWith("@gmail.com")) {
-          setInputError("Couldn't find your account");
-        } else {
-          setInputError("");
-        }
-      } else if (inputType === "PHONE") {
-        const phoneRegex = /^\+(?:[0-9] ?){6,14}[0-9]$/;
-        if (!inputValue) {
-          setInputError("Phone number is required");
-        } else if (!phoneRegex.test(inputValue)) {
-          setInputError("Please enter a valid phone number");
-        } else {
-          setInputError("");
-        }
-      }
-      if (!signInPassword) {
-        setSignInPasswordError("Password is required");
-      } else if (
-        !/(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*\W).{8,}/.test(
-          signInPassword
-        )) {
-          setSignInPasswordError("Password must contain at least one digit, one lowercase character, one uppercase character, one special character, and have a minimum length of 8 characters");
-        } else {
-          setSignInPasswordError("");
-        }
+    } catch (error) {
+      console.error(error.message);
     }
-    if (
-      userType === "VENDOR" &&
-      authType === "REGISTER" &&
-      !updateVendorRegistrationForm
-    ) {
-      if (
-        !errorInfo.fullName &&
-        !errorInfo.email &&
-        !errorInfo.password &&
-        !errorInfo.phone &&
-        !errorInfo.brandName &&
-        !errorInfo.eventTypesInfo &&
-        !errorInfo.vendorTypeInfo &&
-        !errorInfo.cityName
-      ) {
-        setUpdateVendorRegistrationForm(true);
+  }, [inputError, loginFormErrorUpdateFlag]);
+
+  // to be executed everytime register validation is done
+  useEffect(() => {
+    try {
+      if (customerInfo.fullName || vendorInfo.fullName) {
+        // ensuring that the form is filled before doing validation
+        if (!updateVendorRegistrationForm && userType === "VENDOR") {
+          if (
+            !errorInfo.fullName &&
+            !errorInfo.email &&
+            !errorInfo.password &&
+            !errorInfo.phone
+          ) {
+            setUpdateVendorRegistrationForm(true);
+          } else {
+            setUpdateVendorRegistrationForm(false);
+          }
+        } else {
+          if (
+            !errorInfo.fullName &&
+            !errorInfo.email &&
+            !errorInfo.password &&
+            !errorInfo.phone &&
+            !errorInfo.brandName &&
+            !errorInfo.eventTypesInfo &&
+            !errorInfo.vendorTypeInfo &&
+            !errorInfo.cityName
+          ) {
+            // setOtpVerificationForm(true);
+            handleSignUp();
+          } else {
+            setOtpVerificationForm(false);
+          }
+        }
       }
+    } catch (error) {
+      console.error(error.message);
     }
-  };
+  }, [errorInfo, regFormErrorUpdateFlag]);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-    if (
-      !errorInfo.fullName &&
-      !errorInfo.email &&
-      !errorInfo.password &&
-      !errorInfo.phone &&
-      !errorInfo.brandName &&
-      !errorInfo.eventTypesInfo &&
-      !errorInfo.vendorTypeInfo &&
-      !errorInfo.cityName
-    ) {
-      if (authType === "REGISTER") {
-        await handleSignUp();
-      } else if (authType === "LOGIN") {
-        if (inputType === "EMAIL") {
-          // await handleEmailLinkSignIn(inputType, inputValue);
-          await handleSignIn();
-        } else if (inputType === "PHONE") {
-          // await phoneNumberAuthentication();
-        }
-      }
-      if (!alertDialog && authType==="REGISTER") {
-        // only if there is no error thrown from server side ...user may proceed for phone number or email validation
-        setVerificationForm(true);
-      }
+
+    console.log(inputType + "  " + inputValue + "  " + authType);
+
+    // authType === "REGISTER" &&
+    //                   userType === "VENDOR" &&
+    //                   !updateVendorRegistrationForm &&
+    //                   setUpdateVendorRegistrationForm(true)
+
+    if (authType === "LOGIN") {
+      validateLoginForm();
+    } else if (authType === "REGISTER") {
+      registrationFormValidation();
     }
+
+    // if (
+    //   !errorInfo.fullName &&
+    //   !errorInfo.email &&
+    //   !errorInfo.password &&
+    //   !errorInfo.phone &&
+    //   !errorInfo.brandName &&
+    //   !errorInfo.eventTypesInfo &&
+    //   !errorInfo.vendorTypeInfo &&
+    //   !errorInfo.cityName
+    // ) {
+
+    //   if (!alertDialog) {
+    //     // only if there is no error thrown from server side ...user may proceed for phone number or email validation
+    //     setOtpVerificationForm(true);
+    //   }
+
+    //   if (authType === "REGISTER") {
+    //     await handleSignUp();
+    //   } else if (authType === "LOGIN") {
+    //     if (inputType === "EMAIL") {
+    //       // await handleEmailLinkSignIn(inputType, inputValue);
+    //       await handleSignIn();
+    //     } else if (inputType === "PHONE") {
+    //       // await phoneNumberAuthentication();
+    //     }
+    //   }
+    // }
   };
 
   return (
@@ -697,10 +697,13 @@ export default function UserAuthDialog({ open, handleClose }) {
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
-          <DialogTitle id="alert-dialog-title">{"Duplicate id found"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">
+            {"Duplicate id found"}
+          </DialogTitle>
           <DialogContent>
             <DialogContentText id="alert-dialog-description">
-            User already exists with the given details! Please login to continue.
+              User already exists with the given details! Please login to
+              continue.
             </DialogContentText>
           </DialogContent>
           <DialogActions>
@@ -712,7 +715,7 @@ export default function UserAuthDialog({ open, handleClose }) {
         <div
           className="signInDialogMain__container"
           style={
-            authType === "LOGIN" || verificationForm
+            authType === "LOGIN" || otpVerificationForm
               ? { height: "85vh" }
               : { height: "100vh" }
           }
@@ -754,7 +757,7 @@ export default function UserAuthDialog({ open, handleClose }) {
                 </span>
               )}
             </p>
-            {!verificationForm ? (
+            {!otpVerificationForm ? (
               <>
                 {!updateVendorRegistrationForm && (
                   <>
@@ -817,7 +820,7 @@ export default function UserAuthDialog({ open, handleClose }) {
                           {inputType === "EMAIL" ? (
                             <span
                               onClick={() => {
-                                setInputValue("91");
+                                setInputValue("");
                                 setInputType("PHONE");
                                 setInputError("");
                               }}
@@ -849,13 +852,7 @@ export default function UserAuthDialog({ open, handleClose }) {
                               inputError && "input__errorInfo"
                             }`}
                           />
-                          {inputError && (
-                        <div className="inputError">
-                          <ErrorIcon className="icon" />
-                          <p>{inputError}</p>
-                        </div>
-                      )}
-                          <input 
+                          {/* <input 
                             type="password"
                             name="password"
                             value={signInPassword}
@@ -866,11 +863,11 @@ export default function UserAuthDialog({ open, handleClose }) {
                             }`}
                           />
                           {signInPasswordError && (
-                        <div className="inputError">
-                          <ErrorIcon className="icon" />
-                          <p>{signInPasswordError}</p>
-                        </div>
-                      )}
+                            <div className="inputError">
+                              <ErrorIcon className="icon" />
+                              <p>{signInPasswordError}</p>
+                            </div>
+                          )} */}
                         </>
                       ) : (
                         <div
@@ -891,20 +888,14 @@ export default function UserAuthDialog({ open, handleClose }) {
                               placeholder: "Enter phone number",
                             }}
                           />
-                          {inputError && (
+                        </div>
+                      )}
+                      {inputError && (
                         <div className="inputError">
                           <ErrorIcon className="icon" />
                           <p>{inputError}</p>
                         </div>
                       )}
-                        </div>
-                      )}
-                      {/* {inputError && (
-                        <div className="inputError">
-                          <ErrorIcon className="icon" />
-                          <p>{inputError}</p>
-                        </div>
-                      )} */}
                     </div>
                   )}
 
@@ -1333,13 +1324,7 @@ export default function UserAuthDialog({ open, handleClose }) {
                       </>
                     ))}
                   <button
-                    type={`${
-                      userType === "VENDOR" &&
-                      authType === "REGISTER" &&
-                      !updateVendorRegistrationForm
-                        ? "button"
-                        : "submit"
-                    }`}
+                    type="submit"
                     disabled={
                       authType === "REGISTER" &&
                       userType === "VENDOR" &&
@@ -1358,7 +1343,6 @@ export default function UserAuthDialog({ open, handleClose }) {
                           ? "not-allowed"
                           : "pointer",
                     }}
-                    onClick={handleContinue}
                   >
                     <p>Continue</p>
                     <ArrowRightIcon className="icon" />
@@ -1391,53 +1375,130 @@ export default function UserAuthDialog({ open, handleClose }) {
               </>
             ) : (
               <>
-                <div className="verificationForm__wrapper">
+                <div className="otpVerificationForm__wrapper">
                   <div className="line__separator"></div>
                   <div className="wrapper">
-                    <h2 className="form__title">Check your email</h2>
+                    {passwordVerificationForm ? (
+                      <h2 className="form__title">
+                        Enter your account password
+                      </h2>
+                    ) : (
+                      <h2 className="form__title">Check your email</h2>
+                    )}
                     <p className="form__desc">to continue to EventifyConnect</p>
                     <div className="editInfo">
                       <div className="userIcon">
                         <PersonIcon className="icon" />
                       </div>
-                      <p>adikrishna1972@gmail.com</p>
+                      {authType === "LOGIN" ? (
+                        <p>{inputValue}</p>
+                      ) : userType === "CUSTOMER" ? (
+                        <p>{customerInfo.email}</p>
+                      ) : (
+                        <p>{vendorInfo.email}</p>
+                      )}
                       <button
                         className="editBtn"
-                        onClick={() => setVerificationForm(false)}
+                        onClick={() => setOtpVerificationForm(false)}
                       >
                         <FaEdit className="icon" />
                       </button>
                     </div>
-                    <div className="sub__title">Verification code</div>
-                    <div className="sub__desc">
-                      Enter the code sent to your email address
-                    </div>
-                    <div className="otp__wrapper">
-                      {otp.map((value, index) => (
-                        <React.Fragment key={`${index}-${Date.now()}`}>
-                          <input
-                            type="digit"
-                            className={`otp-digit ${
-                              otpFieldFocused === index && "currentInputBox"
-                            }`}
-                            maxLength={1}
-                            value={value}
-                            onChange={(e) =>
-                              handleOtpChange(index, e.target.value)
+                    {passwordVerificationForm ? (
+                      <div className="passwordField__wrapper">
+                        {
+                          signInError &&
+                          <Alert variant="outlined" severity="error">
+                            Invalid Username or Password.
+                          </Alert>
+                        }
+                        <div className="title">
+                          <span>Password</span>
+                        </div>
+                        <div className="inputField__wrapper">
+                          <div
+                            className=" wrapper"
+                            style={
+                              signInPasswordError
+                                ? { border: "2px solid red" }
+                                : {}
                             }
-                            onKeyDown={(e) => handleKeyDown(e, index)}
-                            onFocus={() => setOtpFieldFocused(index)}
-                            onBlur={() => setOtpFieldFocused(null)}
-                            ref={(input) => (inputRefs.current[index] = input)}
-                          />
-                          &nbsp;
-                        </React.Fragment>
-                      ))}
-                    </div>
-                    <div className="comment">
-                      Didn&apos;t receive a code? <span>Resend (12)</span>
-                    </div>
-                    <div className="methodSwitch__wrapper" >
+                          >
+                            <input
+                              type={passwordVisibility ? "text" : "password"}
+                              name="password"
+                              spellCheck="false"
+                              value={signInPasswordValue}
+                              placeholder="Enter your password"
+                              onChange={(e) =>
+                                setSignInPasswordValue(e.target.value)
+                              }
+                              className={`input`}
+                            />
+                            <a
+                              onClick={() =>
+                                setPasswordVisibility(!passwordVisibility)
+                              }
+                            >
+                              {passwordVisibility ? (
+                                <VisibilityIcon className="icon visibilityIcon" />
+                              ) : (
+                                <VisibilityOffIcon className="icon visibilityIcon" />
+                              )}
+                            </a>
+                          </div>
+                          {signInPasswordError && (
+                            <div className="inputError">
+                              <ErrorIcon className="icon" />
+                              <p>{signInPasswordError}</p>
+                            </div>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => validatePassword(signInPasswordValue)}
+                        >
+                          <p>Continue</p>
+                          <ArrowRightIcon className="icon" />
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="otpField__wrapper">
+                        <div className="sub__title">Verification code</div>
+                        <div className="sub__desc">
+                          Enter the code sent to your email address
+                        </div>
+                        <div className="otp__wrapper">
+                          {otp.map((value, index) => (
+                            <React.Fragment key={`${index}-${Date.now()}`}>
+                              <input
+                                type="text"
+                                pattern="[0-9]*" // Allow only digits
+                                className={`otp-digit ${
+                                  otpFieldFocused === index && "currentInputBox"
+                                }`}
+                                maxLength={1}
+                                value={value}
+                                onChange={(e) =>
+                                  handleOtpChange(index, e.target.value)
+                                }
+                                onKeyDown={(e) => handleKeyDown(e, index)}
+                                onFocus={() => setOtpFieldFocused(index)}
+                                onBlur={() => setOtpFieldFocused(null)}
+                                ref={(input) =>
+                                  (inputRefs.current[index] = input)
+                                }
+                              />
+                              &nbsp;
+                            </React.Fragment>
+                          ))}
+                        </div>
+                        <div className="comment">
+                          Didn&apos;t receive a code? <span>Resend (12)</span>
+                        </div>
+                      </div>
+                    )}
+                    <div className="methodSwitch__wrapper">
                       Use another method
                     </div>
                   </div>
@@ -1486,4 +1547,5 @@ export default function UserAuthDialog({ open, handleClose }) {
 UserAuthDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  setUserAuthStateChangeFlag: PropTypes.func.isRequired,
 };

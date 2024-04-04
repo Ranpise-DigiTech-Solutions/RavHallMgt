@@ -1,7 +1,13 @@
 import { default as express } from 'express';
 const router = express.Router();
 import { getDatabase, ref, set, get } from 'firebase/database';
-import { createUserWithEmailAndPassword, fetchSignInMethodsForEmail, signInWithEmailAndPassword, sendSignInLinkToEmail } from 'firebase/auth';
+import { 
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword, 
+    sendSignInLinkToEmail 
+} from 'firebase/auth';
+// Developer Note:- Please refrain from using fetchSignInMethodsForEmail... since it always returns null as "Enumeration" is enabled by default in the firebase project
+  
 import { firebaseAuth, firebaseDb } from '../database/FirebaseDb.js';
 import { v4 as uuidv4 } from 'uuid';
 import { serviceProviderMaster, customerMaster } from '../models/index.js';
@@ -16,43 +22,6 @@ import {
 } from "firebase/auth";
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
-
-router.post("/googleSignIn", async (req, res) => {
-
-    // const provider = new GoogleAuthProvider();
-    // const auth = getAuth();
-
-    // try {
-    //     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
-    //     auth.useDeviceLanguage();
-    //     signInWithRedirect(auth, provider);
-    //     getRedirectResult(auth)
-    //         .then((result) => {
-    //             // This gives you a Google Access Token. You can use it to access Google APIs.
-    //             const credential = GoogleAuthProvider.credentialFromResult(result);
-    //             const token = credential.accessToken;
-
-    //             // The signed-in user info.
-    //             const user = result.user;
-
-    //             return res.status(200).json(user);
-    //             // IdP data available using getAdditionalUserInfo(result)
-    //         }).catch((error) => {
-    //             // Handle Errors here.
-    //             const errorCode = error.code;
-    //             const errorMessage = error.message;
-    //             // The email of the user's account used.
-    //             const email = error.customData.email;
-    //             // The AuthCredential type that was used.
-    //             const credential = GoogleAuthProvider.credentialFromError(error);
-    //             // ...
-    //         });
-
-    // } catch (error) {
-    //     return res.status(500).json({ message: "Internal Server Error" });
-    // }
-
-});
 
 router.post("/passwordlessSignIn/", async (req, res) => {
 
@@ -124,35 +93,30 @@ router.post("/passwordlessSignIn/", async (req, res) => {
 
 router.post("/loginWithPassword", async (req, res) => {
 
-    const { email, password, userType } = req.body;
+    const { userEmail, userPassword, userType } = req.body;
 
     try {
-        const user = userType === "CUSTOMER" ? await customerMaster.findOne({"customer_email": email}) : await serviceProviderMaster.findOne({"vendor_email": email});
+        const user = userType === "CUSTOMER" ? await customerMaster.findOne({"customer_email": userEmail}) : await serviceProviderMaster.findOne({"vendor_email": userEmail});
 
         if(!user){
-            return res.status(401).json("Wrong username");
+            return res.status(401).json("No User records found!! Please check your email to continue or Sign Up.");
         }
 
         const originalPassword = CryptoJS.AES.decrypt(userType === "CUSTOMER" ? user.customer_password : user.vendor_password, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString(CryptoJS.enc.Utf8);
 
-        if(originalPassword !== req.body.password) {
-            res.status(401).json("Wrong password");
-            return;
+        if(originalPassword !== userPassword) {
+            return res.status(401).json("Wrong password");
         }
-
-        const userCredential = await firebaseAuth.signInWithEmailAndPassword(req.body.email, req.body.password);
-        const userDetails = userCredential.user;
-
 
         const accessToken = jwt.sign(
             { id: user._id },
-                process.env.SECRET_KEY, 
-                { expiresIn: "5d"}
+            process.env.JWT_SECRET_KEY,
+            { expiresIn: "1d"}
         );
 
-        const {password, ...info} = user._doc
+        const { customer_password, vendor_password, ...info } = user._doc;
 
-        res.status(200).json({ ...info, accessToken, userDetails});
+        res.status(200).json({ ...info, accessToken});
 
     } catch(error) {
         return res.status(500).json({message: error.message});
@@ -161,7 +125,7 @@ router.post("/loginWithPassword", async (req, res) => {
 
 router.post("/registerUser", async (req, res) => {
 
-    const { userType, data } = req.body;
+    const { userType, data, user } = req.body; // user = FirebaseUser
 
     var cipherText = CryptoJS.AES.encrypt(data.password, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString();
 
@@ -185,9 +149,6 @@ router.post("/registerUser", async (req, res) => {
             console.log('User already exists with this email. Operation canceled!!');
             return res.status(401).json({ message: 'User already exists!!' });
         }
-
-        const userCredential = await createUserWithEmailAndPassword(firebaseAuth, data.email, data.password);
-        const user = userCredential.user;
 
         // Create a new entry in mongodb
         const response = userType === "CUSTOMER" ? await axios.post("http://localhost:8000/eventify_server/customerMaster/", {
