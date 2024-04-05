@@ -17,6 +17,7 @@ import Hall_08 from '../assets/Hall_08.jpg';
 import Modal_01 from '../assets/Modal_01.png';
 import loginPageBg from '../assets/loginPageBg.jpg';
 import microsoft from '../assets/microsoft.svg';
+import userRegistrationPageBg from '../assets/userRegistrationPageBg.jpg';
 
 export default {
     logo,
@@ -38,4 +39,5 @@ export default {
     Modal_01,
     loginPageBg,
     microsoft,
+    userRegistrationPageBg
 };

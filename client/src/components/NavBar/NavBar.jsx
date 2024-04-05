@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import "./NavBar.scss";
 
@@ -16,9 +17,11 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
-
 import { Images } from "../../constants";
-import { UserAuthDialog } from "../../sub-components";
+import {
+  UserAuthDialog,
+  RegistrationForm
+} from '../../components';
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
 // import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
@@ -26,6 +29,7 @@ import { userInfoActions } from "../../states/UserInfo/index.js";
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
   const [isSignInDialogOpen, setSignInDialogOpen] = useState(false);
+  const [isRegistrationDialogOpen, setIsRegistrationDialogOpen] = useState(false);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [user, setUser] = useState(null);
   const [userAuthStateChangeFlag, setUserAuthStateChangeFlag] = useState(false);
@@ -48,6 +52,13 @@ export default function NavBar() {
 
   const handleSignInDialogClose = () => {
     setSignInDialogOpen(false);
+  };
+  const handleRegistrationDialogOpen = () => {
+    setIsRegistrationDialogOpen(true);
+  };
+
+  const handleRegistrationDialogClose = () => {
+    setIsRegistrationDialogOpen(false);
   };
 
   const handleLogout = async () => {
@@ -217,7 +228,8 @@ export default function NavBar() {
             <Button
               variant="contained"
               className="button"
-              onClick={handleSignInButtonClick}
+              // onClick={handleSignInButtonClick}
+              onClick={handleRegistrationDialogOpen}
             >
               Sign In
             </Button>
@@ -240,12 +252,21 @@ export default function NavBar() {
           </> */}
         </div>
       </div>
-      {isSignInDialogOpen && (
+      {/* {isSignInDialogOpen && (
         <div className="signInDialog">
           <UserAuthDialog
             open={isSignInDialogOpen}
             handleClose={handleSignInDialogClose}
             setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
+          />
+        </div>
+      )} */}
+      {isRegistrationDialogOpen && (
+        <div className="userRegistrationDialog">
+          <RegistrationForm
+            open={isRegistrationDialogOpen}
+            handleClose={handleRegistrationDialogClose}
+            // setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
           />
         </div>
       )}

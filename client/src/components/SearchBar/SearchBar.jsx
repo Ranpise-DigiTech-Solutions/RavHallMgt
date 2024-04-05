@@ -50,6 +50,10 @@ export default function SearchBar() {
       },
       padding: 10,
     }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#999999', // Change the placeholder color here
+    }),
   };
 
   return (

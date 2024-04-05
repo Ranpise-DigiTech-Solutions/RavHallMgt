@@ -49,9 +49,9 @@ import { FcGoogle } from "react-icons/fc";
 import { FaUserAlt, FaEdit } from "react-icons/fa";
 
 import "./UserAuthDialog.scss";
-import { Images } from "../../constants";
+import { Images } from "../../constants/index.js";
 import { firebaseAuth } from "../../firebaseConfig.js";
-import { userInfoActions } from "../../states/UserInfo";
+import { userInfoActions } from "../../states/UserInfo/index.js";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -439,6 +439,10 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
       },
       padding: 0,
     }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: '#999999', // Change the placeholder color here
+    }),
   };
 
   const validateLoginForm = () => {
@@ -639,44 +643,11 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
 
     console.log(inputType + "  " + inputValue + "  " + authType);
 
-    // authType === "REGISTER" &&
-    //                   userType === "VENDOR" &&
-    //                   !updateVendorRegistrationForm &&
-    //                   setUpdateVendorRegistrationForm(true)
-
     if (authType === "LOGIN") {
       validateLoginForm();
     } else if (authType === "REGISTER") {
       registrationFormValidation();
     }
-
-    // if (
-    //   !errorInfo.fullName &&
-    //   !errorInfo.email &&
-    //   !errorInfo.password &&
-    //   !errorInfo.phone &&
-    //   !errorInfo.brandName &&
-    //   !errorInfo.eventTypesInfo &&
-    //   !errorInfo.vendorTypeInfo &&
-    //   !errorInfo.cityName
-    // ) {
-
-    //   if (!alertDialog) {
-    //     // only if there is no error thrown from server side ...user may proceed for phone number or email validation
-    //     setOtpVerificationForm(true);
-    //   }
-
-    //   if (authType === "REGISTER") {
-    //     await handleSignUp();
-    //   } else if (authType === "LOGIN") {
-    //     if (inputType === "EMAIL") {
-    //       // await handleEmailLinkSignIn(inputType, inputValue);
-    //       await handleSignIn();
-    //     } else if (inputType === "PHONE") {
-    //       // await phoneNumberAuthentication();
-    //     }
-    //   }
-    // }
   };
 
   return (
