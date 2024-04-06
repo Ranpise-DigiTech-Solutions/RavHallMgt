@@ -6,10 +6,8 @@ const BookingConfirmation = ({ isOpen, details, onClose }) => {
 
   React.useEffect(() => {
     if (isOpen) {
-      console.log("Slide up");
       setAnimation('slide-up');
     } else {
-      console.log("Slide down");
       setAnimation(''); // Remove animation class on close
     }
   }, [isOpen]); // Update animation state on isOpen change

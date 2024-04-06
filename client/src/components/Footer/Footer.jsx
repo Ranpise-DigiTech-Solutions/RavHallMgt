@@ -5,6 +5,7 @@ import InstagramIcon from '@mui/icons-material/Instagram';
 import playStoreIcon from '../../assets/Playstore_icon.png'; 
 import appStoreIcon from '../../assets/App_store_icon.png'; 
 import  AlertDialogSlide from '../Alertwindow/Popup';
+import  CompanyFAQ from '../CompanyFAQ/CompanyFAQ';
 import emailjs from 'emailjs-com';
 
 
@@ -12,7 +13,9 @@ export default function Footer() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [openDialog, setOpenDialog] = useState(false);
     const form = useRef();
+    const [showFAQ, setShowFAQ] = useState(false);
 
+   
     const handleLinkClick = () => {
       setOpenDialog(true);
   };
@@ -58,7 +61,7 @@ export default function Footer() {
                             <p onClick={handleLinkClick}>Career</p>
                             <p><a href="#contact-form">Contact Us</a></p>
                             <p onClick={handleLinkClick}>Our Service</p>
-                            <p>FAQs </p>
+                            <p onClick={() => setShowFAQ(true)}>FAQs</p>
                         </div>
                         <div className="link__grp_2">
                             <p>Privacy Policy</p>
@@ -123,6 +126,7 @@ export default function Footer() {
                 </div>
             </div>
             <AlertDialogSlide open={openDialog} handleClose={handleCloseDialog} />
+            <CompanyFAQ isOpen={showFAQ} onClose={() => setShowFAQ(false)}  />
         </div>
     );
 }
