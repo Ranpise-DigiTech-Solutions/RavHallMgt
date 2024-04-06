@@ -266,6 +266,8 @@ export default function NavBar() {
           <RegistrationForm
             open={isRegistrationDialogOpen}
             handleClose={handleRegistrationDialogClose}
+            userType={"VENDOR"}
+            vendorType={"Banquet Hall"}
             // setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
           />
         </div>
