@@ -1,18 +1,19 @@
 import mongoose from "mongoose";
 
 const bookingMasterSchema = new mongoose.Schema({
-    hall_id: { type: mongoose.Schema.Types.ObjectId, ref: 'hallmasters'},
-    vendor_id: {type: mongoose.Schema.Types.ObjectId, ref: 'vendormasters'},
-    booking_timestamp: {type: Date, required: true,},
-    event_id: { type: mongoose.Schema.Types.ObjectId, ref: 'eventmasters'},
-    customer_id: { type: mongoose.Schema.Types.ObjectId, ref: 'customermasters'},
-    booking_type: { type: String, enum: ['HALL', 'VENDOR'], default: "HALL" },
-    book_caterer: { type: Boolean, required: true },
-    booking_status: {type: String, enum:['PENDING', 'CONFIRMED', 'REJECTED'],default:'PENDING'},
-    booking_duration: { type: Number, required: true },
+    hallId: { type: mongoose.Schema.Types.ObjectId, ref: 'hallmasters'},
+    vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "vendormasters"},
+    vendorTypeId: {type: mongoose.Schema.Types.ObjectId, ref: 'vendortypes', required: true },
+    bookingTimestamp: {type: Date, required: true,},
+    eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'eventtypes', required: true },
+    customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'customermasters', required: true },
+    bookingType: { type: String, enum: ['HALL', 'VENDOR'], default: "HALL" },
+    bookCaterer: { type: Boolean, required: true },
+    bookingStatus: {type: String, enum:['PENDING', 'CONFIRMED', 'REJECTED'],default:'PENDING'},
+    bookingDuration: { type: Number, required: true },
     comments: { type: String }
 }, { timestamps: true });
-bookingMasterSchema.index({ customer_id: 1, booking_timestamp: 1 }, { unique: true });
+bookingMasterSchema.index({ customerId: 1, bookingTimestamp: 1 }, { unique: true });
 
 const bookingMaster = mongoose.model("bookingMaster", bookingMasterSchema);
 

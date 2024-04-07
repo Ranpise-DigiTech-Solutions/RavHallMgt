@@ -6,7 +6,7 @@ const initialState = {
     eventType: "",
     eventId: "",
     vendorType: "",
-    vendorId: ""
+    vendorTypeId: ""
   };
   
 export default function SearchBoxFilterReducer(state = initialState, action) {

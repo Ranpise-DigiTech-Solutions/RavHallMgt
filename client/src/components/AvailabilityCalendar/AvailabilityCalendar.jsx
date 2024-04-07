@@ -131,7 +131,7 @@ export default function AvailabilityCalendar({ hallData }) {
         console.log("ENTEREDDDDD0000");
         if (bookings) {
           bookings.map((booking) => {
-            const bookingTimestamp = booking.booking_timestamp;
+            const bookingTimestamp = booking.bookingTimestamp;
             const bookingDate = new Date(bookingTimestamp);
             // bookingDate.setUTCHours(0);
             console.log(bookingDate);
@@ -140,7 +140,7 @@ export default function AvailabilityCalendar({ hallData }) {
             const dayOfWeek = getDayOfWeek(bookingDate);
             console.log(bookingHour);
             console.log(dayOfWeek);
-            const bookingDuration = booking.booking_duration;
+            const bookingDuration = booking.bookingDuration;
             for (var i = 0; i < bookingDuration; i++) {
               const hour = ( bookingHour + i ) % 24;
               console.log("HOUR" + hour);

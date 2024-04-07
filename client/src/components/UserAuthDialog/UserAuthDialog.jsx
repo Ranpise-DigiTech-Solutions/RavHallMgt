@@ -109,7 +109,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
     cityName: "",
     vendorTypeInfo: {
       vendorType: null,
-      vendorId: null,
+      vendorTypeId: null,
     },
     eventTypesInfo: [
       {
@@ -395,7 +395,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
       if (userType === "VENDOR") {
         postData.data = {
           ...vendorInfo,
-          vendorTypeInfo: vendorInfo.vendorTypeInfo.vendorId,
+          vendorTypeInfo: vendorInfo.vendorTypeInfo.vendorTypeId,
           eventTypesInfo: vendorInfo.eventTypesInfo.map((item) => item.eventId),
         };
       }
@@ -519,7 +519,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
           handleErrorInfo("cityName", "");
         }
         if (
-          !vendorInfo.vendorTypeInfo.vendorId ||
+          !vendorInfo.vendorTypeInfo.vendorTypeId ||
           !vendorInfo.vendorTypeInfo.vendorType
         ) {
           handleErrorInfo("vendorTypeInfo", "Vendor type details required");
@@ -1156,9 +1156,9 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                               }
                               value={
                                 vendorInfo.vendorTypeInfo &&
-                                vendorInfo.vendorTypeInfo.vendorId
+                                vendorInfo.vendorTypeInfo.vendorTypeId
                                   ? {
-                                      value: vendorInfo.vendorTypeInfo.vendorId,
+                                      value: vendorInfo.vendorTypeInfo.vendorTypeId,
                                       label:
                                         vendorInfo.vendorTypeInfo.vendorType,
                                     }
@@ -1167,7 +1167,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                               onChange={(selectedOption) => {
                                 handleVendorInfo("vendorTypeInfo", {
                                   vendorType: selectedOption.label,
-                                  vendorId: selectedOption.value,
+                                  vendorTypeId: selectedOption.value,
                                 });
                               }}
                               placeholder="Choose business type"

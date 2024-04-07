@@ -27,12 +27,12 @@ export default function PackagesCard({ card }) {
   useEffect(() => {
     const intervalId = setInterval(() => {
       setCurrentImageIndex(
-        (prevIndex) => (prevIndex + 1) % card.hall_images.length
+        (prevIndex) => (prevIndex + 1) % card.hallImages.length
       );
     }, 4000);
 
     return () => clearInterval(intervalId);
-  }, [card.hall_images]);
+  }, [card.hallImages]);
 
   const responsive = {
     desktop: {
@@ -74,7 +74,7 @@ export default function PackagesCard({ card }) {
             arrows={true}
             containerClass="carousel-container"
           >
-            {card.hall_images.map((image, index) => (
+            {card.hallImages.map((image, index) => (
               <img src={image} key={index} alt="Img" />
             ))}
           </Carousel>
@@ -107,10 +107,10 @@ export default function PackagesCard({ card }) {
               </div>
               <NavigationDots
                 active={currentImageIndex}
-                imageList={card.hall_images}
+                imageList={card.hallImages}
                 className="packageCard__navigation-dot"
               />
-              <Tooltip title={card.hall_description} placement="top" arrow>
+              <Tooltip title={card.hallDescription} placement="top" arrow>
                 <InfoOutlinedIcon className="icon" />
               </Tooltip>
             </div>
@@ -118,7 +118,7 @@ export default function PackagesCard({ card }) {
         </div>
         <div className="contents__wrapper">
           <div className="wrapper wrapper_1">
-            <h2>{card.hall_name}</h2>
+            <h2>{card.hallName}</h2>
             <div className="ratings">
               <div className="rating">
                 <p>4.9</p>
@@ -189,7 +189,7 @@ export default function PackagesCard({ card }) {
           <div className="wrapper wrapper_2">
             <div className="sub__wrapper">
               <LocationOnIcon className="icon" />
-              <p>{card.hall_city}</p>
+              <p>{card.hallCity}</p>
             </div>
             <div className="sub__wrapper">
               <AccountBalanceIcon className="icon" />

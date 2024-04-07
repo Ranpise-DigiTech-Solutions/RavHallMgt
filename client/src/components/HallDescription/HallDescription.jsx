@@ -50,16 +50,16 @@ const Slider = ({ hallData }) => {
             arrows={true}
             containerClass="carousel-container"
           >
-            {hallData && hallData.hall_images && hallData.hall_images.map((image, index) => (
+            {hallData && hallData.hallImages && hallData.hallImages.map((image, index) => (
               <img src={image} key={index} alt="Img" />
             ))}
           </Carousel>
         </div>
         <div className="quickinfo">
-          <h2>{hallData.hall_name}</h2>
+          <h2>{hallData.hallName}</h2>
           <h3 className="location">
             <a href="https://www.google.com/maps/dir//TMA+Pai+Convention+Centre,+MG+Rd,+Kodailbail,+Mangaluru,+Karnataka+575003/@12.8803793,74.7986391,13z/data=!4m8!4m7!1m0!1m5!1m1!1s0x3ba35a44b7805283:0xbb55b8b40db48da!2m2!1d74.8398387!2d12.8803825?entry=ttu">
-              <FaMapMarkerAlt /> {hallData.hall_taluk}, {hallData.hall_city}, {hallData.hall_state}
+              <FaMapMarkerAlt /> {hallData.hallTaluk}, {hallData.hallCity}, {hallData.hallState}
             </a>
           </h3>
           <ReactStars

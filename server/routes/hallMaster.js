@@ -49,8 +49,8 @@ router.get('/', async(req, res)=> {
         const hallDetails = await hallMaster.aggregate([
             {
                 $match: {
-                    "hall_city": hallCity ? hallCity : {$exists: true},
-                    "hall_eventtype" : specificObjectId ? { $in: [specificObjectId] } : { $exists: true }
+                    "hallCity": hallCity ? hallCity : {$exists: true},
+                    "hallEventTypes" : specificObjectId ? { $in: [specificObjectId] } : { $exists: true }
                 }
             }
         ]);
@@ -78,7 +78,6 @@ router.post('/', async (req, res) => {
 
 router.patch('/:id', async (req, res) => {
 
-    console.log("Entered")
     const resourceId = req.params.id;
     const updatedFields = req.body;
 

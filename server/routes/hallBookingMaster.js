@@ -40,8 +40,8 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
         const allHalls = await hallMaster.aggregate([
                 {
                     $match: {
-                        hall_city: selectedCity ? selectedCity : {$exists: true}, 
-                        hall_eventtype : eventObjectId ? { $in: [eventObjectId] } : { $exists: true },
+                        hallCity: selectedCity ? selectedCity : {$exists: true}, 
+                        hallEventTypes : eventObjectId ? { $in: [eventObjectId] } : { $exists: true },
                     }
                 }
             ]
@@ -51,28 +51,28 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
         const bookings = await hallBookingMaster.aggregate([
             {
                 $match: {
-                    booking_timestamp: {
+                    bookingTimestamp: {
                         $gte: new Date(selectedDate + 'T00:00:00.000Z'),
                         $lte: new Date(selectedDate + 'T23:59:59.999Z')
                     },
-                    hall_city: selectedCity ? selectedCity : {$exists: true}, 
-                    event_id : eventObjectId ? eventObjectId : { $exists: true },
+                    hallCity: selectedCity ? selectedCity : {$exists: true}, 
+                    eventId : eventObjectId ? eventObjectId : { $exists: true },
                 },
             },
             {
                 $group: {
                     _id: {
-                      hall_id: "$hall_id",
-                      hall_city: "$hall_city",   
+                      hallId: "$hallId",
+                      hallCity: "$hallCity",   
                     },
-                    totalDuration: { $sum: "$booking_duration" }
+                    totalDuration: { $sum: "$bookingDuration" }
                 },
             },
             {
                 $project: {
                     _id: 0,
-                    hall_id: "$_id.hall_id",
-                    hall_city: "$_id.hall_city",
+                    hallId: "$_id.hallId",
+                    hallCity: "$_id.hallCity",
                     totalDuration: 1
                 }
             }
@@ -81,7 +81,7 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
         // Group bookings by hall
         const bookingsByHall = {};
         bookings.forEach(booking => {
-            bookingsByHall[booking.hall_id] = booking;
+            bookingsByHall[booking.hallId] = booking;
         });
 
         // Calculate availability status for each hall
@@ -93,12 +93,12 @@ router.get("/getHallsAvailabilityStatus", async (req, res) => {
             }
             const availabilityStatus = isHallAvailable ? 'AVAILABLE' : checkAvailability();
             return {
-                hall_id: hall._id,
-                hall_name: hall.hall_name,
+                hallId: hall._id,
+                hallName: hall.hallName,
                 availability: availabilityStatus,
-                hall_city: hall.hall_city,
-                hall_images: hall.hall_images,
-                hall_description: hall.hall_description,
+                hallCity: hall.hallCity,
+                hallImages: hall.hallImages,
+                hallDescription: hall.hallDescription,
             };
         });
 
@@ -122,8 +122,8 @@ router.get("/getHallAvailability", async (req, res) => {
         const hallBookings = await hallBookingMaster.aggregate([
             {
                 $match: {
-                    hall_id: hallObjectId,
-                    booking_timestamp: {
+                    hallId: hallObjectId,
+                    bookingTimestamp: {
                         $gte: new Date(startDate + 'T00:00:00.000Z'),
                         $lte: new Date(endDate + 'T23:59:59.999Z')
                     },
@@ -132,9 +132,9 @@ router.get("/getHallAvailability", async (req, res) => {
             {
                 $project: {
                     _id: 1,
-                    hall_id: 1,
-                    booking_timestamp: 1,
-                    booking_duration: 1
+                    hallId: 1,
+                    bookingTimestamp: 1,
+                    bookingDuration: 1
                 }
             }
         ]);

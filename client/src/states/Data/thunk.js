@@ -33,8 +33,8 @@ const fetchCities = async (dispatch) => {
 const fetchEventTypes = async (dispatch) => {
     dispatch(fetchEventTypesRequest());
     try {
-        const URL = "http://localhost:8000/eventify_server/eventMaster/";
-
+        const URL = "http://localhost:8000/eventify_server/eventTypes/";
+        
         await axios
             .get(URL)
             .then((response) => {
@@ -51,7 +51,7 @@ const fetchEventTypes = async (dispatch) => {
 const fetchVendorTypes = async (dispatch) => {
     dispatch(fetchVendorTypesRequest());
     try {
-        const URL = "http://localhost:8000/eventify_server/vendorMaster";
+        const URL = "http://localhost:8000/eventify_server/vendorTypes/";
 
         await axios
             .get(URL)

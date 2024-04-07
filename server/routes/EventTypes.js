@@ -1,10 +1,10 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import { eventMaster } from '../models/index.js';
+import { eventTypes } from '../models/index.js';
 
 router.post("/", async (req, res) => { 
-    const newDocument = new eventMaster(req.body);
+    const newDocument = new eventTypes(req.body);
 
     if(!newDocument) {
         return res.status(404).json({message: "Request Body attachment not found!!"});
@@ -23,7 +23,7 @@ router.get("/", async (req, res) => {
     const filter = {};
 
     try {
-        const eventDetails = await eventMaster.find(filter);
+        const eventDetails = await eventTypes.find(filter);
 
         if(!eventDetails) {
             return res.status(404).json({message: "No Records Found"});
@@ -44,7 +44,7 @@ router.get("/getEventId", async (req, res) => {
     }
 
     try {
-        var document = await eventMaster.findOne({ "event_name": eventName });
+        var document = await eventTypes.findOne({ "eventName": eventName });
 
         if (document) {
             var documentId = document._id;
@@ -67,7 +67,7 @@ router.get("/getEventIds", async (req, res) => {
     }
 
     try {
-        const documents = await eventMaster.find({ "event_name": { $in: eventNames } });
+        const documents = await eventTypes.find({ "eventName": { $in: eventNames } });
 
         if (documents.length === 0) {
             return res.status(404).json({ message: "No documents found for the provided event names" });
@@ -76,7 +76,7 @@ router.get("/getEventIds", async (req, res) => {
         // Create an object mapping event names to event IDs
         const eventIdsMap = {};
         documents.forEach((document) => {
-            eventIdsMap[document.event_name] = document._id;
+            eventIdsMap[document.eventName] = document._id;
         });
 
         // Create an array of event IDs in the same order as the input event names

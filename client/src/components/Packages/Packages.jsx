@@ -70,7 +70,7 @@ export default function Packages() {
     const getEventId = async () => {
       try {
         if(searchBoxFilterStore.eventType) { // if user has chosen a event return its ID.. else return NULL
-          const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventMaster/getEventId', {
+          const eventMasterResponse = await axios.get('http://localhost:8000/eventify_server/eventTypes/getEventId', {
             params: {
               eventName: searchBoxFilterStore.eventType
             }
@@ -94,7 +94,7 @@ export default function Packages() {
       try {
         const hallMasterResponse = await axios.get(`http://localhost:8000/eventify_server/hallBookingMaster/getHallsAvailabilityStatus/`, {
           params: {
-            selectedCity: selectedCityName ? selectedCityName : "Udupi",
+            selectedCity: selectedCityName ? selectedCityName : "Mangalore",
             selectedDate: selectedDate ? selectedDate : formattedDate,
             eventId: eventId
           }
@@ -144,7 +144,7 @@ export default function Packages() {
         <Link 
           to={{
             pathname: "/DescriptionPage",
-            search: `?hall_id=${card.hall_id}`
+            search: `?hallId=${card.hallId}`
           }}
           target="_blank"
         >

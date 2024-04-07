@@ -9,16 +9,16 @@ import {
     hallMasterRoute,
     countriesNowRoute,
     chatBotRoute,
-    eventMasterRoute,
-    bookingmasterRoute,
-    customermasterRoute,
-    vendormasterRoute,
-    venuemasterRoute,
+    eventTypesRoute,
+    bookingMasterRoute,
+    customerMasterRoute,
+    vendorTypesRoute,
+    venueTypesRoute,
     hallBookingMasterRoute,
     geoLocationTrackerRoute,
     userAuthenticationRoute,
     serviceProviderMasterRoute,
-    vendorBusinessMasterRoute,
+    vendorMasterRoute,
 } from './routes/index.js';
 
 const app = express();
@@ -36,17 +36,17 @@ Connection(USERNAME, PASSWORD);
 // Server Endpoints
 app.use('/eventify_server/hallMaster/', hallMasterRoute);
 app.use('/eventify_server/countriesNow/', countriesNowRoute);
-app.use('/eventify_server/chatBot', chatBotRoute);
-app.use('/eventify_server/eventMaster', eventMasterRoute);
-app.use('/eventify_server/bookingMaster', bookingmasterRoute);
-app.use('/eventify_server/customerMaster', customermasterRoute);
-app.use('/eventify_server/venueMaster', venuemasterRoute);
-app.use('/eventify_server/vendorMaster', vendormasterRoute);
-app.use('/eventify_server/hallBookingMaster', hallBookingMasterRoute);
-app.use('/eventify_server/geoLocationTracker', geoLocationTrackerRoute);
-app.use('/eventify_server/userAuthentication', userAuthenticationRoute);
-app.use('/eventify_server/serviceProviderMaster', serviceProviderMasterRoute);
-app.use('/eventify_server/vendorBusinessMaster', vendorBusinessMasterRoute);
+app.use('/eventify_server/chatBot/', chatBotRoute);
+app.use('/eventify_server/eventTypes/', eventTypesRoute);
+app.use('/eventify_server/bookingMaster/', bookingMasterRoute);
+app.use('/eventify_server/customerMaster/', customerMasterRoute);
+app.use('/eventify_server/venueTypes/', venueTypesRoute);
+app.use('/eventify_server/vendorTypes/', vendorTypesRoute);
+app.use('/eventify_server/hallBookingMaster/', hallBookingMasterRoute);
+app.use('/eventify_server/geoLocationTracker/', geoLocationTrackerRoute);
+app.use('/eventify_server/userAuthentication/', userAuthenticationRoute);
+app.use('/eventify_server/serviceProviderMaster/', serviceProviderMasterRoute);
+app.use('/eventify_server/vendorMaster/', vendorMasterRoute);
 
 
 app.listen(PORT, () => console.log(`server running successfully on 8000`));

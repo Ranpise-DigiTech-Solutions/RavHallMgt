@@ -1,11 +1,11 @@
 import { default as express } from 'express';
 const router = express.Router();
 
-import { venueMaster } from '../models/index.js';
+import { venueTypes } from '../models/index.js';
 
 router.get("/", async (req, res) => {
     try {
-        const venueDetails = await venueMaster.find(filter);
+        const venueDetails = await venueTypes.find(filter);
 
         if(!venueDetails) {
             return res.status(404).json({message: "No Records Found"});
@@ -18,7 +18,7 @@ router.get("/", async (req, res) => {
 });
 
 router.post("/", async (req, res) => { 
-    const newDocument = new venueMaster(req.body);
+    const newDocument = new venueTypes(req.body);
 
     if(!newDocument) {
         return res.status(404).json({message: "Request Body attachment not found!!"});

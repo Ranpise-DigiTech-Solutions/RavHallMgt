@@ -1,12 +1,34 @@
 import mongoose from "mongoose";
 
 const customerMasterSchema = new mongoose.Schema({
-    customer_name: { type: String, required: true},
-    customer_location: {type: String},
-    customer_contact: {type: String, required: true ,unique: true},
-    customer_email: {type: String, required: true},
-    customer_password: {type: String},
-    customer_uid: {type: String, required: true, unique: true},
+    customerName: { type: String, required: true},
+    customerCurrentLocation: {type: String}, // current location
+    customerContact: {type: String, required: true ,unique: true},
+    customerEmail: {type: String, required: true, unique: true },
+    customerPassword: {type: String},
+    customerUid: {type: String, required: true, unique: true}, // firebase
+
+    customerAddress: { type: String }, // required-true
+    customerCity: { type: String }, // required-true
+    customerPincode: { type: Number }, // required-true
+    customerState: { type: String }, // required-true
+    customerTaluk: { type: String }, // required-true
+    customerCountry: { type: String }, // required-true
+    customerLandmark: { type: String }, // required-true
+    
+    customerDesignation: { type: String },
+    customerMainPhoneNo: { type: String }, // required-true
+    customerMainMobile: { type: String }, // required-true
+    customerMainEmail: { type: String }, // required-true
+
+    customerAlternateMobile: { type: String },
+    customerAlternateEmail: { type: String },
+
+    customerDocumentType: { type: String },
+    customerDocumentId: { type: String },
+    customerProfileImage: { type: String },
+
+    programId: { type: String, required: true }, // required-true
 }, { timestamps: true });
 
 const customerMaster = mongoose.model("customerMaster", customerMasterSchema);

@@ -96,13 +96,13 @@ router.post("/loginWithPassword", async (req, res) => {
     const { userEmail, userPassword, userType } = req.body;
 
     try {
-        const user = userType === "CUSTOMER" ? await customerMaster.findOne({"customer_email": userEmail}) : await serviceProviderMaster.findOne({"vendor_email": userEmail});
+        const user = userType === "CUSTOMER" ? await customerMaster.findOne({"customerEmail": userEmail}) : await serviceProviderMaster.findOne({"vendorEmail": userEmail});
 
         if(!user){
             return res.status(401).json("No User records found!! Please check your email to continue or Sign Up.");
         }
 
-        const originalPassword = CryptoJS.AES.decrypt(userType === "CUSTOMER" ? user.customer_password : user.vendor_password, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString(CryptoJS.enc.Utf8);
+        const originalPassword = CryptoJS.AES.decrypt(userType === "CUSTOMER" ? user.customerPassword : user.vendorPassword, process.env.PASSWORD_ENCRYPTION_SECRET_KEY).toString(CryptoJS.enc.Utf8);
 
         if(originalPassword !== userPassword) {
             return res.status(401).json("Wrong password");
@@ -114,7 +114,7 @@ router.post("/loginWithPassword", async (req, res) => {
             { expiresIn: "1d"}
         );
 
-        const { customer_password, vendor_password, ...info } = user._doc;
+        const { customerPassword, vendorPassword, ...info } = user._doc;
 
         res.status(200).json({ ...info, accessToken});
 
@@ -134,14 +134,14 @@ router.post("/registerUser", async (req, res) => {
 
         const existingCustomers = await customerMaster.find({
             $or: [
-              { "customer_email": data.email },
-              { "customer_contact": data.phone }
+              { "customerEmail": data.email },
+              { "customerContact": data.phone }
             ]
           });
         const existingVedors = await serviceProviderMaster.find({
             $or: [
-              { "vendor_email": data.email },
-              { "vendor_contact": data.phone }
+              { "vendorEmail": data.email },
+              { "vendorContact": data.phone }
             ]
           });
 
@@ -152,23 +152,25 @@ router.post("/registerUser", async (req, res) => {
 
         // Create a new entry in mongodb
         const response = userType === "CUSTOMER" ? await axios.post("http://localhost:8000/eventify_server/customerMaster/", {
-            customer_uid: user.uid,
-            customer_name: data.fullName,
-            customer_email: data.email,
-            customer_password: cipherText,
-            customer_contact: data.phone,
-            customer_location: data.location,
+            customerUid: user.uid,
+            customerName: data.fullName,
+            customerEmail: data.email,
+            customerPassword: cipherText,
+            customerContact: data.phone,
+            customerCurrentLocation: data.location,
+            programId: "USER"
         }) : await axios.post("http://localhost:8000/eventify_server/serviceProviderMaster/", {
-            vendor_uid: user.uid,
-            vendor_name: data.fullName,
-            vendor_id: data.vendorTypeInfo,
-            vendor_location: data.location,
-            vendor_contact: data.phone,
-            vendor_email: data.email,
-            vendor_password: cipherText,
-            service_brandName: data.brandName,
-            service_location: data.cityName,
-            event_types: data.eventTypesInfo
+            vendorUid: user.uid,
+            vendorName: data.fullName,
+            vendorTypeId: data.vendorTypeInfo,
+            vendorCurrentLocation: data.location,
+            vendorContact: data.phone,
+            vendorEmail: data.email,
+            vendorPassword: cipherText,
+            vendorCompanyName: data.brandName,
+            vendorLocation: data.cityName,
+            eventTypes: data.eventTypesInfo,
+            programId: "USER"
         });
 
         const userRef = ref(firebaseDb, 'Users/' + user.uid);

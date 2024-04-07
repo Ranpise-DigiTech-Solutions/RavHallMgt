@@ -113,8 +113,8 @@ export default function SearchBar() {
                 options={
                   Array.isArray(data.eventTypes.data)
                     ? data.eventTypes.data.map((item) => ({
-                        value: item.event_name,
-                        label: item.event_name,
+                        value: item.eventName,
+                        label: item.eventName,
                       }))
                     : null
                 }
@@ -149,8 +149,8 @@ export default function SearchBar() {
                 options={
                   Array.isArray(data.vendorTypes.data)
                     ? data.vendorTypes.data.map((val) => ({
-                        value: val.vendor_type,
-                        label: val.vendor_type,
+                        value: val.vendorType,
+                        label: val.vendorType,
                       }))
                     : null
                 }

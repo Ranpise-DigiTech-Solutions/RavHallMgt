@@ -19,7 +19,7 @@ export default function DescriptionPage() {
 
   const location = useLocation();
   const searchParams = new URLSearchParams(location.search);
-  const hallId = searchParams.get('hall_id');
+  const hallId = searchParams.get('hallId');
 
   const [hallData, setHallData] = useState({});
   const [isLoading, setIsLoading] = useState(true);

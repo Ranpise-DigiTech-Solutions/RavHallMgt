@@ -182,7 +182,7 @@ export default function RegistrationForm({
             <div className="progressIndicator__wrapper">
               <div className="sub-wrapper currentForm">
                 <div className="formNumberIndicator">
-                  {formType === "FORM_ONE" ? <span>1</span> : <DoneIcon />}
+                  {formType === "FORM_ONE" ? <span>1</span> : <DoneIcon className="icon"/>}
                 </div>
                 <p className="tag">Address</p>
               </div>
@@ -248,7 +248,9 @@ export default function RegistrationForm({
                   >
                     <div className="formNumberIndicator">
                       {/* {formType === "FORM_FOUR" ? <span>4</span> : <DoneIcon />} */}
-                      4
+                      <span>
+                        4
+                      </span>
                     </div>
                     <p className="tag">Detailed</p>
                   </div>
