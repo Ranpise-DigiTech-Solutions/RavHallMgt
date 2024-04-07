@@ -13,6 +13,7 @@ import { useTheme } from "@mui/material/styles";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import AddIcon from "@mui/icons-material/Add";
+import DoneIcon from "@mui/icons-material/Done";
 import { FaEdit } from "react-icons/fa";
 
 import { useDropzone } from "react-dropzone";
@@ -64,6 +65,22 @@ export default function RegistrationForm({
       ...provided,
       color: "#999999", // Change the placeholder color here
     }),
+  };
+
+  const progressBarStyle = {
+    position: "relative",
+    flex: 1,
+    width: "6.5rem",
+  };
+
+  const beforeStyle = {
+    content: '""',
+    position: "absolute",
+    top: "-10px",
+    left: "0",
+    height: "1px",
+    width: "100%",
+    backgroundColor: "rgba(0, 0, 0, 0.3)",
   };
 
   const handlePrevBtnClick = () => {
@@ -137,10 +154,23 @@ export default function RegistrationForm({
       >
         <div className="registrationFormMain__wrapper">
           <div className="img__wrapper">
-            <p className="title">
-              Let&apos;s Get <br /> <span className="highlight">Started</span>
-            </p>
-            <img src={Images.userRegistrationPageBg} alt="" />
+            <div className="companyInfo">
+              <img src={Images.logo} alt="EventifyConnect" />
+              <p>EventifyConnect</p>
+            </div>
+            <div className="bgCover">
+              <p>
+                Let&apos;s get <br /> <span>Started</span>
+              </p>
+            </div>
+            <img
+              src={Images.userRegistrationPageBg2}
+              alt=""
+              style={{
+                objectPosition:
+                  formType === "FORM_FOUR" ? "center" : "left center",
+              }}
+            />
           </div>
           <div className="contents__wrapper">
             <div className="formTitle__wrapper">
@@ -151,24 +181,75 @@ export default function RegistrationForm({
             </div>
             <div className="progressIndicator__wrapper">
               <div className="sub-wrapper currentForm">
-                <div className="formNumberIndicator">1</div>
+                <div className="formNumberIndicator">
+                  {formType === "FORM_ONE" ? <span>1</span> : <DoneIcon />}
+                </div>
                 <p className="tag">Address</p>
               </div>
-              <div className="progressBar"></div>
-              <div className="sub-wrapper">
-                <div className="formNumberIndicator">2</div>
+              <div className="progressBar" style={progressBarStyle}>
+                <div
+                  style={
+                    formType !== "FORM_ONE"
+                      ? { ...beforeStyle, backgroundColor: "#007bff" }
+                      : beforeStyle
+                  }
+                ></div>
+              </div>
+              <div
+                className={`sub-wrapper ${
+                  formType !== "FORM_ONE" && "currentForm"
+                }`}
+              >
+                <div className="formNumberIndicator">
+                  {formType === "FORM_ONE" || formType === "FORM_TWO" ? (
+                    <span>2</span>
+                  ) : (
+                    <DoneIcon />
+                  )}
+                </div>
                 <p className="tag">Register</p>
               </div>
-              <div className="progressBar"></div>
-              <div className="sub-wrapper">
-                <div className="formNumberIndicator">3</div>
+              <div className="progressBar" style={progressBarStyle}>
+                <div
+                  style={
+                    formType !== "FORM_ONE" && formType !== "FORM_TWO"
+                      ? { ...beforeStyle, backgroundColor: "#007bff" }
+                      : beforeStyle
+                  }
+                ></div>
+              </div>
+              <div
+                className={`sub-wrapper ${
+                  formType !== "FORM_ONE" &&
+                  formType !== "FORM_TWO" &&
+                  "currentForm"
+                }`}
+              >
+                <div className="formNumberIndicator">
+                  {formType !== "FORM_FOUR" ? <span>3</span> : <DoneIcon />}
+                </div>
                 <p className="tag">Contact</p>
               </div>
               {userType === "VENDOR" && (
                 <>
-                  <div className="progressBar"></div>
-                  <div className="sub-wrapper">
-                    <div className="formNumberIndicator">4</div>
+                  <div className="progressBar" style={progressBarStyle}>
+                    <div
+                      style={
+                        formType === "FORM_FOUR"
+                          ? { ...beforeStyle, backgroundColor: "#007bff" }
+                          : beforeStyle
+                      }
+                    ></div>
+                  </div>
+                  <div
+                    className={`sub-wrapper ${
+                      formType === "FORM_FOUR" && "currentForm"
+                    }`}
+                  >
+                    <div className="formNumberIndicator">
+                      {/* {formType === "FORM_FOUR" ? <span>4</span> : <DoneIcon />} */}
+                      4
+                    </div>
                     <p className="tag">Detailed</p>
                   </div>
                 </>
@@ -655,7 +736,8 @@ export default function RegistrationForm({
                   onClick={handleNextBtnClick}
                   type="button"
                 >
-                  {formType === "FORM_FOUR" || (userType==="CUSTOMER" && formType === "FORM_THREE") ? (
+                  {formType === "FORM_FOUR" ||
+                  (userType === "CUSTOMER" && formType === "FORM_THREE") ? (
                     <span>Submit</span>
                   ) : (
                     <span>Next</span>

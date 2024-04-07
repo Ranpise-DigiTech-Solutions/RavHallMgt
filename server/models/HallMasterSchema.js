@@ -18,7 +18,6 @@ const hallMasterSchema = new mongoose.Schema({
     hall_mgrnm: { type: String},     
     hall_email: { type: String},
     hall_images: [{ type: String}],
-    hall_description: {type: String}
 }, { timestamps: true });
 
 const hallMaster = mongoose.model("hallMaster", hallMasterSchema);
