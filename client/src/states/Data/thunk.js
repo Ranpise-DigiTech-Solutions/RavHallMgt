@@ -1,7 +1,16 @@
 import {
-    fetchCitiesRequest,
-    fetchCitiesSuccess,
-    fetchCitiesFailure,
+    fetchCountriesRequest,
+    fetchCountriesSuccess,
+    fetchCountriesFailure,
+    fetchStatesRequest,
+    fetchStatesSuccess,
+    fetchStatesFailure,
+    fetchCitiesOfCountryRequest,
+    fetchCitiesOfCountrySuccess,
+    fetchCitiesOfCountryFailure,
+    fetchCitiesOfStateRequest,
+    fetchCitiesOfStateSuccess,
+    fetchCitiesOfStateFailure,
     fetchEventTypesRequest,
     fetchEventTypesSuccess,
     fetchEventTypesFailure,
@@ -12,21 +21,75 @@ import {
 import axios from 'axios';
 
 // thunk action creator to fetch data asynchronously
-const fetchCities = async (dispatch) => {
-    dispatch(fetchCitiesRequest());
+const fetchCountries = async (dispatch) => {
+    dispatch(fetchCountriesRequest());
     try {
-        const URL = "http://localhost:8000/eventify_server/countriesNow/";
+        const URL = `http://localhost:8000/eventify_server/countriesNow/getCountries/`
 
         await axios
             .get(URL)
             .then((response) => {
-                dispatch(fetchCitiesSuccess(response.data));
+                dispatch(fetchCountriesSuccess(response.data));
             })
             .catch((error) => {
-                dispatch(fetchCitiesFailure("Error fetching cities:- ", error.message));
+                dispatch(fetchCountriesFailure("Error fetching countries:- ", error.message));
             });
     } catch (error) {
-        dispatch(fetchCitiesFailure(error.message));
+        dispatch(fetchCountriesFailure(error.message));
+    }
+};
+
+const fetchStates = (countryName) => async (dispatch) => {
+    dispatch(fetchStatesRequest());
+    try {
+        const URL = `http://localhost:8000/eventify_server/countriesNow/getStates/?countryName=${countryName}`;
+
+        await axios
+            .get(URL)
+            .then((response) => {
+                dispatch(fetchStatesSuccess(response.data));
+            })
+            .catch((error) => {
+                dispatch(fetchStatesFailure("Error fetching states:- ", error.message));
+            });
+    } catch (error) {
+        dispatch(fetchStatesFailure(error.message));
+    }
+};
+
+const fetchCitiesOfCountry = (countryName) => async (dispatch) => {
+    dispatch(fetchCitiesOfCountryRequest());
+    try {
+        const URL = `http://localhost:8000/eventify_server/countriesNow/getCitiesOfCountry/?countryName=${countryName}`;
+
+        await axios
+            .get(URL)
+            .then((response) => {
+                dispatch(fetchCitiesOfCountrySuccess(response.data));
+            })
+            .catch((error) => {
+                dispatch(fetchCitiesOfCountryFailure("Error fetching cities:- ", error.message));
+            });
+    } catch (error) {
+        dispatch(fetchCitiesOfCountryFailure(error.message));
+    }
+};
+
+const fetchCitiesOfState = (countryName, stateName) => async (dispatch) => {
+    dispatch(fetchCitiesOfStateRequest());
+    try {
+        const URL = `http://localhost:8000/eventify_server/countriesNow/getCitiesOfState/?countryName=${countryName}&stateName=${stateName}`;
+
+        await axios
+            .get(URL)
+            .then((response) => {
+                dispatch(fetchCitiesOfStateSuccess(response.data));
+            })
+            .catch((error) => {
+                dispatch(fetchCitiesOfStateFailure("Error fetching cities:- ", error.message));
+            });
+    } catch (error) {
+        dispatch(fetchCitiesOfStateFailure(error.message));
     }
 };
 
@@ -67,7 +130,10 @@ const fetchVendorTypes = async (dispatch) => {
 };
 
 export {
-    fetchCities,
+    fetchCountries,
+    fetchStates,
+    fetchCitiesOfCountry,
+    fetchCitiesOfState,
     fetchEventTypes, 
     fetchVendorTypes,
 };

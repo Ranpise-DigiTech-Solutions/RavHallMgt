@@ -13,13 +13,13 @@ const hallMasterSchema = new mongoose.Schema({
     hallRegisterNo: { type: String },
     hallRegisterDate: { type: Date },
 
-    hallMainContact: { type: String, required: true },
+    hallMainContactName: { type: String, required: true },
     hallMainDesignation: { type: String },
     hallMainOfficeNo: { type: String, required: true },
     hallMainMobileNo: { type: String, required: true },
     hallMainEmail: { type: String, required: true }, 
     
-    hallAlternateContact: { type: String },
+    hallAlternateContactName: { type: String },
     hallAlternateDesignation: { type: String },
     hallAlternateOfficeNo: { type: String },
     hallAlternateMobileNo: { type: String },

@@ -179,7 +179,7 @@ router.post("/registerUser", async (req, res) => {
             name: data.fullName,
             email: data.email,
             contact: data.phone,
-            uid: response.data._id,
+            _id: response.data._id,
         });
 
         console.log("User Created Successfully!!", user.uid);

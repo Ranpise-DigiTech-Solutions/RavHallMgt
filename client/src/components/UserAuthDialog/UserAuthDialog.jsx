@@ -1047,7 +1047,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                         </div>
                         <div className="inputField__wrapper">
                           <div
-                            className=" wrapper"
+                            className="wrapper"
                             style={
                               errorInfo.brandName
                                 ? { border: "2px solid red" }

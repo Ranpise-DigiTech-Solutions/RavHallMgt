@@ -5,7 +5,7 @@ const customerMasterSchema = new mongoose.Schema({
     customerCurrentLocation: {type: String}, // current location
     customerContact: {type: String, required: true ,unique: true},
     customerEmail: {type: String, required: true, unique: true },
-    customerPassword: {type: String},
+    customerPassword: {type: String, required:true },
     customerUid: {type: String, required: true, unique: true}, // firebase
 
     customerAddress: { type: String }, // required-true
@@ -17,11 +17,11 @@ const customerMasterSchema = new mongoose.Schema({
     customerLandmark: { type: String }, // required-true
     
     customerDesignation: { type: String },
-    customerMainPhoneNo: { type: String }, // required-true
-    customerMainMobile: { type: String }, // required-true
+    customerMainOfficeNo: { type: String }, // required-true
+    customerMainMobileNo: { type: String }, // required-true
     customerMainEmail: { type: String }, // required-true
 
-    customerAlternateMobile: { type: String },
+    customerAlternateMobileNo: { type: String },
     customerAlternateEmail: { type: String },
 
     customerDocumentType: { type: String },

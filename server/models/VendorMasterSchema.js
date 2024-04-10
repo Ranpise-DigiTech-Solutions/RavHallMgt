@@ -8,20 +8,21 @@ const vendorMasterSchema = new mongoose.Schema({
     companyState: { type: String, required: true },
     companyTaluk: { type: String, required: true },
     companyCountry: { type: String, required: true },
+    companyLandmark: { type: String, required: true },
 
     vendorRegisterNo: { type: String },
     vendorRegisterDate: { type: Date },
 
-    vendorMainContact: { type: String, required: true },
+    vendorMainContactName: { type: String, required: true },
     vendorMainDesignation: { type: String },
-    vendorMainOfficeNo: { type: Number, required: true },
-    vendorMainMobile: { type: Number, required: true },
+    vendorMainOfficeNo: { type: String, required: true },
+    vendorMainMobileNo: { type: String, required: true },
     vendorMainEmail: { type: String, required: true },
 
-    vendorAlternateContact: { type: String },
+    vendorAlternateContactName: { type: String },
     vendorAlternateDesignation: { type: String },
-    vendorAlternateOfficeNo: { type: Number },
-    vendorAlternateMobile: { type: Number },
+    vendorAlternateOfficeNo: { type: String },
+    vendorAlternateMobileNo: { type: String },
     vendorAlternateEmail: { type: String },
 
     vendorTypeId: { type: mongoose.Schema.Types.ObjectId, ref: 'vendortypes', required: true }, // vendor type id

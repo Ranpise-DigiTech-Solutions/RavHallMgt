@@ -70,8 +70,8 @@ export default function SearchBar() {
               <VirtualizedSelect
                 customStyles={customStyles}
                 options={
-                  Array.isArray(data.cities.data)
-                    ? data.cities.data.map((city) => ({
+                  Array.isArray(data.citiesOfCountry.data)
+                    ? data.citiesOfCountry.data.map((city) => ({
                         value: city,
                         label: city,
                       }))

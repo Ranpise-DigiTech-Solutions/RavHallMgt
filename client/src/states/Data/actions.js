@@ -1,7 +1,19 @@
 // action types
-export const FETCH_CITIES_REQUEST = 'FETCH_CITIES_REQUEST';
-export const FETCH_CITIES_SUCCESS = 'FETCH_CITIES_SUCCESS';
-export const FETCH_CITIES_FAILURE = 'FETCH_CITIES_FAILURE';
+export const FETCH_COUNTRIES_REQUEST = 'FETCH_COUNTRIES_REQUEST';
+export const FETCH_COUNTRIES_SUCCESS = 'FETCH_COUNTRIES_SUCCESS';
+export const FETCH_COUNTRIES_FAILURE = 'FETCH_COUNTRIES_FAILURE';
+
+export const FETCH_STATES_REQUEST = 'FETCH_STATES_REQUEST';
+export const FETCH_STATES_SUCCESS = 'FETCH_STATES_SUCCESS';
+export const FETCH_STATES_FAILURE = 'FETCH_STATES_FAILURE';
+
+export const FETCH_CITIES_OF_COUNTRY_REQUEST = 'FETCH_CITIES_OF_COUNTRY_REQUEST';
+export const FETCH_CITIES_OF_COUNTRY_SUCCESS = 'FETCH_CITIES_OF_COUNTRY_SUCCESS';
+export const FETCH_CITIES_OF_COUNTRY_FAILURE = 'FETCH_CITIES_OF_COUNTRY_FAILURE';
+
+export const FETCH_CITIES_OF_STATE_REQUEST = 'FETCH_CITIES_OF_STATE_REQUEST';
+export const FETCH_CITIES_OF_STATE_SUCCESS = 'FETCH_CITIES_OF_STATE_SUCCESS';
+export const FETCH_CITIES_OF_STATE_FAILURE = 'FETCH_CITIES_OF_STATE_FAILURE';
 
 export const FETCH_EVENT_TYPES_REQUEST = 'FETCH_EVENT_TYPES_REQUEST';
 export const FETCH_EVENT_TYPES_SUCCESS = 'FETCH_EVENT_TYPES_SUCCESS';
@@ -12,18 +24,63 @@ export const FETCH_VENDOR_TYPES_SUCCESS = 'FETCH_VENDOR_TYPES_SUCCESS';
 export const FETCH_VENDOR_TYPES_FAILURE = 'FETCH_VENDOR_TYPES_FAILURE';
 
 // action creators
-// CITIES
-const fetchCitiesRequest = () => ({
-  type: FETCH_CITIES_REQUEST
+// COUNTRIES
+const fetchCountriesRequest = () => ({
+  type: FETCH_COUNTRIES_REQUEST
 });
 
-const fetchCitiesSuccess = (data) => ({
-  type: FETCH_CITIES_SUCCESS,
+const fetchCountriesSuccess = (data) => ({
+  type: FETCH_COUNTRIES_SUCCESS,
   payload: data
 });
 
-const fetchCitiesFailure = (error) => ({
-  type: FETCH_CITIES_FAILURE,
+const fetchCountriesFailure = (error) => ({
+  type: FETCH_COUNTRIES_FAILURE,
+  payload: error
+});
+
+// STATES
+const fetchStatesRequest = () => ({
+  type: FETCH_STATES_REQUEST
+});
+
+const fetchStatesSuccess = (data) => ({
+  type: FETCH_STATES_SUCCESS,
+  payload: data
+});
+
+const fetchStatesFailure = (error) => ({
+  type: FETCH_STATES_FAILURE,
+  payload: error
+});
+
+// CITIES OF COUNTRY
+const fetchCitiesOfCountryRequest = () => ({
+  type: FETCH_CITIES_OF_COUNTRY_REQUEST
+});
+
+const fetchCitiesOfCountrySuccess = (data) => ({
+  type: FETCH_CITIES_OF_COUNTRY_SUCCESS,
+  payload: data
+});
+
+const fetchCitiesOfCountryFailure = (error) => ({
+  type: FETCH_CITIES_OF_COUNTRY_FAILURE,
+  payload: error
+});
+
+// CITIES OF STATE
+const fetchCitiesOfStateRequest = () => ({
+  type: FETCH_CITIES_OF_STATE_REQUEST
+});
+
+const fetchCitiesOfStateSuccess = (data) => ({
+  type: FETCH_CITIES_OF_STATE_SUCCESS,
+  payload: data
+});
+
+const fetchCitiesOfStateFailure = (error) => ({
+  type: FETCH_CITIES_OF_STATE_FAILURE,
   payload: error
 });
 
@@ -58,9 +115,18 @@ const fetchVendorTypesFailure = (error) => ({
 });
 
 export { 
-    fetchCitiesRequest,
-    fetchCitiesSuccess,
-    fetchCitiesFailure,
+    fetchCountriesRequest,
+    fetchCountriesSuccess,
+    fetchCountriesFailure,
+    fetchStatesRequest,
+    fetchStatesSuccess,
+    fetchStatesFailure,
+    fetchCitiesOfCountryRequest,
+    fetchCitiesOfCountrySuccess,
+    fetchCitiesOfCountryFailure,
+    fetchCitiesOfStateRequest,
+    fetchCitiesOfStateSuccess,
+    fetchCitiesOfStateFailure,
     fetchEventTypesRequest,
     fetchEventTypesSuccess,
     fetchEventTypesFailure,

@@ -10,9 +10,10 @@ import {
   DescriptionPage,
 } from './pages'
 import {
-  fetchCitiesData,
+  fetchCitiesOfCountryData,
   fetchEventTypesData,
   fetchVendorTypesData,
+  fetchCountriesData
 } from "./states/Data";
 
 function App() {
@@ -62,9 +63,10 @@ function App() {
 
     try {
       const fetchData = () => {
-        dispatch(fetchCitiesData);
+        dispatch(fetchCitiesOfCountryData("India"));
         dispatch(fetchEventTypesData);
         dispatch(fetchVendorTypesData);
+        dispatch(fetchCountriesData);
       };
       fetchData();
     } catch(error) {

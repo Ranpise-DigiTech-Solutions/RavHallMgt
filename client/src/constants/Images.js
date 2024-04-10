@@ -19,6 +19,11 @@ import loginPageBg from '../assets/loginPageBg.jpg';
 import microsoft from '../assets/microsoft.svg';
 import userRegistrationPageBg from '../assets/userRegistrationPageBg.jpg';
 import userRegistrationPageBg2 from '../assets/userRegistrationPageBg2.jpg';
+import pptx from '../assets/pptx.svg';
+import pdf from '../assets/pdf.svg';
+import docx from '../assets/docx.svg';
+import txt from '../assets/txt.svg';
+import jpg from '../assets/jpg.svg';
 
 export default {
     logo,
@@ -41,5 +46,10 @@ export default {
     loginPageBg,
     microsoft,
     userRegistrationPageBg,
-    userRegistrationPageBg2
+    userRegistrationPageBg2,
+    pptx,
+    pdf,
+    docx,
+    txt,
+    jpg
 };

@@ -14,6 +14,7 @@ import './DescriptionPage.scss'
 import Gallery from '../../components/Gallery/Gallery'
 import HallInformation from '../../components/HallInformation/HallInformation'
 import AvailabilityCalendar from '../../components/AvailabilityCalendar/AvailabilityCalendar';
+import { LoadingScreen } from '../../sub-components';
 
 export default function DescriptionPage() {
 
@@ -44,7 +45,7 @@ export default function DescriptionPage() {
   return (
     <div>
     {isLoading ? (
-      <p>Loading...</p>
+      <div><LoadingScreen /></div>
     ) : (
       <>
         <NavBar />
