@@ -8,9 +8,11 @@ import './App.scss'
 import { 
   HomePage,
   DescriptionPage,
+  UserProfile,
 } from './pages'
 
 import { store } from './states';
+
 
 function App() {
 
@@ -66,6 +68,9 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/DescriptionPage" element={<DescriptionPage />} />
+          </Routes>
+          <Routes>
+            <Route path="/UserProfile" element={<UserProfile />} />
           </Routes>
         </ClerkProvider>
       );

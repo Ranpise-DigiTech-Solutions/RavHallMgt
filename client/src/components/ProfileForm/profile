@@ -1,0 +1,288 @@
+import React, { useState } from 'react';
+import { TextField, Button, Avatar, Grid, Typography, IconButton } from '@mui/material';
+import { PersonOutline, EmailOutlined, PhoneOutlined, LockOutlined, Room } from '@mui/icons-material';
+import './ProfileForm.scss'; 
+const ProfileForm = () => {
+  const [profile, setProfile] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    currentPassword: '',
+    newPassword: '',
+    address: {
+      country: '',
+      state: '',
+      city: '',
+      street: '',
+      zipcode: '',
+    },
+    image: null,
+  });
+
+  const handleInputChange = (e) => {
+    if (e.target.name.startsWith('address.')) {
+      setProfile({
+        ...profile,
+        address: {
+          ...profile.address,
+          [e.target.name.split('.')[1]]: e.target.value,
+        },
+      });
+    } else {
+      setProfile({ ...profile, [e.target.name]: e.target.value });
+    }
+  };
+
+  const handleImageUpload = (e) => {
+    setProfile({ ...profile, image: e.target.files[0] });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Handle form submission logic here
+    console.log(profile);
+  };
+
+  return (
+    <div className="UserProfile">
+      <form onSubmit={handleSubmit}>
+        <Grid container spacing={4} alignItems="center" justify="center">
+        <Grid item xs={12}>
+            <Typography className='sideheading' variant="h6">Personal Information</Typography>
+          </Grid>
+          <Grid item xs={12} sm={4} className='profileupload'>
+            <Avatar
+              src={profile.image ? URL.createObjectURL(profile.image) : ''}
+              style={{ width: 150, height: 150 }}
+            />
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleImageUpload}
+              style={{ display: 'none' }}
+              id="profile-image"
+            />
+            <label htmlFor="profile-image" className="upload-label">
+              <Button variant="contained" color="primary" component="span" className='upload-button'>
+                Upload Image
+              </Button>
+            </label>
+
+          </Grid>
+        </Grid>
+        <Grid container spacing={4}>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="First Name"
+              name="firstname"
+              value={profile.name}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <PersonOutline fontSize="small" />,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Last Name"
+              name="lastname"
+              value={profile.name}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <PersonOutline fontSize="small" />,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Email"
+              name="email"
+              type="email"
+              value={profile.email}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <EmailOutlined fontSize="small" />,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Phone"
+              name="phone"
+              value={profile.phone}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <PhoneOutlined fontSize="small" />,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Current Password"
+              name="currentPassword"
+              type="password"
+              value={profile.currentPassword}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <LockOutlined fontSize="small" />,
+              }}
+            />
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="New Password"
+              name="newPassword"
+              type="password"
+              value={profile.newPassword}
+              onChange={handleInputChange}
+              variant="outlined"
+              fullWidth
+              InputProps={{
+                startAdornment: <LockOutlined fontSize="small" />,
+              }}
+            />
+          </Grid>
+         
+          <Grid item xs={12}>
+            <Typography className='sideheading' variant="h6">Address</Typography>
+          </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Address"
+            name="address.address"
+            value={profile.address.address}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Landmark"
+            name="address.landmark"
+            value={profile.address.landmark}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="City"
+            name="address.city"
+            value={profile.address.city}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Taluk"
+            name="address.taluk"
+            value={profile.address.taluk}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="State"
+            name="address.state"
+            value={profile.address.state}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Pincode"
+            name="address.pincode"
+            value={profile.address.pincode}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <TextField
+            label="Country"
+            name="address.country"
+            value={profile.address.country}
+            onChange={handleInputChange}
+            variant="outlined"
+            fullWidth
+            InputProps={{
+              startAdornment: <Room fontSize="small" />,
+            }}
+          />
+        </Grid>
+          <Grid item xs={12}>
+            <Button type="submit" variant="contained" color="primary">
+              Save
+            </Button>
+          </Grid>
+        </Grid>
+      </form>
+    </div>
+  );
+};
+
+export default ProfileForm;
+
+.UserProfile {
+    background-color: #f5f5f5;
+    height: auto;
+    width: 100%;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 3rem;
+  
+    .sideheading {
+      color: black;
+    }
+    .profileupload{
+        margin-bottom:30px ;
+    }
+    .upload-button
+    {
+        margin-top: 1rem;
+    }
+  
+   
+  }
+  

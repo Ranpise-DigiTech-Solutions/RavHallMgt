@@ -1,0 +1,27 @@
+body, html {
+  height: 100vh;
+  background-color: #1A1A1A; 
+}
+
+.notification-container
+{
+h1{
+  padding: 0 0 2rem 0;
+  font-size: 1.5rem;
+
+}
+}
+.message-header, .message-body
+{
+ background-color: #FF3333;
+ color: #2B193D;
+
+}
+.message-header
+{
+font-size: 1.5rem;
+}
+.message
+{
+border: 2px solid rgb(127, 207, 197);
+}

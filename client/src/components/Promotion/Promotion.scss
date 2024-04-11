@@ -14,6 +14,8 @@
         justify-content: space-between;
         align-items: center;
         position: relative;
+        background-color: #1A1A1A;
+
 
         .white__gradient {
             width: 20rem;
@@ -37,7 +39,7 @@
             flex-direction: column;
             justify-content: space-between;
             align-items: flex-start;
-            margin: 7rem 7rem 6rem;
+            margin: 7rem 2rem 6rem 7rem;
     
             .title__wrapper {
 
@@ -163,7 +165,7 @@
                 image-resolution: initial;
                 object-fit: cover;
                 object-position: center center;
-                width: 650px;
+                width: 800px;
                 height: 500px;
             }
         }
