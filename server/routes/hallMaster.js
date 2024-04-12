@@ -1,6 +1,8 @@
 import { default as express } from 'express';
 const router = express.Router();
 import { ObjectId } from 'mongodb';
+import { firebaseStorage } from '../database/FirebaseDb.js';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import { hallMaster } from '../models/index.js';
 
@@ -68,6 +70,52 @@ router.post('/', async (req, res) => {
     }
 
     try {
+        const savedDocument = await newDocument.save();
+        return res.status(200).json(savedDocument);
+    } catch(err) {
+        return res.status(500).json(err);
+    }
+});
+
+router.post('/registerHall', async (req, res) => {
+
+    if(!req.body || !req.query.userId) {
+        return res.status(404).json({message: "Required Fields missing in the Request body!!"});
+    }
+
+    const { hallRegisterDocument, hallImages, ...hallData } = req.body;
+    const userId = req.query.userId;
+    let hallRegisterDocumentUrl = "";
+    const hallImagesUrl = [];
+    const hallRegisterDocumentRef = ref(firebaseStorage, `VENDOR/BanquetHall/${userId}/RegistrationDocument`);
+    const hallImagesRef = ref(firebaseStorage, `VENDOR/BanquetHall/${userId}/HallImages/image.jpg`);
+
+    try {
+        if(hallRegisterDocument) {
+            await uploadBytes(hallRegisterDocumentRef ,hallRegisterDocument);
+            hallRegisterDocumentUrl = await getDownloadURL(hallRegisterDocumentRef);
+        }
+
+        if(hallImages || hallImages.length !== 0) {
+            for (const hallImage of hallImages) {
+                await uploadBytes(hallImagesRef ,hallImage);
+                const getHallImageURL = await getDownloadURL(hallImagesRef);
+                hallImagesUrl.push(getHallImageURL);
+            }
+        }
+
+        const postBody = {
+            ...hallData,
+            hallRegisterDocument: hallRegisterDocumentUrl,
+            hallImages: hallImagesUrl
+        }
+
+        const newDocument = new hallMaster(postBody);
+    
+        if(!newDocument) {
+            return res.status(409).json({message: "Request couldn't be processed due to conflict in current resource!"})
+        }
+
         const savedDocument = await newDocument.save();
         return res.status(200).json(savedDocument);
     } catch(err) {

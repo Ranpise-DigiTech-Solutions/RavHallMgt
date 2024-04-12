@@ -228,8 +228,8 @@ export default function NavBar() {
             <Button
               variant="contained"
               className="button"
-              // onClick={handleSignInButtonClick}
-              onClick={handleRegistrationDialogOpen}
+              onClick={handleSignInButtonClick}
+              // onClick={handleRegistrationDialogOpen}
             >
               Sign In
             </Button>
@@ -252,23 +252,23 @@ export default function NavBar() {
           </> */}
         </div>
       </div>
-      {/* {isSignInDialogOpen && (
+      {isSignInDialogOpen && (
         <div className="signInDialog">
           <UserAuthDialog
             open={isSignInDialogOpen}
             handleClose={handleSignInDialogClose}
             setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
+            handleRegistrationDialogOpen={handleRegistrationDialogOpen}
           />
         </div>
-      )} */}
+      )}
       {isRegistrationDialogOpen && (
         <div className="userRegistrationDialog">
           <RegistrationForm
             open={isRegistrationDialogOpen}
             handleClose={handleRegistrationDialogClose}
-            userType={"VENDOR"}
-            vendorType={"Banquet Hall"}
-            // setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
+            // userType={"VENDOR"}
+            // vendorType={"Banquet Hall"}
           />
         </div>
       )}

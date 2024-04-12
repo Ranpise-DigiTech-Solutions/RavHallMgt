@@ -52,15 +52,22 @@ import "./UserAuthDialog.scss";
 import { Images } from "../../constants/index.js";
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
+import { LoadingScreen } from "../../sub-components";
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function UserAuthDialog({ open, handleClose, setUserAuthStateChangeFlag }) {
+export default function UserAuthDialog({
+  open,
+  handleClose,
+  setUserAuthStateChangeFlag,
+  handleRegistrationDialogOpen
+}) {
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  const [loadingScreen, setLoadingScreen] = useState(false); // toggle Loading Screen
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
   const [loginFormErrorUpdateFlag, setLoginFormErrorUpdateFlag] =
@@ -215,6 +222,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
   };
 
   const handleSignInWithPassword = async () => {
+    setLoadingScreen(true);
     if(inputValue && signInPasswordValue && !inputError && !signInPasswordError) {
       const postData = {
         // PHONE or EMAIL
@@ -231,8 +239,14 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
         const userCredential = await signInWithEmailAndPassword(firebaseAuth, inputValue, signInPasswordValue);
         const userDetails = userCredential.user;
         // UPDATE USER DATA IN REDUX STORE
-        dispatch(userInfoActions("userDetails", {message: {"UID": userDetails.uid, "Document": response.data}}));
+        dispatch(userInfoActions("userDetails", {
+          "UID": userDetails.uid,
+          "Document": response.data,
+          userType: userType,
+          vendorType: ""
+        }));
         setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+        setLoadingScreen(false);
         handleClose(); // Close the Entire Login/Register Dialog after Sign-In
       } catch (error) {
         console.error("SIGN-IN ERR: " + error.message);
@@ -380,6 +394,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
 
   const handleSignUp = async () => {
     // here the postdata will be customerInfo and vendorInfo Object defined above
+    setLoadingScreen(true);
     try {
       const userCredential = userType === "CUSTOMER" ? await createUserWithEmailAndPassword(firebaseAuth, customerInfo.email, customerInfo.password) : await createUserWithEmailAndPassword(firebaseAuth, vendorInfo.email, vendorInfo.password);
       const user = userCredential.user;
@@ -402,10 +417,15 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
 
       const response = await axios.post(url, postData);
       // UPDATE USER DATA IN REDUX STORE
-      dispatch(userInfoActions("userDetails", response.data));
+      dispatch(userInfoActions("userDetails", {
+        ...response.data,
+        userType: userType,
+        vendorType: vendorInfo.vendorTypeInfo?.vendorType
+      }));
       setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      setLoadingScreen(false);
       handleClose(); // Close the Entire Login/Register Dialog after Sign-In
-
+      handleRegistrationDialogOpen();
     } catch (error) {
       setAlertDialog(true);
       console.error("ERROR :- ", error.message);
@@ -663,6 +683,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
         aria-labelledby="responsive-dialog-title"
         maxWidth="md"
       >
+        {loadingScreen && <LoadingScreen />}
         <Dialog
           open={alertDialog}
           aria-labelledby="alert-dialog-title"
@@ -1089,8 +1110,8 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                             <Select
                               styles={customSelectStyles}
                               options={
-                                Array.isArray(data.cities.data)
-                                  ? data.cities.data.map((city) => ({
+                                Array.isArray(data.citiesOfCountry.data)
+                                  ? data.citiesOfCountry.data.map((city) => ({
                                       value: city,
                                       label: city,
                                     }))
@@ -1150,7 +1171,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                                 Array.isArray(data.vendorTypes.data)
                                   ? data.vendorTypes.data.map((val) => ({
                                       value: val._id,
-                                      label: val.vendor_type,
+                                      label: val.vendorType,
                                     }))
                                   : null
                               }
@@ -1231,7 +1252,7 @@ export default function UserAuthDialog({ open, handleClose, setUserAuthStateChan
                                 Array.isArray(data.eventTypes.data)
                                   ? data.eventTypes.data.map((item) => ({
                                       value: item._id,
-                                      label: item.event_name,
+                                      label: item.eventName,
                                     }))
                                   : null
                               }
@@ -1519,4 +1540,5 @@ UserAuthDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   setUserAuthStateChangeFlag: PropTypes.func.isRequired,
+  handleRegistrationDialogOpen: PropTypes.func.isRequired
 };

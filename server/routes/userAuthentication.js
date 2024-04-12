@@ -184,10 +184,8 @@ router.post("/registerUser", async (req, res) => {
 
         console.log("User Created Successfully!!", user.uid);
         return res.status(200).json({
-            message: {
-                "UID": user.uid,
-                "Document": response.data,
-            }
+            "UID": user.uid,
+            "Document": response.data,
         });
     } catch (error) {
         console.log("ERROR", error);

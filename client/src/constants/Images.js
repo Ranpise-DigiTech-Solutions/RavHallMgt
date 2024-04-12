@@ -24,6 +24,8 @@ import pdf from '../assets/pdf.svg';
 import docx from '../assets/docx.svg';
 import txt from '../assets/txt.svg';
 import jpg from '../assets/jpg.svg';
+import welcomePageThankYou from '../assets/welcomePageThankYou.png';
+import welcomePageBg from '../assets/welcomePageBg.jpg';
 
 export default {
     logo,
@@ -51,5 +53,7 @@ export default {
     pdf,
     docx,
     txt,
-    jpg
+    jpg,
+    welcomePageThankYou,
+    welcomePageBg,
 };

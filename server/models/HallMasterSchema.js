@@ -12,6 +12,7 @@ const hallMasterSchema = new mongoose.Schema({
 
     hallRegisterNo: { type: String },
     hallRegisterDate: { type: Date },
+    hallRegisterDocument: { type: String },
 
     hallMainContactName: { type: String, required: true },
     hallMainDesignation: { type: String },
@@ -29,6 +30,7 @@ const hallMasterSchema = new mongoose.Schema({
     hallCapacity: { type: Number, required: true },
     hallRooms: { type: Number, required: true },
     hallParking: { type: Boolean, required: true },
+    hallParkingCapacity: { type: Number, }, 
     hallVegRate: { type: Number, required: true },
     hallNonVegRate: { type: Number, required: true },
     hallFreezDay: { type: Number },

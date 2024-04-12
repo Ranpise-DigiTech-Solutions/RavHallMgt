@@ -12,6 +12,7 @@ const vendorMasterSchema = new mongoose.Schema({
 
     vendorRegisterNo: { type: String },
     vendorRegisterDate: { type: Date },
+    vendorRegisterDocument: { type: String },
 
     vendorMainContactName: { type: String, required: true },
     vendorMainDesignation: { type: String },
@@ -27,6 +28,7 @@ const vendorMasterSchema = new mongoose.Schema({
 
     vendorTypeId: { type: mongoose.Schema.Types.ObjectId, ref: 'vendortypes', required: true }, // vendor type id
     vendorDescription: { type: String, required: true },
+    vendorEventTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'eventtypes', required: true}], 
     vendorImages: [{ type: String, required: true }],
 
     programId: { type: String, required: true },
