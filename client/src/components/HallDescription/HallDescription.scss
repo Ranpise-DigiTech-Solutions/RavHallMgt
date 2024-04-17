@@ -1,78 +1,38 @@
 // Define styles for description component
 .hallDescription__container {
-  width: 70%;
-  height: 700px;
-  /* background-color: red; */
-  margin: 3rem 0 0 0;
+  width: 100%;
+  // padding: 3rem 3rem 10rem 3rem;
+  padding-bottom: 10rem;
+  position: relative;
 
   // Define styles for slider
-  .slider {
+  .slider__wrapper {
     width: 100%;
-    max-width: 1000px;
-    height: 500px;
     position: relative;
     overflow: hidden;
     border-radius: 15px;
     margin: 0 auto;
     box-shadow: 0 4px 8px rgba(0.4, 0.4, 0.4, 0.4);
 
-    // Define styles for slides
-    .slide {
+    .carousel-container {
       width: 100%;
-      max-width: 1200px;
-      height: 500px;
-      position: absolute;
-      transition: all 0.5s;
 
-      // Define styles for slide images
-      img {
+      img{
         width: 100%;
-        height: 100%;
-        object-fit: cover;
       }
     }
 
-    // Define styles for buttons
-    .btn {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      padding: 10px;
-      border: none;
-      border-radius: 50%;
-      z-index: 10px;
-      cursor: pointer;
-      background-color: #fff;
-      font-size: 18px;
-
-      &:active {
-        transform: scale(1.1);
-      }
-    }
-
-    // Define styles for previous button
-    .btn-prev {
-      top: 45%;
-      left: 2%;
-    }
-
-    // Define styles for next button
-    .btn-next {
-      top: 45%;
-      right: 2%;
-    }
   }
 
   // Define styles for quick info
   .quickinfo {
-    position: relative;
+    position: absolute;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    height: auto;
-    width: 900px;
+    bottom: 1rem;
+    left: 6rem;
+    right: 6rem;
     z-index: 1;
-    margin: 0 auto;
-    top: -100px;
     border-radius: 1rem;
     padding: 1.5rem;
 
@@ -95,6 +55,27 @@
         display: flex; // Display as flex container
         align-items: center; // Align items vertically
         gap: 10px;
+      }
+    }
+
+    .menu__wrapper {
+      display: flex;
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+
+      margin-top: 1rem;
+
+      .verticalLine {
+
+        &::before {
+          position: absolute;
+          height: 1rem;
+          width: 2px;
+          top: 0;
+          background-color: #cccccc;
+        }
       }
     }
   }

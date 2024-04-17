@@ -1,19 +1,23 @@
 .aboutHall__container {
   /* background-color: #FFD085; */
-  width: 95%;
-  margin: 0 5rem;
+  width: 100%;
+  // padding: 0 3rem; 
   border-radius: 1rem;
 
   // Define styles for container
   .About-container {
-    max-width: 1000px;
-    margin: auto 0;
-    padding: 2rem;
+    // max-width: 1000px;
+    // margin: auto 0;
+    padding: 4rem;
 
     // Define styles for headings
     h1 {
       font-weight: 800;
       font-size: 1.7rem;
+    }
+
+    p{
+      // margin-right: 3rem;
     }
   }
 }

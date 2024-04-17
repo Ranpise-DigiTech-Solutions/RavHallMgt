@@ -65,92 +65,94 @@ export default function Gallery() {
   };
 
   return (
-    <div className='gallery'>
-      <Tabs
-        value={value}
-        onChange={handleChange}
-        aria-label="icon label tabs example"
-        TabIndicatorProps={{
-          style: {
-            display: 'none',
-          },
-        }}
-        sx={{
-          '.MuiTabs-flexContainer': {
-            justifyContent: 'flex-end',
-          },
-        }}
-      >
-        <Tab
-          icon={<Photo style={{ color: value === 0 ? 'white' : '' }} />}
-          label="PHOTOS"
-          selected={value === 0}
-          style={{ color: value === 0 ? 'white' : '' }}
-        />
-        <Tab
-          icon={<PhotoLibraryIcon style={{ color: value === 1 ? 'white' : '' }} />}
-          label="ALBUMS"
-          selected={value === 1}
-          style={{ color: value === 1 ? 'white' : '' }}
-        />
-        <Tab
-          icon={<YouTubeIcon style={{ color: value === 2 ? 'white' : '' }} />}
-          label="VIDEOS"
-          selected={value === 2}
-          style={{ color: value === 2 ? 'white' : '' }}
-        />
-      </Tabs>
-      <div className='Photos'>
-        {value === 0 ? (
-          <div className={`imageBox ${value === 0 ? '' : 'blur-background'}`}>
-            <div className='images-container'>
-              {renderImages(PhotoSlides)}
-            </div>
-            <Lightbox
-              plugins={[Captions, Fullscreen, Zoom, Thumbnails]}
-              captions={{
-                showToggle: true,
-                descriptionTextAlign: 'end',
-              }}
-              index={index}
-              open={index >= 0}
-              close={() => setIndex(-1)}
-              slides={PhotoSlides} // Pass slides data to Lightbox
-            />
-          </div>
-        ) : null}
-        {value === 1 ? (
-          <div className={`imageBox ${value === 1 ? '' : 'blur-background'}`}>
-            <div className='images-container'>
-              {renderImages(AlbumSlides)} {/* Render images from Album component */}
-            </div>
-            <Lightbox
-              plugins={[Captions, Fullscreen, Zoom, Thumbnails]}
-              captions={{
-                showToggle: true,
-                descriptionTextAlign: 'end',
-              }}
-              index={index}
-              open={index >= 0}
-              close={() => setIndex(-1)}
-              slides={AlbumSlides} // Pass slides data from Album component to Lightbox
-            />
-          </div>
-        ) : null}
-        {value === 2 ? (
-          <div className={`imageBox ${value === 2 ? '' : 'blur-background'}`}>
-            <div className='videos-container'>
-              {renderVideos()}
-            </div>
-          </div>
-        ) : null}
-        <Box display="flex" justifyContent="center">
-          <Pagination
-            count={Math.ceil(PhotoSlides.length / itemsPerPage)}
-            page={page}
-            onChange={handlePaginationChange}
+    <div className="gallery__container">
+      <div className='gallery'>
+        <Tabs
+          value={value}
+          onChange={handleChange}
+          aria-label="icon label tabs example"
+          TabIndicatorProps={{
+            style: {
+              display: 'none',
+            },
+          }}
+          sx={{
+            '.MuiTabs-flexContainer': {
+              justifyContent: 'flex-end',
+            },
+          }}
+        >
+          <Tab
+            icon={<Photo style={{ color: value === 0 ? 'white' : '' }} />}
+            label="PHOTOS"
+            selected={value === 0}
+            style={{ color: value === 0 ? 'white' : '' }}
           />
-        </Box>
+          <Tab
+            icon={<PhotoLibraryIcon style={{ color: value === 1 ? 'white' : '' }} />}
+            label="ALBUMS"
+            selected={value === 1}
+            style={{ color: value === 1 ? 'white' : '' }}
+          />
+          <Tab
+            icon={<YouTubeIcon style={{ color: value === 2 ? 'white' : '' }} />}
+            label="VIDEOS"
+            selected={value === 2}
+            style={{ color: value === 2 ? 'white' : '' }}
+          />
+        </Tabs>
+        <div className='Photos'>
+          {value === 0 ? (
+            <div className={`imageBox ${value === 0 ? '' : 'blur-background'}`}>
+              <div className='images-container'>
+                {renderImages(PhotoSlides)}
+              </div>
+              <Lightbox
+                plugins={[Captions, Fullscreen, Zoom, Thumbnails]}
+                captions={{
+                  showToggle: true,
+                  descriptionTextAlign: 'end',
+                }}
+                index={index}
+                open={index >= 0}
+                close={() => setIndex(-1)}
+                slides={PhotoSlides} // Pass slides data to Lightbox
+              />
+            </div>
+          ) : null}
+          {value === 1 ? (
+            <div className={`imageBox ${value === 1 ? '' : 'blur-background'}`}>
+              <div className='images-container'>
+                {renderImages(AlbumSlides)} {/* Render images from Album component */}
+              </div>
+              <Lightbox
+                plugins={[Captions, Fullscreen, Zoom, Thumbnails]}
+                captions={{
+                  showToggle: true,
+                  descriptionTextAlign: 'end',
+                }}
+                index={index}
+                open={index >= 0}
+                close={() => setIndex(-1)}
+                slides={AlbumSlides} // Pass slides data from Album component to Lightbox
+              />
+            </div>
+          ) : null}
+          {value === 2 ? (
+            <div className={`imageBox ${value === 2 ? '' : 'blur-background'}`}>
+              <div className='videos-container'>
+                {renderVideos()}
+              </div>
+            </div>
+          ) : null}
+          <Box display="flex" justifyContent="center">
+            <Pagination
+              count={Math.ceil(PhotoSlides.length / itemsPerPage)}
+              page={page}
+              onChange={handlePaginationChange}
+            />
+          </Box>
+        </div>
       </div>
     </div>
   );

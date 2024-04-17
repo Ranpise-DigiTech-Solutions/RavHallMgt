@@ -83,7 +83,7 @@ router.post('/registerHall', async (req, res) => {
         return res.status(404).json({message: "Required Fields missing in the Request body!!"});
     }
 
-    const { hallRegisterDocument, hallImages, ...hallData } = req.body;
+    const { hallRegisterDocument, hallImages, hallParking, ...hallData } = req.body;
     const userId = req.query.userId;
     let hallRegisterDocumentUrl = "";
     const hallImagesUrl = [];
@@ -96,6 +96,9 @@ router.post('/registerHall', async (req, res) => {
             hallRegisterDocumentUrl = await getDownloadURL(hallRegisterDocumentRef);
         }
 
+        console.log("ENTERED0")
+        console.log("ENTERED0")
+
         if(hallImages || hallImages.length !== 0) {
             for (const hallImage of hallImages) {
                 await uploadBytes(hallImagesRef ,hallImage);
@@ -106,6 +109,7 @@ router.post('/registerHall', async (req, res) => {
 
         const postBody = {
             ...hallData,
+            hallParking: hallParking === "AVAILABLE", 
             hallRegisterDocument: hallRegisterDocumentUrl,
             hallImages: hallImagesUrl
         }
@@ -115,10 +119,12 @@ router.post('/registerHall', async (req, res) => {
         if(!newDocument) {
             return res.status(409).json({message: "Request couldn't be processed due to conflict in current resource!"})
         }
+        console.log(newDocument);
 
         const savedDocument = await newDocument.save();
         return res.status(200).json(savedDocument);
     } catch(err) {
+        console.log(err.message);
         return res.status(500).json(err);
     }
 });

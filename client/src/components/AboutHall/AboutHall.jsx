@@ -15,7 +15,7 @@ const AboutHall = () => {
           <br />
           Partnering with luxurious hospitality services, and accompanied by state-of-the-art facilities, the TMA Pai International Convention Centre is an extravagant one place stop for all your requirements.
           <br />
-          <br />s
+          <br />
         </p>
       </div>
     </div>

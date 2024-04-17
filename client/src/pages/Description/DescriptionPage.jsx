@@ -2,18 +2,22 @@ import { useEffect, useState } from 'react'
 // import { useHistory } from 'react-router-dom';
 import axios from "axios";
 import { useLocation } from 'react-router-dom';
-import { NavBar,Footer } from '../../components'
-import AboutPage from '../../components/AboutHall/AboutHall'
-import Testimonials from '../../components/Testimonials/Testimonials'
-import VenueSummary from '../../components/VenueSummary/venueSummary'
-import Location from '../../components/Location/Location'
-import FAQ from '../../components/FAQ/Faq'
-import HallDescription from '../../components/HallDescription/HallDescription'
+import {
+  NavBar,
+  Footer,
+  AboutPage,
+  Testimonials,
+  VenueSummary,
+  FAQ,
+  HallDescription,
+  Location,
+  HallInformation,
+  Gallery,
+  AvailabilityCalendar,
+  AdditionalVendorDetails
+} from '../../components'
 
 import './DescriptionPage.scss'
-import Gallery from '../../components/Gallery/Gallery'
-import HallInformation from '../../components/HallInformation/HallInformation'
-import AvailabilityCalendar from '../../components/AvailabilityCalendar/AvailabilityCalendar';
 import { LoadingScreen } from '../../sub-components';
 
 export default function DescriptionPage() {
@@ -51,13 +55,17 @@ export default function DescriptionPage() {
         <NavBar />
         <div className='DescriptionPage__container'>
           <div className="main__wrapper">
-            <div className="column1">
-              <HallDescription hallData={hallData}/>
-              <AvailabilityCalendar hallData={hallData} />
-              <AboutPage />
-              <Gallery />
+            <div className="sub-wrapper">
+              <div className="column1">
+                <HallDescription hallData={hallData}/>
+                <AvailabilityCalendar hallData={hallData} />
+                <AboutPage />
+              </div>
+              <div className="column2">
+                <AdditionalVendorDetails />
+              </div>
             </div>
-            <div className="column2"></div>
+            <Gallery />
             <HallInformation />
             <VenueSummary />
             <Testimonials />

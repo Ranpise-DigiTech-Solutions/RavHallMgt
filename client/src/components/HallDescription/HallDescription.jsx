@@ -35,7 +35,7 @@ const Slider = ({ hallData }) => {
   return (
     <>
       <div className="hallDescription__container">
-        <div className="slider">
+        <div className="slider__wrapper">
           <Carousel
             responsive={responsive}
             dotListClass="custom-dot-list-style"
@@ -71,7 +71,7 @@ const Slider = ({ hallData }) => {
             edit={false}
           />
 
-          <Button
+          {/* <Button
             variant="contained"
             className="button"
             sx={{
@@ -82,7 +82,24 @@ const Slider = ({ hallData }) => {
             }}
           >
             Book Now
-          </Button>
+          </Button> */}
+          <div className="menu__wrapper">
+            <div className="photosMenu menuOption">
+              <p>10 Photos</p>
+            </div>
+            <div className="verticalLine"></div>
+            <div className="favouriteMenu menuOption">
+              <p>Shortlist</p>
+            </div>
+            <div className="verticalLine"></div>
+            <div className="reviewMenu menuOption">
+              <p>Write a Review</p>
+            </div>
+            <div className="verticalLine"></div>
+            <div className="shareMenu">
+              <p>Share</p>
+            </div>
+          </div>
         </div>
       </div>
     </>
