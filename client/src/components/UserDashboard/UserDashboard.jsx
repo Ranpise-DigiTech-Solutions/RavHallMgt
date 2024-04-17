@@ -23,16 +23,17 @@ export default function UserDashboard({ setActiveComponent }) {
         <span className="ml-2 text-sm font-bold">EventifyConnect</span>
       </a>
       <div className="w-full px-2">
-        <MenuSection title="Dashboard">
+        <MenuSection>
+        <MenuItem icon={<HeartIcon />} text="Dashboard" />
+        <MenuItem icon={<ProfileIcon />} text="View Profile" />
           <MenuItem icon={<HeartIcon />} text="Favorites" />
           <MenuItem icon={<CartIcon />} text="Your Cart" />
-          <MenuItem icon={<HistoryIcon />} text="Order History" />
+          <MenuItem icon={<HistoryIcon />} text="Booking History" />
           <MenuItem
             icon={<BellIcon />}
             text="Notifications"
             onClick={() => handleItemClick("Notification")}
           />
-          <MenuItem icon={<HelpIcon />} text="Help and Support" />
           <MenuItem icon={<SettingsIcon />} text="Settings" />
         </MenuSection>
       </div>
@@ -138,14 +139,15 @@ function MenuItem({ icon, text, onClick }) {
   );
   
   
-  const HelpIcon = () => (
-    <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12.5 13C12.5 11 14 11.5 14 10C14 9.34375 13.5 8.5 12.5 8.5C11.5 8.5 11 9 10.5 9.5M12.5 16V14.5M20.5 12.5C20.5 16.9183 16.9183 20.5 12.5 20.5C8.08172 20.5 4.5 16.9183 4.5 12.5C4.5 8.08172 8.08172 4.5 12.5 4.5C16.9183 4.5 20.5 8.08172 20.5 12.5Z" />
-    </svg>
-  );
   
   const SettingsIcon = () => (
     <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.195 12.155c-.036-.255-.08-.512-.135-.765l1.938-1.507c.34-.263.418-.739.178-1.1l-1.954-3.386a.724.724 0 00-.726-.377l-2.426.196c-.295-.222-.61-.409-.947-.556l-.372-2.54A.724.724 0 0013.75 2h-3.5a.724.724 0 00-.725.648l-.372 2.54c-.337.147-.652.334-.947.556l-2.426-.196a.724.724 0 00-.726.377l-1.953 3.386a.724.724 0 00.178 1.1l1.938 1.507c-.055.253-.099.51-.135.765l-1.938 1.507c-.34.263-.418.739-.178 1.1l1.954 3.386c.154.267.415.437.726.377l2.426-.196c.294.222.609.409.947.556l.372 2.54c.05.343.343.601.695.601h3.5c.352 0 .645-.258.695-.601l.372-2.54c.337-.147.652-.334.947-.556l2.426.196c.311.026.572-.11.726-.377l1.954-3.386c.24-.36.162-.837-.178-1.1l-1.938-1.507zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+    </svg>
+  );
+
+  const ProfileIcon = () => (
+    <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z"/><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
     </svg>
   );
