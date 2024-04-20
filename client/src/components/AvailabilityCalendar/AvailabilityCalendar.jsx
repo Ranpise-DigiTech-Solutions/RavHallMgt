@@ -1,15 +1,21 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import DatePicker from "react-datepicker";
 import PropTypes from "prop-types";
 import { motion } from "framer-motion";
+import { useSelector, useDispatch } from "react-redux";
+
+import Tooltip from "@mui/material/Tooltip";
+import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 import "./AvailabilityCalendar.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-carousel/lib/styles.css";
 
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
+import { bookingInfoActions } from "../../states/BookingInfo";
 
 export default function AvailabilityCalendar({ hallData }) {
   const timeSlots = {
@@ -47,27 +53,29 @@ export default function AvailabilityCalendar({ hallData }) {
     Saturday: { date: "", timeSlots: { ...timeSlots } },
     Sunday: { date: "", timeSlots: { ...timeSlots } },
   };
-  console.log("CALENDAR", calendar)
+  console.log("CALENDAR", calendar);
   const [availabilityCalendar, setAvailabilityCalendar] = useState(calendar);
   const containerRef = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
   const [startDateOfWeek, setStartDateOfWeek] = useState(null);
   const [endDateOfWeek, setEndDateOfWeek] = useState(null);
 
+  const dispatch = useDispatch();
+  const bookingInfoStore = useSelector((state) => state.bookingInfo);
+
   const startOfWeek = (date) => {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
     return new Date(d.setDate(diff));
-};
+  };
 
-const endOfWeek = (date) => {
+  const endOfWeek = (date) => {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? 0 : 7); // Adjust for Sunday
     return new Date(d.setDate(diff));
-};
-
+  };
 
   function getDayOfWeek(date) {
     const daysOfWeek = [
@@ -144,7 +152,7 @@ const endOfWeek = (date) => {
             console.log(dayOfWeek);
             const bookingDuration = booking.bookingDuration;
             for (var i = 0; i < bookingDuration; i++) {
-              const hour = ( bookingHour + i ) % 24;
+              const hour = (bookingHour + i) % 24;
               console.log("HOUR" + hour);
               tempCalendar[dayOfWeek]["timeSlots"][hour] = true;
             }
@@ -159,9 +167,43 @@ const endOfWeek = (date) => {
     }
   };
 
+  const formatBookingDate = (date) => {
+    // yyyy-mm-dd to dd/mm/yyyy
+    const [year, month, day] = date.split("-");
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatDate = (date) => {
+    // new Date()  to  dd/mm/yyyy
+    const dateObject = new Date(date);
+    const day = String(dateObject.getDate()).padStart(2, "0");
+    const month = String(dateObject.getMonth() + 1).padStart(2, "0");
+    const year = dateObject.getFullYear();
+
+    return `${day}/${month}/${year}`;
+  };
+
+  const formatBookingTime = (time) => {
+    const [HH, MM] = time.split(":");
+    return parseInt(`${HH}`);
+  };
+
+  const isSelectedSlot = (timeSlot) => {
+    if(!bookingInfoStore.startTime || !bookingInfoStore.endTime) {
+      return;
+    }
+    const formattedStartTime = formatBookingTime(bookingInfoStore.startTime);
+    const formattedEndTime = formatBookingTime(bookingInfoStore.endTime);
+    if (formattedEndTime < formattedStartTime) {
+      return timeSlot >= formattedStartTime || timeSlot < formattedEndTime;
+    } else {
+      return timeSlot >= formattedStartTime && timeSlot < formattedEndTime;
+    }
+  };
+
   useEffect(() => {
     if (startDate) {
-      console.log("CHECK0" + startDate)
+      console.log("CHECK0" + startDate);
       setStartDateOfWeek(startOfWeek(startDate));
       setEndDateOfWeek(endOfWeek(startDate));
     }
@@ -174,6 +216,69 @@ const endOfWeek = (date) => {
       getAvailability();
     }
   }, [startDateOfWeek, endDateOfWeek]);
+
+  useEffect(() => {
+    try {
+      const bookingDate = bookingInfoStore.bookingDate;
+      if (!bookingDate) {
+        const [dd, mm, yyyy] = formatDate(startDate).split("/");
+        dispatch(bookingInfoActions("bookingDate", `${yyyy}-${mm}-${dd}`));
+        dispatch(bookingInfoActions("bookingDay", getDayOfWeek(startDate)));
+        return;
+      }
+      const newFormatBookingDate = formatBookingDate(bookingDate);
+
+      for (const day in availabilityCalendar) {
+        if (availabilityCalendar[day].date === newFormatBookingDate) {
+          return;
+        }
+      }
+      
+      setStartDate(bookingInfoStore.bookingDate);
+    } catch (error) {
+      console.error(error.message);
+    }
+  }, [bookingInfoStore.bookingDate]);
+
+  useEffect(()=> {
+    if(!bookingInfoStore.startTime || !bookingInfoStore.endTime) {
+      return;
+    }
+    try {
+        var i;
+        const bookingStartTime = parseInt(bookingInfoStore.startTime?.substring(0, 2));
+        const bookingEndTime = parseInt(bookingInfoStore.endTime?.substring(0, 2));
+        const bookingData = availabilityCalendar[bookingInfoStore.bookingDay]["timeSlots"];
+      console.log("bookingStartTime " + bookingStartTime);
+      console.log("bookingEndTime " + bookingEndTime);
+      console.log("bookingData " + bookingData);
+
+      if(bookingEndTime < bookingStartTime) {
+        for(i=bookingStartTime; i<24; i++) {
+          if(bookingData[i]) {
+            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            return;
+          }
+        }
+        for(i=0; i<bookingEndTime; i++) {
+          if(bookingData[i]) {
+            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            return;
+          }
+        }
+      } else {
+        for(i=bookingStartTime; i<bookingEndTime; i++) {
+          if(bookingData[i]) {
+            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            return;
+          }
+        }
+      }
+      dispatch(bookingInfoActions("errorInfo", ""));
+    } catch(error) {
+      console.error(error.message);
+    }
+  }, [bookingInfoStore.startTime, bookingInfoStore.endTime])
 
   // eslint-disable-next-line no-unused-vars
   const rearrangeContent = () => {
@@ -203,7 +308,7 @@ const endOfWeek = (date) => {
   //     });
   //   }
   // };
-  
+
   // useEffect(() => {
   //   const container = containerRef.current;
   //   // Add scroll event listener
@@ -213,7 +318,7 @@ const endOfWeek = (date) => {
   //     container.removeEventListener('scroll', rearrangeContent);
   //   };
   // }, []); // Run only once on component mount
-  
+
   const handlePrevWeek = () => {
     setAvailabilityCalendar(calendar);
     setStartDate((prevStartDate) => {
@@ -232,17 +337,32 @@ const endOfWeek = (date) => {
     });
   };
 
-  // Other JSX and handlers
+  const handleDateChange = (date, day) => {
+    const [dd, mm, yyyy] = date.split("/");
+    dispatch(bookingInfoActions("bookingDate", `${yyyy}-${mm}-${dd}`));
+    dispatch(bookingInfoActions("bookingDay", day));
+  };
+
+  const handleTimeChange = (time, isBooked) => {
+    const endTime = parseInt(time) < 23 ? parseInt(time) + 1 : "00";
+    dispatch(bookingInfoActions("startTime", `${time.toString().padStart(2, '0')}:00`));
+    dispatch(bookingInfoActions("endTime", `${endTime.toString().padStart(2, '0')}:00`));
+    
+    // if(isBooked) {
+    //   dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"))
+    //   return;
+    // }
+
+    // dispatch(bookingInfoActions("errorInfo", ""))
+  };
 
   return (
     <div className="availabilityCalendar__wrapper">
-      <h2 className="heading">
-        Availability Calander
-      </h2>
+      <h2 className="heading">Availability Calander</h2>
       <div className="contents__wrapper">
         <div className="seven-day-date-picker">
           <div className="arrow" onClick={handlePrevWeek}>
-            <FaChevronLeft />
+            <FaChevronLeft className="icon" />
           </div>
           <div className="date-range">
             {/* <DatePicker
@@ -293,7 +413,7 @@ const endOfWeek = (date) => {
             </span>
           </div>
           <div className="arrow" onClick={handleNextWeek}>
-            <FaChevronRight />
+            <FaChevronRight className="icon" />
           </div>
         </div>
         <div className="days__wrapper">
@@ -313,8 +433,19 @@ const endOfWeek = (date) => {
               if (!dayInfo) return null; // Skip rendering if dayInfo is null or undefined
 
               return (
-                <div key={day} className="sub-wrapper">
-                  <div className="sub-title">{dayInfo.date.substring(0, 5)}</div>
+                <div
+                  key={day}
+                  className={`sub-wrapper ${
+                    (bookingInfoStore.bookingDate
+                      ? dayInfo.date ===
+                        formatBookingDate(bookingInfoStore.bookingDate)
+                      : dayInfo.date === formatDate(startDate)) &&
+                    "currentSelection"
+                  }`}
+                >
+                  <div className="sub-title">
+                    {dayInfo.date.substring(0, 5)}
+                  </div>
                   <div className="title">{day}</div>
                 </div>
               );
@@ -347,18 +478,50 @@ const endOfWeek = (date) => {
                   animate={{ opacity: 1 }} // Animation when component enters the DOM
                   exit={{ opacity: 0 }} // Animation when component exits the DOM
                   transition={{ duration: 0.5 }} // Animation duration
+                  onClick={() => handleDateChange(dayInfo.date, day)}
                 >
-                  <div className="timeSlots__wrapper">
+                  <div
+                    className={`timeSlots__wrapper ${
+                      (bookingInfoStore.bookingDate
+                        ? dayInfo.date ===
+                          formatBookingDate(bookingInfoStore.bookingDate)
+                        : dayInfo.date === formatDate(startDate)) &&
+                      "currentSelection"
+                    }`}
+                  >
                     {Object.entries(dayInfo.timeSlots).map(
                       ([timeSlot, isBooked]) => (
-                        <div key={timeSlot} className="time-slot">
-                          {
-                            isBooked && 
-                          <span className="unAvailableSlot">
-                            NA
-                          </span>
+                        <Tooltip
+                          key={timeSlot}
+                          title={
+                            isBooked
+                              ? "This slot is already booked!"
+                              : "This slot is currently available!"
                           }
-                        </div>
+                          placement="top"
+                          enterDelay={1500} 
+                          leaveDelay={0}
+                        >
+                          <div
+                            className={`time-slot ${
+                              bookingInfoStore.startTime &&
+                              bookingInfoStore.endTime &&
+                              dayInfo.date === formatBookingDate(bookingInfoStore.bookingDate) &&
+                              isSelectedSlot(timeSlot) &&
+                              "selectedTimeSlot"
+                            }`}
+                            onClick={() => handleTimeChange(timeSlot, isBooked)}
+                          >
+                            {isBooked ? (
+                              <span className="unAvailableSlot">NA</span>
+                            ) : (
+                              <span className="availableSlot">Book</span>
+                            )}
+                            <span className="selectedSlot">
+                              <CheckCircleOutlineIcon className="icon"/>
+                            </span>
+                          </div>
+                        </Tooltip>
                       )
                     )}
                   </div>
