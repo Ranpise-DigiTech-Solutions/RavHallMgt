@@ -1,0 +1,83 @@
+.user-dashboard {
+    position: fixed;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80px;
+    overflow: hidden;
+    color: #ccc;
+    background-color: #333;
+    border-radius: 8px;
+  
+    .logo-container {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 0.75rem;
+      text-decoration: none;
+      color: inherit;
+  
+      .logo {
+        margin-right: 0.5rem;
+      }
+    }
+  
+    .menu-section {
+      width: 100%;
+      padding: 0.5rem;
+      border-top: 1px solid #555;
+      margin-top: 0.75rem;
+  
+      .menu-item {
+        cursor: pointer;
+  
+        a {
+          display: flex;
+          align-items: center;
+          width: 100%;
+          height: 3rem;
+          padding: 0.5rem;
+          margin-top: 0.25rem;
+          border-radius: 0.25rem;
+          transition: background-color 0.2s, color 0.2s;
+  
+          &:hover {
+            background-color: #444;
+            color: #ddd;
+          }
+  
+          svg {
+            margin-right: 0.5rem;
+          }
+        }
+      }
+    }
+  
+    .logout-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 3rem;
+      margin-top: auto;
+      background-color: #444;
+      color: #ccc;
+      text-decoration: none;
+      border-radius: 0 0 8px 8px;
+      transition: background-color 0.2s, color 0.2s;
+  
+      svg {
+        stroke: currentColor;
+      }
+  
+      &:hover {
+        background-color: #333;
+        color: #ddd;
+      }
+    }
+  }
+  

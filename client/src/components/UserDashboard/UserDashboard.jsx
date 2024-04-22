@@ -8,23 +8,16 @@ export default function UserDashboard({ setActiveComponent }) {
     logo: logoImage,
   };
   return (
-    <div className="fixed top-0 left-0 bottom-0 flex flex-col items-center w-80 overflow-hidden text-gray-400 bg-gray-900 rounded">
+    <div className="fixed top-0 left-0 bottom-0 flex flex-col items-center w-80 overflow-hidden text-gray-400 bg-gray-900 rounded text-m">
       <a className="flex items-center w-full px-3 mt-3" href="#">
-        {/* <svg
-          className="w-8 h-8 fill-current"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 20 20"
-          fill="currentColor"
-        >
-          <path d="M11 17a1 1 0 001.447.894l4-2A1 1 0 0017 15V9.236a1 1 0 00-1.447-.894l-4 2a1 1 0 00-.553.894V17zM15.211 6.276a1 1 0 000-1.788l-4.764-2.382a1 1 0 00-.894 0L4.789 4.488a1 1 0 000 1.788l4.764 2.382a1 1 0 00.894 0l4.764-2.382zM4.447 8.342A1 1 0 003 9.236V15a1 1 0 00.553.894l4 2A1 1 0 009 17v-5.764a1 1 0 00-.553-.894l-4-2z" />
-        </svg> */}
+       
       <img width={50} src={Images.logo} alt="logo" className="logo" />
 
-        <span className="ml-2 text-sm font-bold">EventifyConnect</span>
+        <span className="ml-2  font-bold">EventifyConnect</span>
       </a>
       <div className="w-full px-2">
         <MenuSection>
-        <MenuItem icon={<HeartIcon />} text="Dashboard" />
+        <MenuItem icon={<DashboardIcon />} text="Dashboard" />
         <MenuItem icon={<ProfileIcon />} text="View Profile" />
           <MenuItem icon={<HeartIcon />} text="Favorites" />
           <MenuItem icon={<CartIcon />} text="Your Cart" />
@@ -90,6 +83,13 @@ function MenuItem({ icon, text, onClick }) {
     </svg>
   );
   
+  
+const DashboardIcon=() =>(
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
+</svg>
+); 
+
   const CartIcon = () => (
     <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.2998 5H22L20 12H8.37675M21 16H9L7 3H4M4 8H2M5 11H2M6 14H2M10 20C10 20.5523 9.55228 21 9 21C8.44772 21 8 20.5523 8 20C8 19.4477 8.44772 19 9 19C9.55228 19 10 19.4477 10 20ZM21 20C21 20.5523 20.5523 21 20 21C19.4477 21 19 20.5523 19 20C19 19.4477 19.4477 19 20 19C20.5523 19 21 19.4477 21 20Z" />
@@ -151,3 +151,4 @@ function MenuItem({ icon, text, onClick }) {
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z"/><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
     </svg>
   );
+  
