@@ -1,27 +1,31 @@
 
 .userProfilePage {
-    height: 100vh;
-    color: white;
+  height: 142rem;
+  color: white;
+  background-color: rgb(0, 0, 0);
+  position: relative;
 
-    .rightPanel {
-      top: 2rem;
-      right: 8rem;
-      width: 78rem;
-      position: absolute; // Position it relative to the .userProfilePage container
-    }
+  .rightPanel {
+    top: 2rem;
+    right: 8rem;
+    width: 78rem;
+    position: absolute;
   }
- 
-  
+
+
+  /* Styles for the Ant Design Drawer */
   :where(.css-dev-only-do-not-override-42nv3w).ant-drawer .ant-drawer-body {
     padding: 0;
   }
-  .ant-drawer-close{
+
+  .ant-drawer-close {
     position: absolute;
     right: 0;
     top: 1rem;
-
   }
-  .anticon svg
-  {
+
+  .anticon svg {
     color: white;
   }
+}
+

@@ -5,6 +5,7 @@ import React,{useState} from 'react';
 import UserDashboard from '../../components/UserDashboard/UserDashboard';
 import Notification from '../../components/Notification/Notification';
 import ProfileForm from '../../components/ProfileForm/ProfileForm';
+import HallForm from '../../components/HallForm/HallForm';
 
 const UserProfile = () => {
   // State to manage which component is currently active/selected
@@ -19,17 +20,21 @@ const UserProfile = () => {
       case 'settings':
         return <UserSettings />;
       default:
-        return <ProfileForm />;
+        // return <ProfileForm />;
+        return <HallForm />
     }
   };
 
   return (
-    <div className="userProfilePage">
+    <div className='userprofile'>
+    <div className="userProfilePage" >
       <UserDashboard setActiveComponent={setActiveComponent} />
       <div className="rightPanel">
         {renderComponent()}
       </div>
     </div>
+    </div>
+
   );
 };
 

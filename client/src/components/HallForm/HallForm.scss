@@ -33,6 +33,9 @@
       color: black;
       font-size: 1rem;
     }
+    textarea{
+        height: 300px;
+    }
 
     input[type="text"],
     input[type="number"],
@@ -47,7 +50,10 @@
       border: 1px solid #ccc;
       box-sizing: border-box;
       background-color: rgb(172, 170, 170);
-      cursor: pointer; /* Adjust cursor as needed */
+      cursor: pointer;
+      color: black;
+      font-family: "Platypi", serif;
+      font-weight: bold;
 
       &:focus {
         outline: none;
@@ -63,15 +69,15 @@
   .save-button {
     padding: 0.5rem 1rem;
     font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
+    background-color: #007bff; /* Blue button color */
+    color: #fff; /* White text color */
     border: none;
     border-radius: 5px;
     cursor: pointer;
     transition: background-color 0.3s ease;
 
     &:hover {
-      background-color: #0056b3;
+      background-color: #0056b3; /* Darker blue on hover */
     }
   }
 }
