@@ -245,6 +245,31 @@ export default function AvailabilityCalendar({ hallData }) {
       return;
     }
     try {
+      // code to calculate the different between the time slots
+      // Parse the start time and end time strings into Date objects
+      const startTime = new Date(`2000-01-01T${bookingInfoStore.startTime}:00`);
+      const endTime = new Date(`2000-01-01T${bookingInfoStore.endTime}:00`);
+      
+      // Calculate the time difference in milliseconds
+      let timeDifference = endTime - startTime;
+      
+      // Handle the case where end time is earlier than start time (crosses midnight)
+      if (timeDifference < 0) {
+        const midnight = new Date(`2000-01-02T00:00:00`);
+        timeDifference = midnight - startTime + (endTime - midnight);
+      }
+
+      // Convert the time difference from milliseconds to hours and minutes
+      const hours = Math.floor(timeDifference / (1000 * 60 * 60));
+      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+
+      // Format the time difference into a string representation
+      const timeDifferenceStr = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
+
+      dispatch(bookingInfoActions("bookingDuration", timeDifferenceStr));
+
+
+      // code to check if there are any clashes with the existing bookings 
         var i;
         const bookingStartTime = parseInt(bookingInfoStore.startTime?.substring(0, 2));
         const bookingEndTime = parseInt(bookingInfoStore.endTime?.substring(0, 2));
@@ -254,6 +279,7 @@ export default function AvailabilityCalendar({ hallData }) {
       console.log("bookingData " + bookingData);
 
       if(bookingEndTime < bookingStartTime) {
+        //check if there already exists a booking for that slot
         for(i=bookingStartTime; i<24; i++) {
           if(bookingData[i]) {
             dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));

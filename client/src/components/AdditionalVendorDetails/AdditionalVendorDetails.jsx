@@ -1,5 +1,6 @@
 import "./AdditionalVendorDetails.scss";
 import { useSelector, useDispatch } from "react-redux";
+import PropTypes from 'prop-types';
 
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import KeyboardArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft';
@@ -41,7 +42,9 @@ const similarVendorsData = [
     },
 ]
 
-export default function AdditionalVendorDetails() {
+export default function AdditionalVendorDetails({
+    handleBookingDetailsDialogOpen
+}) {
 
     const dispatch = useDispatch();
     const bookingInfoStore = useSelector((state) => state.bookingInfo);
@@ -190,7 +193,7 @@ export default function AdditionalVendorDetails() {
                     <div className="input">
                         <input 
                             type="date"
-                            value={bookingInfoStore.bookingDate}
+                            value={bookingInfoStore?.bookingDate}
                             placeholder="dd/mm/yyyy"
                             onChange={handleBookingDateChange}
                         />
@@ -204,7 +207,7 @@ export default function AdditionalVendorDetails() {
                         <input 
                             type="time"
                             placeholder="dd/mm/yyyy"
-                            value={bookingInfoStore.startTime}
+                            value={bookingInfoStore?.startTime}
                             onChange={handleBookingStartTimeChange}
                         />
                     </div>
@@ -216,7 +219,7 @@ export default function AdditionalVendorDetails() {
                     <div className="input">
                         <input 
                             type="time"
-                            value={bookingInfoStore.endTime}
+                            value={bookingInfoStore?.endTime}
                             placeholder="dd/mm/yyyy"
                             onChange={handleBookingEndTimeChange}
                         />
@@ -224,23 +227,27 @@ export default function AdditionalVendorDetails() {
                 </div>
                 <div className="wrapper">
                     <p className="inputTitle">
-                        Total Hours
+                        Booking Duration
                     </p>
                     <div className="input__wrapper">
                         <div className="sub-wrapper">
                             <label htmlFor="hoursInput" className="label">Hours:</label>
                             <input
                                 type="number"
-                                className="sub-input"
                                 name="hoursInput"
+                                value={parseInt(bookingInfoStore?.bookingDuration.substring(0, 2))}
+                                className="sub-input"
+                                disabled
                             />
                         </div>
                         <div className="sub-wrapper">
                             <label htmlFor="minutesInput" className="label">Minutes:</label>
                             <input
                                 type="number"
-                                className="sub-input"
                                 name="minutesInput"
+                                value={parseInt(bookingInfoStore?.bookingDuration.substring(3, 5))}
+                                className="sub-input"
+                                disabled
                             />
                         </div>
                     </div>
@@ -258,7 +265,10 @@ export default function AdditionalVendorDetails() {
                     <button className="btn">
                         Check Slot
                     </button>
-                    <button className="btn">
+                    <button 
+                        className="btn"
+                        onClick={handleBookingDetailsDialogOpen}
+                    >
                         Book Now
                     </button>
                 </div>
@@ -271,4 +281,8 @@ export default function AdditionalVendorDetails() {
         </div>
     </div>
   );
+}
+
+AdditionalVendorDetails.propTypes = {
+    handleBookingDetailsDialogOpen: PropTypes.func.isRequired
 }

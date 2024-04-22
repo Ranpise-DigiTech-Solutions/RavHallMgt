@@ -20,3 +20,4 @@ export {default as Gallery} from './Gallery/Gallery';
 export {default as HallInformation} from './HallInformation/HallInformation';
 export {default as AvailabilityCalendar} from './AvailabilityCalendar/AvailabilityCalendar';
 export {default as AdditionalVendorDetails} from './AdditionalVendorDetails/AdditionalVendorDetails';
+export {default as BookingDetailsDialog} from './BookingDetailsDialog/BookingDetailsDialog';

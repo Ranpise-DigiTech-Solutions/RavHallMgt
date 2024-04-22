@@ -14,7 +14,8 @@ import {
   HallInformation,
   Gallery,
   AvailabilityCalendar,
-  AdditionalVendorDetails
+  AdditionalVendorDetails,
+  BookingDetailsDialog
 } from '../../components'
 
 import './DescriptionPage.scss'
@@ -28,7 +29,16 @@ export default function DescriptionPage() {
 
   const [hallData, setHallData] = useState({});
   const [isLoading, setIsLoading] = useState(true);
+  const [openBookingDetailsDialog, setOpenBookingDetailsDialog] = useState(false);
   
+  const handleBookingDetailsDialogOpen = ()=> {
+    setOpenBookingDetailsDialog(true);
+  }
+
+  const handleBookingDetailsDialogClose = ()=> {
+    setOpenBookingDetailsDialog(false);
+  }
+
   useEffect(() => {
     try {
       const getData = async () => {
@@ -53,6 +63,10 @@ export default function DescriptionPage() {
     ) : (
       <>
         <NavBar />
+        <BookingDetailsDialog 
+          open={openBookingDetailsDialog}
+          handleClose={handleBookingDetailsDialogClose}
+        />
         <div className='DescriptionPage__container'>
           <div className="main__wrapper">
             <div className="sub-wrapper">
@@ -62,7 +76,9 @@ export default function DescriptionPage() {
                 <AboutPage />
               </div>
               <div className="column2">
-                <AdditionalVendorDetails />
+                <AdditionalVendorDetails 
+                  handleBookingDetailsDialogOpen={handleBookingDetailsDialogOpen} 
+                />
               </div>
             </div>
             <Gallery />
