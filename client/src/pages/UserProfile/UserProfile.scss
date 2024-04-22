@@ -2,13 +2,15 @@
 .userProfilePage {
     height: 100vh;
     color: white;
+
+    .rightPanel {
+      top: 2rem;
+      right: 8rem;
+      width: 78rem;
+      position: absolute; // Position it relative to the .userProfilePage container
+    }
   }
-  .rightPanel {
-    top: 2rem;
-    right: 8rem;
-    width: 78rem;
-    position: absolute; // Position it relative to the .userProfilePage container
-  }
+ 
   
   :where(.css-dev-only-do-not-override-42nv3w).ant-drawer .ant-drawer-body {
     padding: 0;
