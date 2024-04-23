@@ -19,6 +19,9 @@ import { searchBoxFilterActions } from "../../states/SearchBoxFilter";
 
 import "./SearchBar.scss";
 
+// TODO: change the way how eventTypes and vendorTypes are rendered - use both id and type... avoid querying for eventId when the search request is sent
+
+
 export default function SearchBar() {
   const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
   const [eventNotSelectedWarning, setEventNotSelectedWarning] = useState(false);

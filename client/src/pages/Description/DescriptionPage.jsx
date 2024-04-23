@@ -66,6 +66,7 @@ export default function DescriptionPage() {
         <BookingDetailsDialog 
           open={openBookingDetailsDialog}
           handleClose={handleBookingDetailsDialogClose}
+          hallData={hallData}
         />
         <div className='DescriptionPage__container'>
           <div className="main__wrapper">

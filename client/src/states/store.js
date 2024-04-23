@@ -4,7 +4,6 @@ import rootReducer from './RootReducer';
 
 const store = configureStore({
   reducer: rootReducer,
-  // middleware: [thunk]
 });
 
 export default store;

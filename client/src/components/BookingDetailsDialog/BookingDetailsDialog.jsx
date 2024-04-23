@@ -1,9 +1,16 @@
 import "./BookingDetailsDialog.scss";
 
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
+import Select from "react-select";
 
 import Dialog from "@mui/material/Dialog";
+import Button from "@mui/material/Button";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 import PersonIcon from "@mui/icons-material/Person";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
@@ -19,18 +26,98 @@ import EmailIcon from "@mui/icons-material/Email";
 import MessageIcon from "@mui/icons-material/Message";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import { FaLandmark, FaCar } from "react-icons/fa";
 import { GiSandsOfTime } from "react-icons/gi";
 
-export default function BookingDetailsDialog({ open, handleClose }) {
+export default function BookingDetailsDialog({ open, handleClose, hallData }) {
+  const dataStore = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
+  const bookingInfoStore = useSelector((state) => state.bookingInfo); // user Booking information
+  const userInfoStore = useSelector((state) => state.userInfo); // user Authentication information
+
   const [formProgress, setFormProgress] = useState(0);
   const [formType, setFormType] = useState("FORM_ONE"); // FORM_ONE, FORM_TWO, FORM_THREE, FORM_FOUR
+  const [submissionConfirmationDialog, setSubmissionConfirmationDialog] =
+    useState(false);
+
+  const customStyles = {
+    control: (provided, state) => ({
+      ...provided,
+      fontSize: "15px",
+      minHeight: "32px",
+      padding: 0,
+      margin: 0,
+      cursor: "pointer",
+      border: "none",
+      outline: "none",
+      boxShadow: state.isFocused ? "none" : provided.boxShadow,
+    }),
+    indicatorSeparator: () => ({
+      display: "none",
+    }),
+    dropdownIndicator: (provided) => ({
+      ...provided,
+      "& svg": {
+        display: "none", // Hide the default arrow icon
+      },
+      padding: 10,
+    }),
+    placeholder: (provided) => ({
+      ...provided,
+      color: "#999999", // Change the placeholder color here
+    }),
+  };
+
+  const bookingDetailsTemplate = {
+    eventTypeInfo: {
+      eventType: "",
+      eventTypeId: "",
+    },
+    guestsCount: null,
+    roomsCount: null,
+    parkingRequirement: {
+      label: "Yes",
+      value: true,
+    },
+    vehiclesCount: null,
+    expectedVegRate: null,
+    expectedNonVegRate: null,
+    vegMenu: [],
+    nonVegMenu: [],
+    catererRequirement: {
+      label: "Yes",
+      value: true,
+    },
+    customerSuggestion: "",
+  };
+
+  // object storing user's booking requirements
+  const [bookingDetails, setBookingDetails] = useState({
+    ...bookingDetailsTemplate,
+  });
+
+  const handleSubmissionConfirmationDialogOpen = () => {
+    setSubmissionConfirmationDialog(true);
+  };
+
+  const handleSubmissionConfirmationDialogClose = () => {
+    setSubmissionConfirmationDialog(false);
+  };
+
+  const handleBookingDetailsInfo = (key, value) => {
+    setBookingDetails((previousInfo) => ({
+      ...previousInfo,
+      [key]: value,
+    }));
+  };
+
+  console.log(hallData);
 
   const handlePrevBtnClick = () => {
     switch (formType) {
       case "FORM_ONE":
         break;
-        case "FORM_TWO":
+      case "FORM_TWO":
         setFormProgress(0);
         setFormType("FORM_ONE");
         break;
@@ -53,25 +140,78 @@ export default function BookingDetailsDialog({ open, handleClose }) {
         setFormProgress(25);
         setFormType("FORM_TWO");
         break;
-        case "FORM_TWO":
+      case "FORM_TWO":
         setFormProgress(50);
         // validateFormTwo();
         setFormType("FORM_THREE");
         break;
-        case "FORM_THREE":
+      case "FORM_THREE":
         setFormProgress(75);
         // validateFormThree();
         setFormType("FORM_FOUR");
         break;
       case "FORM_FOUR":
+        handleSubmissionConfirmationDialogOpen();
         break;
       default:
         break;
     }
   };
 
+  const handleFormSubmit = () => {
+    setFormType("FORM_ONE");
+    handleClose();
+    try {
+    //   const [year, month, day] = bookingInfoStore.bookingDate.split('/').map(Number);
+    // const [startHour, startMinute] = bookingInfoStorestartTime.split(':').map(Number);
+
+      // const postData = {
+      //   hallId: hallData._id,
+      //   hallCity: hallData.hallCity,
+      //   vendorTypeId: "6612e8bddfb65ff32fa575f1",
+      //   bookingTimeStamp: 
+      // }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
-    <Dialog open={open} keepMounted onClose={handleClose} maxWidth="md">
+    <Dialog open={open} keepMounted onClose={()=> {
+      setFormType("FORM_ONE");
+      handleClose();
+    }} maxWidth="md">
+      <Dialog
+        open={submissionConfirmationDialog}
+        onClose={handleSubmissionConfirmationDialogClose}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">{"Confirm Booking ?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Before proceeding, please verify that the details entered are
+            correct to the best of your knowledge. Click &apos;OK&apos; to
+            confirm and proceed with the booking, or &apos;Cancel&apos; to
+            review your details once again.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleSubmissionConfirmationDialogClose}>
+            Cancel
+          </Button>
+          <Button
+            onClick={() => {
+              handleSubmissionConfirmationDialogClose();
+              handleFormSubmit();
+            }}
+            autoFocus
+          >
+            Ok
+          </Button>
+        </DialogActions>
+      </Dialog>
+
       <div className="bookingDetailsMain__container">
         <div>
           <h1 className="heading">booking form</h1>
@@ -156,9 +296,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    value={hallData?.hallName}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -170,9 +311,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={`${hallData?.hallTaluk}, ${hallData?.hallCity}, ${hallData?.hallState}`}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
@@ -183,9 +325,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={hallData?.hallLandmark}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
@@ -198,9 +341,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={hallData?.hallCapacity}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
@@ -211,9 +355,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={hallData?.hallRooms}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
@@ -226,9 +371,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={hallData?.hallVegRate}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
@@ -239,23 +385,25 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                     <div className="divider"></div>
                     <input
                       type="text"
-                      value={"something"}
+                      value={hallData?.hallNonVegRate}
                       className="input"
                       disabled
+                      readOnly
                     />
                   </div>
                 </div>
               </div>
               <div className="inputField__wrapper half-width">
-                <div className="title">Parking Avilability</div>
+                <div className="title">Parking Availability</div>
                 <div className="input__wrapper disabledInput__wrapper">
                   <LocalParkingIcon className="icon" />
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    value={hallData?.hallParking ? "Available" : "Unavailable"}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -265,11 +413,119 @@ export default function BookingDetailsDialog({ open, handleClose }) {
             <div className="container preferences__container">
               <div className="inputFields__wrapper">
                 <div className="wrapper">
+                  <div className="title">Event Type</div>
+                  <div className="input__wrapper">
+                    <CurrencyRupeeIcon className="icon" />
+                    <div className="divider"></div>
+                    <Select
+                      styles={customStyles}
+                      options={
+                        Array.isArray(dataStore.eventTypes.data)
+                          ? dataStore.eventTypes.data.map((item) => ({
+                              value: item._id,
+                              label: item.eventName,
+                            }))
+                          : null
+                      }
+                      value={
+                        bookingDetails.eventTypeInfo.eventTypeId
+                          ? {
+                              label: bookingDetails.eventTypeInfo.eventType,
+                              value: bookingDetails.eventTypeInfo.eventTypeId,
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption) => {
+                        const updatedEventInfo = {
+                          eventType: selectedOption.label,
+                          eventTypeId: selectedOption.value,
+                        };
+                        handleBookingDetailsInfo(
+                          "eventTypeInfo",
+                          updatedEventInfo
+                        );
+                      }}
+                      placeholder="Choose Event Type"
+                      components={{
+                        DropdownIndicator: () => (
+                          <KeyboardArrowDownIcon style={{ color: "#007bff" }} />
+                        ),
+                      }}
+                      className="input selectInput"
+                      menuShouldScrollIntoView={false}
+                      closeMenuOnSelect
+                      isSearchable
+                    />
+                  </div>
+                </div>
+                <div className="wrapper">
+                  <div className="title">Caterer Requirement</div>
+                  <div className="input__wrapper">
+                    <CurrencyRupeeIcon className="icon" />
+                    <div className="divider"></div>
+                    <Select
+                      styles={customStyles}
+                      options={[
+                        {
+                          value: true,
+                          label: "Yes",
+                        },
+                        {
+                          value: false,
+                          label: "No",
+                        },
+                      ]}
+                      value={
+                        bookingDetails.catererRequirement.value
+                          ? {
+                              label: bookingDetails.catererRequirement.label,
+                              value: bookingDetails.catererRequirement.value,
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption) => {
+                        const updatedInfo = {
+                          label: selectedOption.label,
+                          value: selectedOption.value,
+                        };
+                        handleBookingDetailsInfo(
+                          "catererRequirement",
+                          updatedInfo
+                        );
+                      }}
+                      placeholder="Do you need a caterer ?"
+                      components={{
+                        DropdownIndicator: () => (
+                          <KeyboardArrowDownIcon style={{ color: "#007bff" }} />
+                        ),
+                      }}
+                      className="input selectInput"
+                      menuShouldScrollIntoView={false}
+                      closeMenuOnSelect
+                      isSearchable={false}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="inputFields__wrapper">
+                <div className="wrapper">
                   <div className="title">No. of Guests Required</div>
                   <div className="input__wrapper">
                     <PeopleAltIcon className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
+                    <input
+                      type="number"
+                      name="guestsCount"
+                      value={bookingDetails.guestsCount}
+                      className="input"
+                      placeholder="Enter guest count"
+                      onChange={(event) =>
+                        handleBookingDetailsInfo(
+                          "guestsCount",
+                          event.target.value
+                        )
+                      }
+                    />
                   </div>
                 </div>
                 <div className="wrapper">
@@ -277,7 +533,14 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="input__wrapper">
                     <BedIcon className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
+                    <input 
+                      type="number"
+                      name="roomCount"
+                      value={bookingDetails.roomsCount}
+                      className="input"
+                      placeholder="Enter room count"
+                      onChange={(event)=> handleBookingDetailsInfo("roomsCount", event.target.value)}
+                    />
                   </div>
                 </div>
               </div>
@@ -287,62 +550,133 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="input__wrapper">
                     <LocalParkingIcon className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
+                    <Select
+                      styles={customStyles}
+                      options={[
+                        {
+                          value: true,
+                          label: "Yes",
+                        },
+                        {
+                          value: false,
+                          label: "No",
+                        },
+                      ]}
+                      value={
+                        bookingDetails.parkingRequirement.value
+                          ? {
+                              label: bookingDetails.parkingRequirement.label,
+                              value: bookingDetails.parkingRequirement.value,
+                            }
+                          : null
+                      }
+                      onChange={(selectedOption) => {
+                        const updatedInfo = {
+                          label: selectedOption.label,
+                          value: selectedOption.value,
+                        };
+                        handleBookingDetailsInfo(
+                          "parkingRequirement",
+                          updatedInfo
+                        );
+                      }}
+                      placeholder="Do your require parking ?"
+                      components={{
+                        DropdownIndicator: () => (
+                          <KeyboardArrowDownIcon style={{ color: "#007bff" }} />
+                        ),
+                      }}
+                      className="input selectInput"
+                      menuShouldScrollIntoView={false}
+                      closeMenuOnSelect
+                      isSearchable={false}
+                    />
                   </div>
                 </div>
                 <div className="wrapper">
-                  <div className="title">No. Of Vehicals</div>
+                  <div className="title">No. Of Vehicles</div>
                   <div className="input__wrapper">
                     <FaCar className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
-                  </div>
-                </div>
-              </div>
-              <div className="inputFields__wrapper">
-                <div className="wrapper">
-                  <div className="title">Expected Veg Rate/plate</div>
-                  <div className="input__wrapper">
-                    <CurrencyRupeeIcon className="icon" />
-                    <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
-                  </div>
-                </div>
-                <div className="wrapper">
-                  <div className="title">Expected Non-Veg Rate/plate</div>
-                  <div className="input__wrapper">
-                    <CurrencyRupeeIcon className="icon" />
-                    <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
-                  </div>
-                </div>
-              </div>
-              <div className="inputFields__wrapper">
-                <div className="wrapper">
-                  <div className="title">Veg Menu Required</div>
-                  <div className="input__wrapper">
-                    <RestaurantMenuIcon className="icon" />
-                    <div className="textAreaDivider"></div>
-                    <textarea
-                      type="text"
-                      value={"something"}
-                      className="input textArea"
-                    />
-                  </div>
-                </div>
-                <div className="wrapper">
-                  <div className="title">Non-Veg Menu Required</div>
-                  <div className="input__wrapper">
-                    <RestaurantMenuIcon className="icon" />
-                    <div className="textAreaDivider"></div>
-                    <textarea
-                      type="text"
-                      // value={""}
-                      className="input textArea"
+                    <input 
+                      type="number"
+                      name="vehiclesCount"
+                      value={bookingDetails.vehiclesCount}
+                      className="input"
+                      placeholder="Enter vehicle count"
+                      onChange={(event) => handleBookingDetailsInfo("vehiclesCount", event.target.value)}
                     />
                   </div>
                 </div>
               </div>
+              {bookingDetails.catererRequirement.value && (
+                <>
+                  <div className="inputFields__wrapper">
+                    <div className="wrapper">
+                      <div className="title">Expected Veg Rate/plate</div>
+                      <div className="input__wrapper">
+                        <CurrencyRupeeIcon className="icon" />
+                        <div className="divider"></div>
+                        <input 
+                          type="number"
+                          name="expectedVegRate"
+                          value={bookingDetails.expectedVegRate}
+                          className="input"
+                          placeholder="enter your expected rate/plate"
+                          onChange={(event) => handleBookingDetailsInfo("expectedVegRate", event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="wrapper">
+                      <div className="title">Expected Non-Veg Rate/plate</div>
+                      <div className="input__wrapper">
+                        <CurrencyRupeeIcon className="icon" />
+                        <div className="divider"></div>
+                        <input 
+                          type="number"
+                          name="expectedNonVegRate"
+                          value={bookingDetails.expectedNonVegRate}
+                          className="input"
+                          placeholder="enter your expected rate/plate"
+                          onChange={(event) => handleBookingDetailsInfo("expectedNonVegRate", event.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="inputFields__wrapper">
+                    <div className="wrapper">
+                      <div className="title">Veg Menu Required</div>
+                      <div className="input__wrapper">
+                        <RestaurantMenuIcon className="icon" />
+                        <div className="textAreaDivider"></div>
+                        <textarea
+                          type="text"
+                          name="vegMenu"
+                          value={bookingDetails.vegMenu}
+                          placeholder="enter items desired in veg menu"
+                          className="input textArea"
+                          onChange={(event) => handleBookingDetailsInfo("vegMenu", event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="wrapper">
+                      <div className="title">Non-Veg Menu Required</div>
+                      <div className="input__wrapper">
+                        <RestaurantMenuIcon className="icon" />
+                        <div className="textAreaDivider"></div>
+                        <textarea
+                          type="text"
+                          name="nonVegMenu"
+                          value={bookingDetails.nonVegMenu}
+                          placeholder="enter items desired in veg menu"
+                          className="input textArea"
+                          onChange={(event) => handleBookingDetailsInfo("nonVegMenu", event.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
             </div>
           )}
           {formType == "FORM_THREE" && (
@@ -353,7 +687,13 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="input__wrapper disabledInput__wrapper">
                     <PersonIcon className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
+                    <input 
+                      type="text" 
+                      value={userInfoStore.userDetails?.Document?.customerName.split(' ')[0]}
+                      className="input"
+                      disabled
+                      readOnly  
+                    />
                   </div>
                 </div>
                 <div className="wrapper">
@@ -361,7 +701,13 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="input__wrapper disabledInput__wrapper">
                     <PersonIcon className="icon" />
                     <div className="divider"></div>
-                    <input type="text" value={"something"} className="input" />
+                    <input 
+                      type="text" 
+                      value={userInfoStore.userDetails?.Document?.customerName.split(' ')[1]} 
+                      className="input" 
+                      disabled  
+                      readOnly
+                    />
                   </div>
                 </div>
               </div>
@@ -372,9 +718,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    value={userInfoStore.userDetails?.Document?.customerContact}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -385,9 +732,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    value={userInfoStore.userDetails?.Document?.customerContact}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -398,9 +746,10 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    value={userInfoStore.userDetails?.Document?.customerEmail}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -411,8 +760,11 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="textAreaDivider"></div>
                   <textarea
                     type="text"
-                    // value={"something"}
+                    name="customerSuggestion"
+                    value={bookingDetails.customerSuggestion}
                     className="input textArea"
+                    placeholder="your message to the hall owner..."
+                    onChange={(event)=> handleBookingDetailsInfo("customerSuggestion", event.target.value)}
                   />
                 </div>
               </div>
@@ -422,7 +774,7 @@ export default function BookingDetailsDialog({ open, handleClose }) {
             <div
               className="container dateTime__container"
               style={{ width: "50%" }}
-            >
+            > 
               <div className="inputField__wrapper">
                 <div className="title">Booking Date</div>
                 <div className="input__wrapper disabledInput__wrapper">
@@ -430,9 +782,11 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    name="bookingDate"
+                    value={bookingInfoStore.bookingDate}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -443,7 +797,8 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    name="startTime"
+                    value={bookingInfoStore.startTime ? bookingInfoStore.startTime : "HH:MM"}
                     className="input"
                     disabled
                   />
@@ -456,7 +811,8 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <div className="divider"></div>
                   <input
                     type="text"
-                    value={"something"}
+                    name="endTime"
+                    value={bookingInfoStore.endTime ? bookingInfoStore.endTime : "HH:MM"}
                     className="input"
                     disabled
                   />
@@ -468,10 +824,12 @@ export default function BookingDetailsDialog({ open, handleClose }) {
                   <GiSandsOfTime className="icon" />
                   <div className="divider"></div>
                   <input
+                    name="bookingDuration"
                     type="text"
-                    value={"something"}
+                    value={bookingInfoStore.bookingDuration ? bookingInfoStore.bookingDuration : "HH:MM"}
                     className="input"
                     disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -516,4 +874,5 @@ export default function BookingDetailsDialog({ open, handleClose }) {
 BookingDetailsDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
+  hallData: PropTypes.object.isRequired,
 };

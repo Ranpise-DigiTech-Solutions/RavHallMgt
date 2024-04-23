@@ -43,7 +43,7 @@ const similarVendorsData = [
 ]
 
 export default function AdditionalVendorDetails({
-    handleBookingDetailsDialogOpen
+    handleBookingDetailsDialogOpen,
 }) {
 
     const dispatch = useDispatch();
@@ -273,7 +273,7 @@ export default function AdditionalVendorDetails({
                     </button>
                 </div>
             </div>
-            <div className="adverisement__wrapper">
+            <div className="advertisement__wrapper">
                 <div className="img__wrapper">
                     <img src={Images.advertisement2} alt="" />
                 </div>
@@ -284,5 +284,5 @@ export default function AdditionalVendorDetails({
 }
 
 AdditionalVendorDetails.propTypes = {
-    handleBookingDetailsDialogOpen: PropTypes.func.isRequired
+    handleBookingDetailsDialogOpen: PropTypes.func.isRequired,
 }

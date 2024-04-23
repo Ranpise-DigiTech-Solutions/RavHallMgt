@@ -138,14 +138,14 @@ router.post("/registerUser", async (req, res) => {
               { "customerContact": data.phone }
             ]
           });
-        const existingVedors = await serviceProviderMaster.find({
+        const existingVendors = await serviceProviderMaster.find({
             $or: [
               { "vendorEmail": data.email },
               { "vendorContact": data.phone }
             ]
           });
 
-        if (existingCustomers.length > 0 || existingVedors.length > 0) {
+        if (existingCustomers.length > 0 || existingVendors.length > 0) {
             console.log('User already exists with this email. Operation canceled!!');
             return res.status(401).json({ message: 'User already exists!!' });
         }
