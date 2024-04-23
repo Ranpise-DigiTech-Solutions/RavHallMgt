@@ -21,7 +21,7 @@ const UserProfile = () => {
         return <UserSettings />;
       default:
         // return <ProfileForm />;
-        return <HallForm />
+        return <ProfileForm />
     }
   };
 
@@ -34,7 +34,6 @@ const UserProfile = () => {
       </div>
     </div>
     </div>
-
   );
 };
 
