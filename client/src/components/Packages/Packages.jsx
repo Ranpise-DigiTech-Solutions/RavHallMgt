@@ -233,6 +233,7 @@ export default function Packages() {
   
   return (
     <div className="packages__container" id="packages" ref={wrapperRef}>
+       
       <div className="tags__wrapper">
         {["Top Rated", "Most Popular", "Most Liked", "Oldest" ,"Available"].map(
           (item, index) => (

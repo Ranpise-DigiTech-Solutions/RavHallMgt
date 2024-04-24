@@ -9,3 +9,4 @@ export {default as Blogs} from './Blogs/Blogs';
 export {default as Footer} from './Footer/Footer';
 export {default as ChatBot} from './ChatBot/ChatBot';
 export {default as UserProfileUpdate} from './UserProfileUpdate/UserProfileUpdate';
+export {default as ProfileForm} from './UserProfile/ProfileForm';
