@@ -9,7 +9,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import Tooltip from "@mui/material/Tooltip";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
-import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
 
 import "./AvailabilityCalendar.scss";
 import "react-datepicker/dist/react-datepicker.css";
@@ -67,14 +67,18 @@ export default function AvailabilityCalendar({ hallData }) {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
-    return new Date(d.setDate(diff));
+    const startOfWeekDate = new Date(d.setDate(diff));
+    startOfWeekDate.setHours(0, 0, 0, 0); // Set time to 23:59:59.999
+    return startOfWeekDate;
   };
 
   const endOfWeek = (date) => {
     const d = new Date(date);
     const day = d.getDay();
     const diff = d.getDate() - day + (day === 0 ? 0 : 7); // Adjust for Sunday
-    return new Date(d.setDate(diff));
+    const endOfWeekDate = new Date(d.setDate(diff));
+    endOfWeekDate.setHours(23, 59, 59, 999); // Set time to 23:59:59.999
+    return endOfWeekDate;
   };
 
   function getDayOfWeek(date) {
@@ -89,6 +93,13 @@ export default function AvailabilityCalendar({ hallData }) {
     ];
     const dayIndex = new Date(date).getDay();
     return daysOfWeek[dayIndex];
+  }
+
+  function getFormattedDate(date) {
+    const d = new Date(date);
+    return `${d.getFullYear()}-${(d.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}-${d.getDate().toString().padStart(2, "0")}`;
   }
 
   const setDates = async (startDateOfWeek, endDateOfWeek) => {
@@ -114,53 +125,150 @@ export default function AvailabilityCalendar({ hallData }) {
   const getAvailability = async () => {
     try {
       if (startDateOfWeek && endDateOfWeek) {
-        const formattedStartDateOfWeek =
-          startDateOfWeek.getFullYear() +
-          "-" +
-          (startDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
-          "-" +
-          startDateOfWeek.getDate().toString().padStart(2, "0");
-
-        const formattedEndDateOfWeek =
-          endDateOfWeek.getFullYear() +
-          "-" +
-          (endDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
-          "-" +
-          endDateOfWeek.getDate().toString().padStart(2, "0");
-
-        console.log(hallData._id);
-        console.log(formattedStartDateOfWeek);
-        console.log(formattedEndDateOfWeek);
-
+        // const formattedStartDateOfWeek = getFormattedDate(startDateOfWeek)
+        // const formattedEndDateOfWeek = getFormattedDate(endDateOfWeek)
         const response = await axios.get(
-          `http://localhost:8000/eventify_server/hallBookingMaster/getHallAvailability?hallId=${hallData._id}&startDate=${formattedStartDateOfWeek}&endDate=${formattedEndDateOfWeek}`
+          `http://localhost:8000/eventify_server/hallBookingMaster/getHallAvailability?hallId=${hallData._id}&startDate=${startDateOfWeek}&endDate=${endDateOfWeek}`
         );
         console.log(response.data);
         const bookings = response.data;
-        const tempCalendar = { ...availabilityCalendar };
-        console.log("ENTEREDDDDD0000");
         if (bookings) {
           bookings.map((booking) => {
-            const bookingTimestamp = booking.bookingTimestamp;
-            const bookingDate = new Date(bookingTimestamp);
-            // bookingDate.setUTCHours(0);
-            console.log(bookingDate);
+            const tempCalendar = { ...availabilityCalendar };
+            const bookingStartDateTimestamp = new Date(booking.bookingStartDateTimestamp);
+            const bookingEndDateTimestamp = new Date(booking.bookingEndDateTimestamp);
+            const bookingStartDate = new Date(bookingStartDateTimestamp.getTime() - (5.5 * 60 * 60 * 1000)); // to UTC time
+            const bookingEndDate = new Date(bookingEndDateTimestamp.getTime() - (5.5 * 60 * 60 * 1000));  // to UTC time
+            console.log("BOOKING START and END DATES ", bookingStartDate.toString(), bookingEndDate.toString());
+            console.log("BOOKING START and END DATES ", startDateOfWeek.toString(), endDateOfWeek.toString());
 
-            const bookingHour = bookingDate.getUTCHours();
-            const dayOfWeek = getDayOfWeek(bookingDate);
-            console.log(bookingHour);
-            console.log(dayOfWeek);
-            const bookingDuration = booking.bookingDuration;
-            for (var i = 0; i < bookingDuration; i++) {
-              const hour = (bookingHour + i) % 24;
-              console.log("HOUR" + hour);
-              tempCalendar[dayOfWeek]["timeSlots"][hour] = true;
+            if (
+              bookingStartDate < startDateOfWeek &&
+              bookingEndDate > endDateOfWeek
+            ) {
+              console.log("DEBUGGING_1: ")
+              // Case 1: Booking spans over the whole week
+              for (const day in tempCalendar) {
+                tempCalendar[day].timeSlots = Object.fromEntries(
+                  Object.entries(tempCalendar[day].timeSlots).map(
+                    ([timeSlot, _]) => [timeSlot, true]
+                  )
+                );
+              }
+              setAvailabilityCalendar(tempCalendar);
+            } else if (
+              bookingStartDate >= startDateOfWeek &&
+              bookingEndDate > endDateOfWeek
+            ) {
+              console.log("DEBUGGING_2: ")
+              // Case 2: Booking starts within the week but extends beyond it
+              const bookingStartDD = bookingStartDate.getDate();
+              const endOfWeekDD = endDateOfWeek.getDate();
+
+              for (let i = 0; i <= endOfWeekDD - bookingStartDD; i++) {
+                const date = new Date(
+                  bookingStartDate.getTime() + i * 24 * 60 * 60 * 1000
+                );
+                const day = getDayOfWeek(date);
+                if (i === 0) {
+                  const bookingStHour = bookingStartDate.getHours();
+                  for (let hour = bookingStHour; hour <= 23; hour++) {
+                    tempCalendar[day].timeSlots[hour] = true;
+                  }
+                } else {
+                  tempCalendar[day].timeSlots = Object.fromEntries(
+                    Object.entries(tempCalendar[day].timeSlots).map(
+                      ([timeSlot, _]) => [timeSlot, true]
+                    )
+                  );
+                }
+              }
+              setAvailabilityCalendar(tempCalendar);
+            } else if (
+              bookingStartDate < startDateOfWeek &&
+              bookingEndDate <= endDateOfWeek
+            ) {
+              console.log("DEBUGGING_3: ")
+              // Case 3: Booking ends within the week but starts before it
+              const bookingEndDD = bookingEndDate.getDate();
+              const startOfWeekDD = startDateOfWeek.getDate();
+
+              for (let i = startOfWeekDD; i <= bookingEndDD; i++) {
+                const date = new Date(
+                  startDateOfWeek.getTime() +
+                    (i - startOfWeekDD) * 24 * 60 * 60 * 1000
+                );
+                const day = getDayOfWeek(date);
+
+                if (i === bookingEndDD) {
+                  const bookingEndHour = bookingEndDate.getUTCHours();
+                  for (let hour = 0; hour < bookingEndHour; hour++) {
+                    tempCalendar[day].timeSlots[hour] = true;
+                  }
+                } else {
+                  tempCalendar[day].timeSlots = Object.fromEntries(
+                    Object.entries(tempCalendar[day].timeSlots).map(
+                      ([timeSlot, _]) => [timeSlot, true]
+                    )
+                  );
+                }
+              }
+              setAvailabilityCalendar(tempCalendar);
+            } else {
+              // Case 4: Booking falls entirely within the week
+              const startDD = bookingStartDate.getDate();
+              const endDD = bookingEndDate.getDate();
+              const startOfWeekDD = startDateOfWeek.getDate();
+              const endOfWeekDD = endDateOfWeek.getDate();
+
+              console.log("DEBUGGING_4 : ", startDD, endDD)
+              console.log(startDateOfWeek, endDateOfWeek);
+              // console.log(formattedStartDateOfWeek, formattedEndDateOfWeek);
+              console.log(bookingStartDate, bookingEndDate);
+
+              if (startDD === endDD) {
+                const bookingStartHour = bookingStartDate.getHours();
+                const bookingEndHour = bookingEndDate.getHours();
+                const day = getDayOfWeek(bookingStartDate);
+                for (
+                  let hour = bookingStartHour;
+                  hour < bookingEndHour;
+                  hour++
+                ) {
+                  tempCalendar[day].timeSlots[hour] = true;
+                }
+              } else {
+                for (let i = startOfWeekDD; i <= endOfWeekDD; i++) {
+                  const date = new Date(
+                    startDateOfWeek.getTime() +
+                      (i - startOfWeekDD) * 24 * 60 * 60 * 1000
+                  );
+                  const day = getDayOfWeek(date);
+
+                  if (i === startDD) {
+                    const bookingStartHour = bookingStartDate.getHours();
+                    for (let hour = bookingStartHour; hour <= 23; hour++) {
+                      tempCalendar[day].timeSlots[hour] = true;
+                    }
+                  } else if (i === endDD) {
+                    const bookingEndHour = bookingEndDate.getHours();
+                    for (let hour = 0; hour < bookingEndHour; hour++) {
+                      tempCalendar[day].timeSlots[hour] = true;
+                    }
+                  } else {
+                    tempCalendar[day].timeSlots = Object.fromEntries(
+                      Object.entries(tempCalendar[day].timeSlots).map(
+                        ([timeSlot, _]) => [timeSlot, true]
+                      )
+                    );
+                  }
+                }
+              }
+              setAvailabilityCalendar(tempCalendar);
             }
           });
-          console.log("ENTEREDDDDD");
-          setAvailabilityCalendar(tempCalendar);
-          console.log(availabilityCalendar);
         }
+        console.log("AVAILABILITY CALENDAR", availabilityCalendar);
       }
     } catch (error) {
       console.error(error.message);
@@ -260,20 +368,27 @@ export default function AvailabilityCalendar({ hallData }) {
 
       // Convert the time difference from milliseconds to hours and minutes
       const hours = Math.floor(timeDifference / (1000 * 60 * 60));
-      const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+      const minutes = Math.floor(
+        (timeDifference % (1000 * 60 * 60)) / (1000 * 60)
+      );
 
       // Format the time difference into a string representation
-      const timeDifferenceStr = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}`;
-
+      const timeDifferenceStr = `${hours.toString().padStart(2, "0")}:${minutes
+        .toString()
+        .padStart(2, "0")}`;
 
       dispatch(bookingInfoActions("bookingDuration", timeDifferenceStr));
 
-
-      // code to check if there are any clashes with the existing bookings 
+      // code to check if there are any clashes with the existing bookings
       var i;
-      const bookingStartTime = parseInt(bookingInfoStore.startTime?.substring(0, 2));
-      const bookingEndTime = parseInt(bookingInfoStore.endTime?.substring(0, 2));
-      const bookingData = availabilityCalendar[bookingInfoStore.bookingDay]["timeSlots"];
+      const bookingStartTime = parseInt(
+        bookingInfoStore.startTime?.substring(0, 2)
+      );
+      const bookingEndTime = parseInt(
+        bookingInfoStore.endTime?.substring(0, 2)
+      );
+      const bookingData =
+        availabilityCalendar[bookingInfoStore.bookingDay]["timeSlots"];
       console.log("bookingStartTime " + bookingStartTime);
       console.log("bookingEndTime " + bookingEndTime);
       console.log("bookingData " + bookingData);
@@ -282,20 +397,35 @@ export default function AvailabilityCalendar({ hallData }) {
         //check if there already exists a booking for that slot
         for (i = bookingStartTime; i < 24; i++) {
           if (bookingData[i]) {
-            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            dispatch(
+              bookingInfoActions(
+                "errorInfo",
+                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+              )
+            );
             return;
           }
         }
         for (i = 0; i < bookingEndTime; i++) {
           if (bookingData[i]) {
-            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            dispatch(
+              bookingInfoActions(
+                "errorInfo",
+                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+              )
+            );
             return;
           }
         }
       } else {
         for (i = bookingStartTime; i < bookingEndTime; i++) {
           if (bookingData[i]) {
-            dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"));
+            dispatch(
+              bookingInfoActions(
+                "errorInfo",
+                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+              )
+            );
             return;
           }
         }
@@ -304,7 +434,7 @@ export default function AvailabilityCalendar({ hallData }) {
     } catch (error) {
       console.error(error.message);
     }
-  }, [bookingInfoStore.startTime, bookingInfoStore.endTime])
+  }, [bookingInfoStore.startTime, bookingInfoStore.endTime]);
 
   // eslint-disable-next-line no-unused-vars
   const rearrangeContent = () => {
@@ -319,31 +449,6 @@ export default function AvailabilityCalendar({ hallData }) {
       container.scrollTop = 0; // Reset scroll position to top
     }
   };
-
-  // const handleScroll = () => {
-  //   const container = containerRef.current;
-  //   if (container.scrollTop + container.clientHeight >= container.scrollHeight) {
-  //     // Move the content that has scrolled out of view to the bottom
-  //     const firstChild = container.firstChild.cloneNode(true);
-  //     container.appendChild(firstChild);
-  //     container.removeChild(container.firstChild);
-  //     // Reset scroll position
-  //     container.scrollTo({
-  //       top: 0,
-  //       behavior: 'auto' // You may choose 'smooth' if you want smooth scrolling
-  //     });
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   const container = containerRef.current;
-  //   // Add scroll event listener
-  //   container.addEventListener('scroll', rearrangeContent);
-  //   // Remove scroll event listener on component unmount
-  //   return () => {
-  //     container.removeEventListener('scroll', rearrangeContent);
-  //   };
-  // }, []); // Run only once on component mount
 
   const handlePrevWeek = () => {
     setAvailabilityCalendar(calendar);
@@ -371,8 +476,12 @@ export default function AvailabilityCalendar({ hallData }) {
 
   const handleTimeChange = (time, isBooked) => {
     const endTime = parseInt(time) < 23 ? parseInt(time) + 1 : "00";
-    dispatch(bookingInfoActions("startTime", `${time.toString().padStart(2, '0')}:00`));
-    dispatch(bookingInfoActions("endTime", `${endTime.toString().padStart(2, '0')}:00`));
+    dispatch(
+      bookingInfoActions("startTime", `${time.toString().padStart(2, "0")}:00`)
+    );
+    dispatch(
+      bookingInfoActions("endTime", `${endTime.toString().padStart(2, "0")}:00`)
+    );
 
     // if(isBooked) {
     //   dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"))
@@ -391,50 +500,23 @@ export default function AvailabilityCalendar({ hallData }) {
             <FaChevronLeft className="icon" />
           </div>
           <div className="date-range">
-            {/* <DatePicker
-            selected={startDate}
-            onChange={handleDateChange}
-            selectsStart
-            startDate={startDateOfWeek}
-            endDate={endDateOfWeek}
-            inline
-            startDateClassName="hover-date"
-            dayClassName={(date) => {
-              if (date.getTime() === startDate.getTime()) return 'selected-date';
-              return null;
-            }}
-          /> */}
             <span>
               {startDateOfWeek
                 ? startDateOfWeek.getDate().toString().padStart(2, "0") +
-                "/" +
-                (startDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
-                "/" +
-                startDateOfWeek.getFullYear().toString()
+                  "/" +
+                  (startDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
+                  "/" +
+                  startDateOfWeek.getFullYear().toString()
                 : ""}
             </span>
-
             <span className="date-separator">-</span>
-            {/* <DatePicker
-            selected={endDateOfWeek}
-            onChange={handleDateChange}
-            selectsEnd
-            startDate={startDateOfWeek}
-            endDate={endDateOfWeek}
-            inline
-            endDateClassName="hover-date"
-            dayClassName={(date) => {
-              if (date.getTime() === endDateOfWeek.getTime()) return 'selected-date';
-              return null;
-            }}
-          /> */}
             <span>
               {endDateOfWeek
                 ? endDateOfWeek.getDate().toString().padStart(2, "0") +
-                "/" +
-                (endDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
-                "/" +
-                endDateOfWeek.getFullYear().toString()
+                  "/" +
+                  (endDateOfWeek.getMonth() + 1).toString().padStart(2, "0") +
+                  "/" +
+                  endDateOfWeek.getFullYear().toString()
                 : ""}
             </span>
           </div>
@@ -461,12 +543,13 @@ export default function AvailabilityCalendar({ hallData }) {
               return (
                 <div
                   key={day}
-                  className={`sub-wrapper ${(bookingInfoStore.bookingDate
+                  className={`sub-wrapper ${
+                    (bookingInfoStore.bookingDate
                       ? dayInfo.date ===
-                      formatBookingDate(bookingInfoStore.bookingDate)
+                        formatBookingDate(bookingInfoStore.bookingDate)
                       : dayInfo.date === formatDate(startDate)) &&
                     "currentSelection"
-                    }`}
+                  }`}
                 >
                   <div className="sub-title">
                     {dayInfo.date.substring(0, 5)}
@@ -506,12 +589,13 @@ export default function AvailabilityCalendar({ hallData }) {
                   onClick={() => handleDateChange(dayInfo.date, day)}
                 >
                   <div
-                    className={`timeSlots__wrapper ${(bookingInfoStore.bookingDate
+                    className={`timeSlots__wrapper ${
+                      (bookingInfoStore.bookingDate
                         ? dayInfo.date ===
-                        formatBookingDate(bookingInfoStore.bookingDate)
+                          formatBookingDate(bookingInfoStore.bookingDate)
                         : dayInfo.date === formatDate(startDate)) &&
                       "currentSelection"
-                      }`}
+                    }`}
                   >
                     {Object.entries(dayInfo.timeSlots).map(
                       ([timeSlot, isBooked]) => (
@@ -527,12 +611,16 @@ export default function AvailabilityCalendar({ hallData }) {
                           leaveDelay={0}
                         >
                           <div
-                            className={`time-slot ${bookingInfoStore.startTime &&
+                            className={`time-slot ${
+                              bookingInfoStore.startTime &&
                               bookingInfoStore.endTime &&
-                              dayInfo.date === formatBookingDate(bookingInfoStore.bookingDate) &&
+                              dayInfo.date ===
+                                formatBookingDate(
+                                  bookingInfoStore.bookingDate
+                                ) &&
                               isSelectedSlot(timeSlot) &&
                               "selectedTimeSlot"
-                              }`}
+                            }`}
                             onClick={() => handleTimeChange(timeSlot, isBooked)}
                           >
                             {isBooked ? (

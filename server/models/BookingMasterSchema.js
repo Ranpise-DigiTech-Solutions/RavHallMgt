@@ -1,18 +1,22 @@
 import mongoose from "mongoose";
+import { v4 as uuidv4 } from 'uuid';
 
 const bookingMasterSchema = new mongoose.Schema({
     // HALL BOOKING
+    documentId: { type: String, default: uuidv4, unique: true }, 
     hallId: { type: mongoose.Schema.Types.ObjectId, ref: 'hallmasters'},
     hallCity: {type: String, required: true },
     vendorTypeId: {type: mongoose.Schema.Types.ObjectId, ref: 'vendortypes', required: true },
-    bookingTimestamp: {type: Date, required: true,},
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'eventtypes', required: true },
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'customermasters', required: true },
     bookingType: { type: String, enum: ['HALL', 'VENDOR'], default: "HALL" },
     bookCaterer: { type: Boolean, required: true },
-    bookingStatus: {type: String, enum:['PENDING', 'CONFIRMED', 'REJECTED'],default:'PENDING'},
+    bookingStartDateTimestamp: {type: Date, required: true,},
+    bookingEndDateTimestamp: {type: Date, required: true,},
     bookingDuration: { type: Number, required: true },
-
+    bookingStatus: {type: String, enum:['PENDING', 'CONFIRMED', 'REJECTED'],default:'PENDING'},
+    bookingStatusRemark: { type: String },
+    
     // details entered by customer 
     guestsCount: { type: Number, required: true},
     roomsCount: { type: Number, required: true},
@@ -22,9 +26,10 @@ const bookingMasterSchema = new mongoose.Schema({
     customerNonVegRate: { type: Number },
     customerVegItemsList: { type: String },
     customerNonVegItemsList: { type: String },
-    bookingDate: { type: String, required : true},
-    bookingStartTime: { type: String, required: true},
-    bookingEndTime: { type: String, required: true},
+    // bookingStartDate: { type: String, required : true},
+    // bookingEndDate: { type: String, required : true},
+    // bookingStartTime: { type: String, required: true},
+    // bookingEndTime: { type: String, required: true},
     customerInfo: { type: String },
     customerSuggestion: { type: String },
 
@@ -32,8 +37,30 @@ const bookingMasterSchema = new mongoose.Schema({
     vendorId: { type: mongoose.Schema.Types.ObjectId, ref: "vendormasters"},
 
 }, { timestamps: true });
-bookingMasterSchema.index({ customerId: 1, bookingTimestamp: 1 }, { unique: true });
+
+// bookingMasterSchema.index({ customerId: 1, bookingStartDateTimestamp: 1, bookingEndDateTimestamp: 1 }, { unique: true });
+
+bookingMasterSchema.index({ documentId: 1 }, { unique: true });
 
 const bookingMaster = mongoose.model("bookingMaster", bookingMasterSchema);
+
+// bookingMasterSchema.collection.dropIndex("customerId_1_bookingTimestamp_1", function(err, result) {
+//     if (err) {
+//         console.error("Error dropping old index:", err);
+//     } else {
+//         console.log("Old index dropped successfully:", result);
+//     }
+// });
+
+// bookingMasterSchema.index({ documentId: 1 }, { unique: true });
+
+// console.log(bookingMaster.collection.dropIndexes());
+// bookingMaster.collection.dropIndexes(function(err, result) {
+//     if (err) {
+//         console.error("Error dropping old indexes:", err);
+//     } else {
+//         console.log("Old indexes dropped successfully:", result);
+//     }
+// });
 
 export default bookingMaster;
