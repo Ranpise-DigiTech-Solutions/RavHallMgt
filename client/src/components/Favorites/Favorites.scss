@@ -1,0 +1,23 @@
+
+.favorites-container {
+    
+    
+    h1{
+        font-size: large;
+        color:aliceblue;
+    }
+    .favorites__wrapper {
+        width:98%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+   
+      .card {
+       margin-left: 20px;
+        width: calc(33.33% - 30px); /* Adjust the width based on your requirements */
+        margin-bottom: 15px; /* Adjust margin between cards */
+        box-sizing: border-box;
+      }
+    }
+  }
+  
