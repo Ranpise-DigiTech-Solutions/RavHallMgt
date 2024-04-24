@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 
 import { Images } from '../../constants';
 import { SignInDialog } from '../../ui';
-import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
+// import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -46,7 +46,7 @@ export default function NavBar() {
   }, [prevScrollY]);
 
   return (
-    <>
+    <div className="navbar__container">
       <div className={`navbar__wrapper ${scrolled ? 'scrolled' : ''}`}>
         <div className="logo__wrapper">
           <img src={Images.logo} alt="logo" className="logo" />
@@ -69,7 +69,15 @@ export default function NavBar() {
           <a href="#" className="tag">
             Get Started
           </a>
-          <>
+            <Button
+              variant="contained"
+              className="button"
+              onClick={handleSignInButtonClick}
+            >
+              Sign In
+            </Button>
+
+          {/* <>
             <SignedIn>
               <div className="userButton">
                 <UserButton />
@@ -84,15 +92,17 @@ export default function NavBar() {
                 Sign In
               </Button>
             </SignedOut>
-          </>
+          </> */}
         </div>
-        {isSignInDialogOpen && (
-          <SignInDialog
-            open={isSignInDialogOpen}
-            handleClose={handleSignInDialogClose}
-          />
-        )}
       </div>
-    </>
+        {isSignInDialogOpen && (
+          <div className="signInDialog">
+            <SignInDialog
+              open={isSignInDialogOpen}
+              handleClose={handleSignInDialogClose}
+            />
+          </div>
+        )}
+    </div>
   );
 }

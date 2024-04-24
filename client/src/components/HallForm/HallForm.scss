@@ -11,6 +11,10 @@
   padding: 3rem;
   margin-bottom: 5rem;
 
+  .edit-icon {
+    color: pink; // Set the color to pink or any other color you prefer
+  }
+
   .sideheading {
     font-size: 2rem;
     color: black;
@@ -126,4 +130,50 @@
       }
     }
   }
+
+  .Photos,
+  .Albums,
+  .Videos {
+    margin-top: 2rem;
+
+    strong {
+      font-size: 1.5rem;
+      color: black;
+      font-family: "Platypi", serif;
+      margin-bottom: 1rem;
+    }
+
+    .ant-upload {
+      width: 100%;
+      padding: 2rem;
+      border: 2px dashed #ccc;
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+
+      .ant-upload-drag-icon {
+        font-size: 3rem;
+        color: #ccc;
+      }
+
+      .ant-upload-text {
+        margin-top: 1rem;
+        color: #ccc;
+        font-size: 1.2rem;
+      }
+
+      .ant-upload-hint {
+        margin-top: 1rem;
+        color: #ccc;
+        font-size: 1rem;
+      }
+    }
+  }
+
+  #hallDescription {
+    height: 200px; /* Adjust the height as needed */
+  }
+  
 }

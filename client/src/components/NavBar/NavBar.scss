@@ -24,7 +24,7 @@
     position: fixed;
     z-index: 100;
 
-    color: white;
+    color: #ffffff;
     font-size: 16px;
     padding: 0.5%;
     
@@ -64,10 +64,8 @@
     .container {
         display: flex;
         flex-direction: row;
-        justify-content: end;
+        justify-content: center;
         height: 100%;
-        width: auto;
- 
 
         .tag {
             margin: 1rem;
@@ -83,22 +81,22 @@
                 height: 2px;
                 bottom: -3px;
                 left: 0;
-                background-color: orange;
+                background-color: #ff8000;
                 transition: width 0.3s ease;
             }
 
             &:hover::before {
-                background-color: orange;
+                background-color: #ff8000;
                 width: 70%;
             }
 
             &:hover {
-                color: orange;
+                color: #ff8000;
             }
         }
 
         .button {
-            background-color: orange;
+            background-color: #ff8000;
             color: #ffffff;
             height: 60%;
             margin: 1em;
@@ -108,7 +106,7 @@
             transition: all 0.3s ease-in;
 
             &:hover {
-                background-color:orange;
+                background-color: rgb(214, 107, 0);
             }
         }
 
