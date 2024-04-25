@@ -63,9 +63,14 @@ export default function AdditionalVendorDetails({
         return daysOfWeek[dayIndex];
     }
 
-    const handleBookingDateChange = (event) => {
-        dispatch(bookingInfoActions("bookingDate", event.target.value));
-        dispatch(bookingInfoActions("bookingDay", getDayOfWeek(new Date(event.target.value))))
+    const handleBookingStartDateChange = (event) => {
+        dispatch(bookingInfoActions("bookingStartDate", event.target.value));
+        dispatch(bookingInfoActions("bookingStartDay", getDayOfWeek(new Date(event.target.value))))
+    }
+
+    const handleBookingEndDateChange = (event) => {
+        dispatch(bookingInfoActions("bookingEndDate", event.target.value));
+        dispatch(bookingInfoActions("bookingEndDay", getDayOfWeek(new Date(event.target.value))))
     }
 
     const handleBookingStartTimeChange = (event)=> {
@@ -188,14 +193,14 @@ export default function AdditionalVendorDetails({
             <div className="inputFields__wrapper">
                 <div className="wrapper">
                     <p className="inputTitle">
-                        Date of booking
+                        Start Date of booking
                     </p>
                     <div className="input">
                         <input 
                             type="date"
-                            value={bookingInfoStore?.bookingDate}
+                            value={bookingInfoStore?.bookingStartDate}
                             placeholder="dd/mm/yyyy"
-                            onChange={handleBookingDateChange}
+                            onChange={handleBookingStartDateChange}
                         />
                     </div>
                 </div>
@@ -209,6 +214,19 @@ export default function AdditionalVendorDetails({
                             placeholder="dd/mm/yyyy"
                             value={bookingInfoStore?.startTime}
                             onChange={handleBookingStartTimeChange}
+                        />
+                    </div>
+                </div>
+                <div className="wrapper">
+                    <p className="inputTitle">
+                        End Date of booking
+                    </p>
+                    <div className="input">
+                        <input 
+                            type="date"
+                            value={bookingInfoStore?.bookingEndDate}
+                            placeholder="dd/mm/yyyy"
+                            onChange={handleBookingEndDateChange}
                         />
                     </div>
                 </div>

@@ -26,10 +26,6 @@ const bookingMasterSchema = new mongoose.Schema({
     customerNonVegRate: { type: Number },
     customerVegItemsList: { type: String },
     customerNonVegItemsList: { type: String },
-    // bookingStartDate: { type: String, required : true},
-    // bookingEndDate: { type: String, required : true},
-    // bookingStartTime: { type: String, required: true},
-    // bookingEndTime: { type: String, required: true},
     customerInfo: { type: String },
     customerSuggestion: { type: String },
 
@@ -43,14 +39,6 @@ const bookingMasterSchema = new mongoose.Schema({
 bookingMasterSchema.index({ documentId: 1 }, { unique: true });
 
 const bookingMaster = mongoose.model("bookingMaster", bookingMasterSchema);
-
-// bookingMasterSchema.collection.dropIndex("customerId_1_bookingTimestamp_1", function(err, result) {
-//     if (err) {
-//         console.error("Error dropping old index:", err);
-//     } else {
-//         console.log("Old index dropped successfully:", result);
-//     }
-// });
 
 // bookingMasterSchema.index({ documentId: 1 }, { unique: true });
 

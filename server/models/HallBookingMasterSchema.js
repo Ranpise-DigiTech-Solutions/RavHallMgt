@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 
+import { v4 as uuidv4 } from "uuid";
+
 const hallBookingMasterSchema = new mongoose.Schema({
+    documentId: {type: String, default: uuidv4, unique: true},
     bookingId: { type: mongoose.Schema.Types.ObjectId, ref: 'bookingmasters'},
     hallId: { type: mongoose.Schema.Types.ObjectId, ref: 'hallmasters'},
     hallCity: {type: String, required: true},
@@ -22,13 +25,20 @@ const hallBookingMasterSchema = new mongoose.Schema({
     finalNonVegRate: { type: Number },
     finalVegItemsList: { type: String },
     finalNonVegItemsList: { type: String },
-    // finalBookingStartDate: { type: String, required : true},
-    // finalBookingEndDate: { type: String, required : true},
-    // finalBookingStartTime: { type: String, required: true},
-    // finalBookingEndTime: { type: String, required: true},
 }, { timestamps: true });
-hallBookingMasterSchema.index({ customerId: 1, bookingTimestamp: 1 }, { unique: true });
+
+// hallBookingMasterSchema.index({ customerId: 1, bookingTimestamp: 1 }, { unique: true });
+
+hallBookingMasterSchema.index({ documentId: 1 }, { unique: true });
 
 const hallBookingMaster = mongoose.model("hallBookingMaster", hallBookingMasterSchema);
+
+// hallBookingMaster.collection.dropIndexes(function(err, result) {
+//     if (err) {
+//         console.error("Error dropping old indexes:", err);
+//     } else {
+//         console.log("Old indexes dropped successfully:", result);
+//     }
+// });
 
 export default hallBookingMaster;

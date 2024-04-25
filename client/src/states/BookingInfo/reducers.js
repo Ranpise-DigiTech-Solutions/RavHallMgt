@@ -1,8 +1,10 @@
 import { SET_DATA } from "./actions";
 
 const initialState = {  
-    bookingDate: "",  // yyyy/mm/dd
-    bookingDay: "", // Monday, Tuesday  etc..
+    bookingStartDate: "",  // yyyy/mm/dd
+    bookingStartDay: "", // Monday, Tuesday  etc..
+    bookingEndDate: "", // yyyy/mm/dd
+    bookingEndDay: "", // Monday, Tuesday  etc..
     startTime: "",  // HH:MM
     endTime: "",  // HH:MM
     bookingDuration: "", // HH:MM

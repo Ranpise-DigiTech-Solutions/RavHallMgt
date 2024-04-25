@@ -96,6 +96,7 @@ export default function AvailabilityCalendar({ hallData }) {
   }
 
   function getFormattedDate(date) {
+    // returns YYYY-MM-DD
     const d = new Date(date);
     return `${d.getFullYear()}-${(d.getMonth() + 1)
       .toString()
@@ -135,18 +136,34 @@ export default function AvailabilityCalendar({ hallData }) {
         if (bookings) {
           bookings.map((booking) => {
             const tempCalendar = { ...availabilityCalendar };
-            const bookingStartDateTimestamp = new Date(booking.bookingStartDateTimestamp);
-            const bookingEndDateTimestamp = new Date(booking.bookingEndDateTimestamp);
-            const bookingStartDate = new Date(bookingStartDateTimestamp.getTime() - (5.5 * 60 * 60 * 1000)); // to UTC time
-            const bookingEndDate = new Date(bookingEndDateTimestamp.getTime() - (5.5 * 60 * 60 * 1000));  // to UTC time
-            console.log("BOOKING START and END DATES ", bookingStartDate.toString(), bookingEndDate.toString());
-            console.log("BOOKING START and END DATES ", startDateOfWeek.toString(), endDateOfWeek.toString());
+            const bookingStartDateTimestamp = new Date(
+              booking.bookingStartDateTimestamp
+            );
+            const bookingEndDateTimestamp = new Date(
+              booking.bookingEndDateTimestamp
+            );
+            const bookingStartDate = new Date(
+              bookingStartDateTimestamp.getTime() - 5.5 * 60 * 60 * 1000
+            ); // to UTC time
+            const bookingEndDate = new Date(
+              bookingEndDateTimestamp.getTime() - 5.5 * 60 * 60 * 1000
+            ); // to UTC time
+            console.log(
+              "BOOKING START and END DATES ",
+              bookingStartDate.toString(),
+              bookingEndDate.toString()
+            );
+            console.log(
+              "BOOKING START and END DATES ",
+              startDateOfWeek.toString(),
+              endDateOfWeek.toString()
+            );
 
             if (
               bookingStartDate < startDateOfWeek &&
               bookingEndDate > endDateOfWeek
             ) {
-              console.log("DEBUGGING_1: ")
+              console.log("DEBUGGING_1: ");
               // Case 1: Booking spans over the whole week
               for (const day in tempCalendar) {
                 tempCalendar[day].timeSlots = Object.fromEntries(
@@ -160,7 +177,7 @@ export default function AvailabilityCalendar({ hallData }) {
               bookingStartDate >= startDateOfWeek &&
               bookingEndDate > endDateOfWeek
             ) {
-              console.log("DEBUGGING_2: ")
+              console.log("DEBUGGING_2: ");
               // Case 2: Booking starts within the week but extends beyond it
               const bookingStartDD = bookingStartDate.getDate();
               const endOfWeekDD = endDateOfWeek.getDate();
@@ -188,7 +205,7 @@ export default function AvailabilityCalendar({ hallData }) {
               bookingStartDate < startDateOfWeek &&
               bookingEndDate <= endDateOfWeek
             ) {
-              console.log("DEBUGGING_3: ")
+              console.log("DEBUGGING_3: ");
               // Case 3: Booking ends within the week but starts before it
               const bookingEndDD = bookingEndDate.getDate();
               const startOfWeekDD = startDateOfWeek.getDate();
@@ -201,7 +218,7 @@ export default function AvailabilityCalendar({ hallData }) {
                 const day = getDayOfWeek(date);
 
                 if (i === bookingEndDD) {
-                  const bookingEndHour = bookingEndDate.getUTCHours();
+                  const bookingEndHour = bookingEndDate.getHours();
                   for (let hour = 0; hour < bookingEndHour; hour++) {
                     tempCalendar[day].timeSlots[hour] = true;
                   }
@@ -221,7 +238,7 @@ export default function AvailabilityCalendar({ hallData }) {
               const startOfWeekDD = startDateOfWeek.getDate();
               const endOfWeekDD = endDateOfWeek.getDate();
 
-              console.log("DEBUGGING_4 : ", startDD, endDD)
+              console.log("DEBUGGING_4 : ", startDD, endDD);
               console.log(startDateOfWeek, endDateOfWeek);
               // console.log(formattedStartDateOfWeek, formattedEndDateOfWeek);
               console.log(bookingStartDate, bookingEndDate);
@@ -275,6 +292,31 @@ export default function AvailabilityCalendar({ hallData }) {
     }
   };
 
+  function parseDate(dateString, splitCriteria) {
+    if (splitCriteria === "/") {
+      // DD/MM/YYYY
+      const parts = dateString.split("/");
+      // Month is 0-based, so we subtract 1 from the month value
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    } else if (splitCriteria === "-") {
+      // YYYY-MM-DD
+      const parts = dateString.split("-");
+      // Month is 0-based, so we subtract 1 from the month value
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+  }
+
+  // Function to compare if a date lies between a start date and an end date
+  function isDateInRange(date, startDate, endDate) {
+    const parsedDate = parseDate(date, "/");
+    const parsedStartDate = parseDate(startDate, "-");
+    const parsedEndDate = parseDate(endDate, "-");
+
+    // Check if the date is greater than or equal to the start date
+    // and less than or equal to the end date
+    return parsedDate >= parsedStartDate && parsedDate <= parsedEndDate;
+  }
+
   const formatBookingDate = (date) => {
     // yyyy-mm-dd to dd/mm/yyyy
     const [year, month, day] = date.split("-");
@@ -327,26 +369,28 @@ export default function AvailabilityCalendar({ hallData }) {
 
   useEffect(() => {
     try {
-      const bookingDate = bookingInfoStore.bookingDate;
-      if (!bookingDate) {
+      const bookingStartDate = bookingInfoStore.bookingStartDate;
+      if (!bookingStartDate) {
         const [dd, mm, yyyy] = formatDate(startDate).split("/");
-        dispatch(bookingInfoActions("bookingDate", `${yyyy}-${mm}-${dd}`));
-        dispatch(bookingInfoActions("bookingDay", getDayOfWeek(startDate)));
+        dispatch(bookingInfoActions("bookingStartDate", `${yyyy}-${mm}-${dd}`));
+        dispatch(bookingInfoActions("bookingStartDay", getDayOfWeek(startDate)));
+        dispatch(bookingInfoActions("bookingEndDate", `${yyyy}-${mm}-${dd}`));
+        dispatch(bookingInfoActions("bookingEndDay", getDayOfWeek(startDate)));
+
         return;
       }
-      const newFormatBookingDate = formatBookingDate(bookingDate);
-
+      //  to dd/mm/yyyy
+      const newFormatBookingStartDate = formatBookingDate(bookingStartDate);
       for (const day in availabilityCalendar) {
-        if (availabilityCalendar[day].date === newFormatBookingDate) {
+        if (availabilityCalendar[day].date === newFormatBookingStartDate) {
           return;
         }
       }
-
-      setStartDate(bookingInfoStore.bookingDate);
+      setStartDate(bookingInfoStore.bookingStartDate);
     } catch (error) {
       console.error(error.message);
     }
-  }, [bookingInfoStore.bookingDate]);
+  }, [bookingInfoStore.bookingStartDate]);
 
   useEffect(() => {
     if (!bookingInfoStore.startTime || !bookingInfoStore.endTime) {
@@ -355,15 +399,20 @@ export default function AvailabilityCalendar({ hallData }) {
     try {
       // code to calculate the different between the time slots
       // Parse the start time and end time strings into Date objects
-      const startTime = new Date(`2000-01-01T${bookingInfoStore.startTime}:00`);
-      const endTime = new Date(`2000-01-01T${bookingInfoStore.endTime}:00`);
+      const startDate = new Date(
+        `${bookingInfoStore.bookingStartDate}T${bookingInfoStore.startTime}:00`
+      );
+      const endDate = new Date(
+        `${bookingInfoStore.bookingEndDate}T${bookingInfoStore.endTime}:00`
+      );
 
       // Calculate the time difference in milliseconds
-      let timeDifference = endTime - startTime;
+      let timeDifference = endDate.getTime() - startDate.getTime();
 
       // Handle the case where end time is earlier than start time (crosses midnight)
       if (timeDifference < 0) {
-        timeDifference += 24 * 60 * 60 * 1000; // Add 24 hours in milliseconds
+        // Add 24 hours in milliseconds to account for crossing midnight
+        timeDifference += 24 * 60 * 60 * 1000;
       }
 
       // Convert the time difference from milliseconds to hours and minutes
@@ -373,7 +422,7 @@ export default function AvailabilityCalendar({ hallData }) {
       );
 
       // Format the time difference into a string representation
-      const timeDifferenceStr = `${hours.toString().padStart(2, "0")}:${minutes
+      const timeDifferenceStr = `${hours}:${minutes
         .toString()
         .padStart(2, "0")}`;
 
@@ -381,74 +430,88 @@ export default function AvailabilityCalendar({ hallData }) {
 
       // code to check if there are any clashes with the existing bookings
       var i;
-      const bookingStartTime = parseInt(
-        bookingInfoStore.startTime?.substring(0, 2)
-      );
-      const bookingEndTime = parseInt(
-        bookingInfoStore.endTime?.substring(0, 2)
-      );
-      const bookingData =
-        availabilityCalendar[bookingInfoStore.bookingDay]["timeSlots"];
-      console.log("bookingStartTime " + bookingStartTime);
-      console.log("bookingEndTime " + bookingEndTime);
-      console.log("bookingData " + bookingData);
+      // const bookingStartTime = parseInt(
+      //   bookingInfoStore.startTime?.substring(0, 2)
+      // );
+      // const bookingEndTime = parseInt(
+      //   bookingInfoStore.endTime?.substring(0, 2)
+      // );
+      // const bookingData =
+      //   availabilityCalendar[bookingInfoStore.bookingDay]["timeSlots"];
+      // console.log("bookingStartTime " + bookingStartTime);
+      // console.log("bookingEndTime " + bookingEndTime);
+      // console.log("bookingData " + bookingData);
 
-      if (bookingEndTime < bookingStartTime) {
-        //check if there already exists a booking for that slot
-        for (i = bookingStartTime; i < 24; i++) {
-          if (bookingData[i]) {
-            dispatch(
-              bookingInfoActions(
-                "errorInfo",
-                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
-              )
-            );
-            return;
-          }
-        }
-        for (i = 0; i < bookingEndTime; i++) {
-          if (bookingData[i]) {
-            dispatch(
-              bookingInfoActions(
-                "errorInfo",
-                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
-              )
-            );
-            return;
-          }
-        }
-      } else {
-        for (i = bookingStartTime; i < bookingEndTime; i++) {
-          if (bookingData[i]) {
-            dispatch(
-              bookingInfoActions(
-                "errorInfo",
-                "Sorry! This slot is already booked. Please choose a different slot to continue!!"
-              )
-            );
-            return;
-          }
-        }
-      }
+      // if (bookingEndTime < bookingStartTime) {
+      //   //check if there already exists a booking for that slot
+      //   for (i = bookingStartTime; i < 24; i++) {
+      //     if (bookingData[i]) {
+      //       dispatch(
+      //         bookingInfoActions(
+      //           "errorInfo",
+      //           "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+      //         )
+      //       );
+      //       return;
+      //     }
+      //   }
+      //   for (i = 0; i < bookingEndTime; i++) {
+      //     if (bookingData[i]) {
+      //       dispatch(
+      //         bookingInfoActions(
+      //           "errorInfo",
+      //           "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+      //         )
+      //       );
+      //       return;
+      //     }
+      //   }
+      // } else {
+      //   for (i = bookingStartTime; i < bookingEndTime; i++) {
+      //     if (bookingData[i]) {
+      //       dispatch(
+      //         bookingInfoActions(
+      //           "errorInfo",
+      //           "Sorry! This slot is already booked. Please choose a different slot to continue!!"
+      //         )
+      //       );
+      //       return;
+      //     }
+      //   }
+      // }
       dispatch(bookingInfoActions("errorInfo", ""));
     } catch (error) {
       console.error(error.message);
     }
   }, [bookingInfoStore.startTime, bookingInfoStore.endTime]);
 
-  // eslint-disable-next-line no-unused-vars
-  const rearrangeContent = () => {
-    const container = containerRef.current;
-    const contentHeight = container.scrollHeight;
-    const scrollTop = container.scrollTop;
-    const scrollHeight = container.clientHeight;
+  // useState(()=> {
+  //   try {
+  //     if(!bookingInfoStore.bookingEndTime) {
+  //       return;
+  //     }
 
-    if (scrollTop + scrollHeight >= contentHeight) {
-      // If reached the bottom, move the content on top to the bottom
-      container.append(...container.children);
-      container.scrollTop = 0; // Reset scroll position to top
-    }
-  };
+  //     if (bookingInfoStore.endTime === "00:00") {
+  //     // if the time is 23 hours.. then set endDate to next day
+  //     // Convert the string to a Date object
+  //     const date = new Date(bookingInfoStore.bookingStartDate);
+
+  //     // Increment the date by one day
+  //     date.setDate(date.getDate() + 1);
+
+  //     // Convert the updated Date object back to YYYY-MM-DD format
+  //     const endDateString = date.toISOString().split("T")[0];
+
+  //     dispatch(bookingInfoActions("bookingEndDate", endDateString));
+  //     return;
+  //   }
+
+  //   dispatch(bookingInfoActions("bookingEndDate", bookingInfoStore.bookingStartDate));
+  //   dispatch(bookingInfoActions("bookingEndDay", bookingInfoStore.bookingStartDay));
+  //   } catch(error) {
+  //     console.error(error.message);
+  //   }
+  // }, [bookingInfoStore.endTime])
 
   const handlePrevWeek = () => {
     setAvailabilityCalendar(calendar);
@@ -470,25 +533,51 @@ export default function AvailabilityCalendar({ hallData }) {
 
   const handleDateChange = (date, day) => {
     const [dd, mm, yyyy] = date.split("/");
-    dispatch(bookingInfoActions("bookingDate", `${yyyy}-${mm}-${dd}`));
-    dispatch(bookingInfoActions("bookingDay", day));
+    dispatch(bookingInfoActions("bookingStartDate", `${yyyy}-${mm}-${dd}`));
+    dispatch(bookingInfoActions("bookingStartDay", day));
+
+    // if (bookingInfoStore.endTime === "00:00") {
+    //   // if the time is 23 hours.. then set endDate to next day
+    //   // Convert the string to a Date object
+    //   const date = new Date(`${yyyy}-${mm}-${dd}`);
+
+    //   // Increment the date by one day
+    //   date.setDate(date.getDate() + 1);
+
+    //   // Convert the updated Date object back to YYYY-MM-DD format
+    //   const endDateString = date.toISOString().split("T")[0];
+
+    //   dispatch(bookingInfoActions("bookingEndDate", endDateString));
+    //   return;
+    // }
+
+    // dispatch(bookingInfoActions("bookingEndDate", `${yyyy}-${mm}-${dd}`));
+    // dispatch(bookingInfoActions("bookingEndDay", day));
   };
 
   const handleTimeChange = (time, isBooked) => {
     const endTime = parseInt(time) < 23 ? parseInt(time) + 1 : "00";
+    
     dispatch(
       bookingInfoActions("startTime", `${time.toString().padStart(2, "0")}:00`)
     );
+    
     dispatch(
       bookingInfoActions("endTime", `${endTime.toString().padStart(2, "0")}:00`)
     );
+    // if (parseInt(time) === 23) {
+    //   // if the time is 23 hours.. then set endDate to next day
+    //   // Convert the string to a Date object
+    //   const date = new Date(bookingInfoStore.bookingStartDate);
 
-    // if(isBooked) {
-    //   dispatch(bookingInfoActions("errorInfo", "Sorry! This slot is already booked. Please choose a different slot to continue!!"))
-    //   return;
+    //   // Increment the date by one day
+    //   date.setDate(date.getDate() + 1);
+
+    //   // Convert the updated Date object back to YYYY-MM-DD format
+    //   const endDateString = date.toISOString().split("T")[0];
+
+    //   dispatch(bookingInfoActions("bookingEndDate", endDateString));
     // }
-
-    // dispatch(bookingInfoActions("errorInfo", ""))
   };
 
   return (
@@ -544,9 +633,13 @@ export default function AvailabilityCalendar({ hallData }) {
                 <div
                   key={day}
                   className={`sub-wrapper ${
-                    (bookingInfoStore.bookingDate
-                      ? dayInfo.date ===
-                        formatBookingDate(bookingInfoStore.bookingDate)
+                    (bookingInfoStore.bookingStartDate &&
+                    bookingInfoStore.bookingEndDate
+                      ? isDateInRange(
+                          dayInfo.date,
+                          bookingInfoStore.bookingStartDate,
+                          bookingInfoStore.bookingEndDate
+                        )
                       : dayInfo.date === formatDate(startDate)) &&
                     "currentSelection"
                   }`}
@@ -590,9 +683,13 @@ export default function AvailabilityCalendar({ hallData }) {
                 >
                   <div
                     className={`timeSlots__wrapper ${
-                      (bookingInfoStore.bookingDate
-                        ? dayInfo.date ===
-                          formatBookingDate(bookingInfoStore.bookingDate)
+                      (bookingInfoStore.bookingStartDate &&
+                      bookingInfoStore.bookingEndDate
+                        ? isDateInRange(
+                            dayInfo.date,
+                            bookingInfoStore.bookingStartDate,
+                            bookingInfoStore.bookingEndDate
+                          )
                         : dayInfo.date === formatDate(startDate)) &&
                       "currentSelection"
                     }`}
@@ -616,7 +713,7 @@ export default function AvailabilityCalendar({ hallData }) {
                               bookingInfoStore.endTime &&
                               dayInfo.date ===
                                 formatBookingDate(
-                                  bookingInfoStore.bookingDate
+                                  bookingInfoStore.bookingStartDate
                                 ) &&
                               isSelectedSlot(timeSlot) &&
                               "selectedTimeSlot"
