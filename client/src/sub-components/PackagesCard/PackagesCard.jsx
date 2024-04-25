@@ -1,17 +1,17 @@
-import { useState, useEffect } from "react";
-import "./PackagesCard.scss";
+import { useState, useEffect } from 'react';
+import './PackagesCard.scss';
 
-import Tooltip from "@mui/material/Tooltip";
+import Tooltip from '@mui/material/Tooltip';
 import StarIcon from "@mui/icons-material/Star";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import CurrencyRupeeIcon from "@mui/icons-material/CurrencyRupee";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import HotelIcon from "@mui/icons-material/Hotel";
-import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
-import AccountBalanceIcon from "@mui/icons-material/AccountBalance";
-import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import HotelIcon from '@mui/icons-material/Hotel';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import AccessAlarmIcon from '@mui/icons-material/AccessAlarm';
+import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
 import { FaCrown } from "react-icons/fa";
 import PropTypes from "prop-types";
 import Carousel from "react-multi-carousel";
@@ -23,6 +23,7 @@ export default function PackagesCard({ card }) {
     opacity: 0,
   });
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isFavorite, setIsFavorite] = useState(false); // State to track if the package is a favorite
 
   useEffect(() => {
     const intervalId = setInterval(() => {
@@ -33,6 +34,29 @@ export default function PackagesCard({ card }) {
 
     return () => clearInterval(intervalId);
   }, [card.hallImages]);
+
+  useEffect(() => {
+    // Check if the package is already marked as favorite in local storage on component mount
+    const storedFavorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    setIsFavorite(storedFavorites.includes(card._id));
+  }, [card._id]);
+
+  const handleFavoriteClick = () => {
+    setIsFavorite(!isFavorite); // Toggle the favorite state
+    updateLocalStorage(!isFavorite); // Update local storage
+  };
+
+  const updateLocalStorage = (addFavorite) => {
+    // Update local storage with the current list of favorite items
+    let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+    if (addFavorite) {
+      favorites.push(card._id);
+    } else {
+      favorites = favorites.filter((id) => id !== card._id);
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+  };
+
 
   const responsive = {
     desktop: {
@@ -49,16 +73,15 @@ export default function PackagesCard({ card }) {
     },
   };
 
-  // const CustomButtonGroup = ({ next, previous }) => (
-  //   <div>
-  //     <button onClick={() => previous()}>Previous</button>
-  //     <button onClick={() => next()}>Next</button>
-  //   </div>
-  // );
-
   return (
     
-      <div className="box__wrapper">
+      <div className="packagesCardBox__wrapper">
+         {/* Favorite heart icon */}
+        <div className="favorite-icon-container" onClick={handleFavoriteClick}>
+          <Tooltip title={isFavorite ? "Remove from Favorites" : "Add to Favorites"} placement="top">
+            <FavoriteIcon className={isFavorite ? "favorite-icon active" : "favorite-icon"} />
+          </Tooltip>
+        </div>
         <div className="image__wrapper">
           <Carousel
             responsive={responsive}

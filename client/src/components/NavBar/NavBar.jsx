@@ -131,7 +131,7 @@ export default function NavBar() {
           </div>
         </div>
 
-        <div className="container">
+        <div className="tags__wrapper">
           <a href="#" className="tag">
             Venues
           </a>

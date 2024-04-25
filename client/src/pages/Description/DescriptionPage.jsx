@@ -18,6 +18,7 @@ import {
   BookingDetailsDialog
 } from '../../components'
 
+
 import './DescriptionPage.scss'
 import { LoadingScreen } from '../../sub-components';
 

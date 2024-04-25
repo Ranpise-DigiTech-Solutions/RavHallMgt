@@ -2,13 +2,24 @@
 import "./HallDescription.scss"; // Import SCSS file
 import ReactStars from "react-stars";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import Button from "@mui/material/Button";
+// import Button from "@mui/material/Button";
 import Carousel from "react-multi-carousel";
 
 import PropTypes from "prop-types";
 
+// import BookingConfirmation from '../BookingConfirmationPage/BookingConfirmation';
+
 // Define Slider component
 const Slider = ({ hallData }) => {
+
+  // const [showPopup, setShowPopup] = useState(false);
+  // const [bookingDetails, setBookingDetails] = useState({
+  //   // Populate with initial booking details or fetch them as required
+  // });
+
+  // const handleBooking = () => {
+  //   setShowPopup(true); // This should set showPopup state to true when "Book Now" button is clicked
+  // };
 
   const responsive = {
     desktop: {
@@ -71,36 +82,25 @@ const Slider = ({ hallData }) => {
             edit={false}
           />
 
-          {/* <Button
-            variant="contained"
-            className="button"
-            sx={{
-              backgroundColor: "orange",
-              "&:hover": {
-                backgroundColor: "darkorange", // Change to your desired shade of orange
-              },
-            }}
-          >
-            Book Now
-          </Button> */}
-          <div className="menu__wrapper">
-            <div className="photosMenu menuOption">
-              <p>10 Photos</p>
-            </div>
-            <div className="verticalLine"></div>
-            <div className="favouriteMenu menuOption">
-              <p>Shortlist</p>
-            </div>
-            <div className="verticalLine"></div>
-            <div className="reviewMenu menuOption">
-              <p>Write a Review</p>
-            </div>
-            <div className="verticalLine"></div>
-            <div className="shareMenu">
-              <p>Share</p>
-            </div>
-          </div>
-        </div>
+        {/* <Button
+          onClick={handleBooking}
+          variant="contained"
+          className="button"
+          sx={{
+            backgroundColor: 'orange',
+            '&:hover': {
+              backgroundColor: 'darkorange', // Change to your desired shade of orange
+            },
+          }}
+        >
+          Book Now
+        </Button>
+        <BookingConfirmation
+        isOpen={showPopup}
+        details={bookingDetails}
+        onClose={() => setShowPopup(false)}
+      /> */}
+      </div>
       </div>
     </>
   );

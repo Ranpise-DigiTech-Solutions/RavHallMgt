@@ -8,6 +8,7 @@ import './App.scss'
 import { 
   HomePage,
   DescriptionPage,
+  UserProfilePage,
 } from './pages'
 import {
   fetchCitiesOfCountryData,
@@ -87,6 +88,9 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/DescriptionPage" element={<DescriptionPage />} />
+          </Routes>
+          <Routes>
+            <Route path="/UserProfilePage" element={<UserProfilePage />} />
           </Routes>
         </ClerkProvider>
       );
