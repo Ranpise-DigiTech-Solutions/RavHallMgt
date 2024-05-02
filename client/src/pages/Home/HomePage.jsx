@@ -15,7 +15,7 @@ const HomePage = () => {
       <AboutUs />
       <Stories />
       <Blogs />
-      <Footer />
+      <Footer className='footer'/>
     </>
   )
 }

@@ -9,7 +9,6 @@ import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
 
 import SearchIcon from "@mui/icons-material/Search";
-// import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import WarningIcon from "@mui/icons-material/Warning";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import CloseIcon from "@mui/icons-material/Close";
@@ -19,15 +18,11 @@ import { searchBoxFilterActions } from "../../states/SearchBoxFilter";
 
 import "./SearchBar.scss";
 
-// TODO: change the way how eventTypes and vendorTypes are rendered - use both id and type... avoid querying for eventId when the search request is sent
-
-
 export default function SearchBar() {
-  const data = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
+  const data = useSelector((state) => state.data);
   const [eventNotSelectedWarning, setEventNotSelectedWarning] = useState(false);
 
-  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter); // Redux Store which holds all the user selection info. which includes cityName, eventType, bookingDate and vendorType
-
+  const searchBoxFilterStore = useSelector((state) => state.searchBoxFilter);
   const dispatch = useDispatch();
 
   const handleDateChange = (event) => {
@@ -49,13 +44,13 @@ export default function SearchBar() {
     dropdownIndicator: (provided) => ({
       ...provided,
       "& svg": {
-        display: "none", // Hide the default arrow icon
+        display: "none",
       },
       padding: 10,
     }),
     placeholder: (provided) => ({
       ...provided,
-      color: '#999999', // Change the placeholder color here
+      color: "#999999",
     }),
   };
 
@@ -91,7 +86,7 @@ export default function SearchBar() {
                 onChange={(selectedOption) => {
                   dispatch(
                     searchBoxFilterActions("cityName", selectedOption.value)
-                  ); // Update Details in 'SearchBoxFilter' Redux Store
+                  );
                 }}
                 placeholder="Select or type a city..."
               />
@@ -132,7 +127,7 @@ export default function SearchBar() {
                 onChange={(selectedOption) => {
                   dispatch(
                     searchBoxFilterActions("eventType", selectedOption.value)
-                  ); // Update Details in 'SearchBoxFilter' Redux Store
+                  );
                 }}
                 placeholder="Choose Event Type"
                 components={{
@@ -172,7 +167,7 @@ export default function SearchBar() {
                         "vendorType",
                         selectedOption ? selectedOption.value : ""
                       )
-                    ); // Update Details in 'SearchBoxFilter' Redux Store
+                    );
                   } else {
                     setEventNotSelectedWarning(true);
                   }
@@ -202,7 +197,7 @@ export default function SearchBar() {
               <CloseIcon
                 className="icon"
                 onClick={() => {
-                  dispatch(searchBoxFilterActions("cityName", "")); // Update Details in 'SearchBoxFilter' Redux Store
+                  dispatch(searchBoxFilterActions("cityName", ""));
                 }}
               />
             </div>
@@ -213,7 +208,7 @@ export default function SearchBar() {
               <CloseIcon
                 className="icon"
                 onClick={() => {
-                  dispatch(searchBoxFilterActions("bookingDate", "")); // Update Details in 'SearchBoxFilter' Redux Store
+                  dispatch(searchBoxFilterActions("bookingDate", ""));
                 }}
               />
             </div>
@@ -224,7 +219,7 @@ export default function SearchBar() {
               <CloseIcon
                 className="icon"
                 onClick={() => {
-                  dispatch(searchBoxFilterActions("eventType", "")); // Update Details in 'SearchBoxFilter' Redux Store
+                  dispatch(searchBoxFilterActions("eventType", ""));
                 }}
               />
             </div>
@@ -235,7 +230,7 @@ export default function SearchBar() {
               <CloseIcon
                 className="icon"
                 onClick={() => {
-                  dispatch(searchBoxFilterActions("vendorType", "")); /// Update Details in 'SearchBoxFilter' Redux Store
+                  dispatch(searchBoxFilterActions("vendorType", ""));
                 }}
               />
             </div>
@@ -257,19 +252,19 @@ export default function SearchBar() {
               Your event is not selected. Please select an event before
               proceeding!!
             </DialogContentText>
-          </DialogContent>
-          <DialogActions>
-            <Button
-              onClick={() => setEventNotSelectedWarning(false)}
-              color="primary"
-              autoFocus
-              className="agree__btn"
-            >
-              ok
-            </Button>
-          </DialogActions>
-        </Dialog>
-      )}
-    </div>
-  );
+</DialogContent>
+<DialogActions>
+<Button
+onClick={() => setEventNotSelectedWarning(false)}
+color="primary"
+autoFocus
+className="agree__btn"
+>
+ok
+</Button>
+</DialogActions>
+</Dialog>
+)}
+</div>
+);
 }

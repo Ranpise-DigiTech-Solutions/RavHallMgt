@@ -38,7 +38,9 @@ const UserProfilePage = () => {
 
   return (
     <div className="userProfilePage__container">
-      <UserProfileLeftPanel setActiveComponent={setActiveComponent} />
+     <div className="leftPanel">
+    <UserProfileLeftPanel setActiveComponent={setActiveComponent} />
+  </div>
       <div className="rightPanel">
         {renderComponent()}
       </div>
