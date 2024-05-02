@@ -11,6 +11,7 @@ import PhoneIcon from '@mui/icons-material/Phone';
 import StarIcon from '@mui/icons-material/Star';
 import PlaceIcon from '@mui/icons-material/Place';
 import ErrorIcon from '@mui/icons-material/Error';
+import VerifiedIcon from '@mui/icons-material/Verified';
 
 import { Images } from "../../constants";
 import { bookingInfoActions } from "../../states/BookingInfo";
@@ -64,13 +65,32 @@ export default function AdditionalVendorDetails({
     }
 
     const handleBookingStartDateChange = (event) => {
+        const bookingStartDate = new Date(event.target.value);
+        const bookingEndDate = new Date(bookingInfoStore.bookingEndDate);
+        dispatch(bookingInfoActions("comments", ""));
+
+        if(bookingStartDate > bookingEndDate) {
+            dispatch(bookingInfoActions("errorInfo", "Invalid Time Frame! Start date cannot be greater than end date."));
+            return;
+        }
+        
         dispatch(bookingInfoActions("bookingStartDate", event.target.value));
         dispatch(bookingInfoActions("bookingStartDay", getDayOfWeek(new Date(event.target.value))))
+        dispatch(bookingInfoActions("errorInfo", ""));
     }
 
     const handleBookingEndDateChange = (event) => {
+        const bookingStartDate = new Date(bookingInfoStore.bookingStartDate);
+        const bookingEndDate = new Date(event.target.value);
+
+        if(bookingEndDate < bookingStartDate) {
+            dispatch(bookingInfoActions("errorInfo", "Invalid Time Frame! End date cannot be lesser than start date."));
+            return;
+        }
+        
         dispatch(bookingInfoActions("bookingEndDate", event.target.value));
         dispatch(bookingInfoActions("bookingEndDay", getDayOfWeek(new Date(event.target.value))))
+        dispatch(bookingInfoActions("errorInfo", ""));
     }
 
     const handleBookingStartTimeChange = (event)=> {
@@ -82,9 +102,18 @@ export default function AdditionalVendorDetails({
     } 
 
     const handleBookingEndTimeChange = (event) => {
-        if(event.target.value === bookingInfoStore.startTime) {
-            dispatch(bookingInfoActions("errorInfo", "End time cannot be same as Start time."));
+        if(!bookingInfoStore.startTime) {
+            dispatch(bookingInfoActions("errorInfo", "Sorry! Please choose a start time first!"));
             return;
+        }
+        if(bookingInfoStore.bookingStartDate === bookingInfoStore.bookingEndDate) {
+            if(event.target.value === bookingInfoStore.startTime) {
+                dispatch(bookingInfoActions("errorInfo", "End time cannot be same as Start time."));
+                return;
+            } else if(parseInt(event.target.value.substring(0, 2)) < parseInt(bookingInfoStore.startTime.substring(0, 2))) {
+                dispatch(bookingInfoActions("errorInfo", "End time cannot be less than Start time."));
+                return;
+            }
         }
         dispatch(bookingInfoActions("endTime", event.target.value));
         dispatch(bookingInfoActions("errorInfo", ""));
@@ -253,7 +282,7 @@ export default function AdditionalVendorDetails({
                             <input
                                 type="number"
                                 name="hoursInput"
-                                value={parseInt(bookingInfoStore?.bookingDuration.substring(0, 2))}
+                                value={parseInt(bookingInfoStore?.bookingDuration.split(":")[0])}
                                 className="sub-input"
                                 disabled
                             />
@@ -263,7 +292,7 @@ export default function AdditionalVendorDetails({
                             <input
                                 type="number"
                                 name="minutesInput"
-                                value={parseInt(bookingInfoStore?.bookingDuration.substring(3, 5))}
+                                value={parseInt(bookingInfoStore?.bookingDuration.split(":")[1])}
                                 className="sub-input"
                                 disabled
                             />
@@ -272,12 +301,18 @@ export default function AdditionalVendorDetails({
                 </div>
                 <div className="userInfo__wrapper">
                     {bookingInfoStore.errorInfo && (
-                        <div className="inputError">
+                        <div className="inputError comments">
                             <ErrorIcon className="icon" />
                             <p>{bookingInfoStore.errorInfo}</p>
                         </div>
                     )}
-                    <p className="desc">* Please read the terms and conditions carefully</p>
+                    {bookingInfoStore.comments && (
+                        <div className="inputSuccess comments">
+                            <VerifiedIcon className="icon" />
+                            <p>{bookingInfoStore.comments}</p>
+                        </div>
+                    )}
+                    {/* <p className="desc">* Please read the terms and conditions carefully</p> */}
                 </div>
                 <div className="btn__wrapper">
                     <button className="btn">

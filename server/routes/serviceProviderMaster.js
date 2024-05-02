@@ -1,10 +1,21 @@
 import { default as express } from 'express';
 const router = express.Router();
+import { ObjectId } from "mongodb";
+import mongoose from "mongoose";
 
 import { serviceProviderMaster } from '../models/index.js';
 
 router.get("/", async (req, res) => {
-    const filter = {};
+
+    const { serviceProviderId } = req.query;
+
+    if(!serviceProviderId) {
+        return res.status(404).json({message: "Service provider id required!"});
+    }
+
+    const filter = {
+        _id: new mongoose.Types.ObjectId(serviceProviderId),
+    };
 
     try {
         const serviceProviderDetails = await serviceProviderMaster.find(filter);

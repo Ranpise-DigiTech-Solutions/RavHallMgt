@@ -1,8 +1,10 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "./BookingDetailsDialog.scss";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import PropTypes from "prop-types";
+import axios from "axios";
 import Select from "react-select";
 
 import Dialog from "@mui/material/Dialog";
@@ -27,10 +29,16 @@ import MessageIcon from "@mui/icons-material/Message";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AccessAlarmIcon from "@mui/icons-material/AccessAlarm";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import ErrorIcon from "@mui/icons-material/Error";
 import { FaLandmark, FaCar } from "react-icons/fa";
 import { GiSandsOfTime } from "react-icons/gi";
 
-export default function BookingDetailsDialog({ open, handleClose, hallData }) {
+export default function BookingDetailsDialog({ 
+  open,
+  handleClose,
+  hallData,
+  serviceProviderData
+}) {
   const dataStore = useSelector((state) => state.data); // CITIES, EVENT_TYPES & VENDOR_TYPES data
   const bookingInfoStore = useSelector((state) => state.bookingInfo); // user Booking information
   const userInfoStore = useSelector((state) => state.userInfo); // user Authentication information
@@ -39,6 +47,7 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
   const [formType, setFormType] = useState("FORM_ONE"); // FORM_ONE, FORM_TWO, FORM_THREE, FORM_FOUR
   const [submissionConfirmationDialog, setSubmissionConfirmationDialog] =
     useState(false);
+  const [formErrorUpdateFlag, setFormErrorUpdateFlag] = useState(false); // error update flag for form
 
   const customStyles = {
     control: (provided, state) => ({
@@ -96,6 +105,14 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
     ...bookingDetailsTemplate,
   });
 
+  const [bookingDetailsErrorInfo, setBookingDetailsErrorInfo] = useState({
+    ...bookingDetailsTemplate,
+    eventTypeInfo: "",
+    guestsCount: "",
+    roomsCount: "",
+    vehiclesCount: "",
+  });
+
   const handleSubmissionConfirmationDialogOpen = () => {
     setSubmissionConfirmationDialog(true);
   };
@@ -111,7 +128,73 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
     }));
   };
 
+  const handleBookingDetailsErrorInfo = (key, value) => {
+    setBookingDetailsErrorInfo((previousInfo) => ({
+      ...previousInfo,
+      [key]: value,
+    }));
+  };
+
+  function parseDate(dateString, splitCriteria) {
+    if (splitCriteria === "/") {
+      // DD/MM/YYYY
+      const parts = dateString.split("/");
+      // Month is 0-based, so we subtract 1 from the month value
+      return new Date(parts[2], parts[1] - 1, parts[0]);
+    } else if (splitCriteria === "-") {
+      // YYYY-MM-DD
+      const parts = dateString.split("-");
+      // Month is 0-based, so we subtract 1 from the month value
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+  }
+
+  useEffect(()=> {
+    try {
+      const requiredFields = [
+        bookingDetailsErrorInfo.eventTypeInfo,
+        bookingDetailsErrorInfo.guestsCount,
+        bookingDetailsErrorInfo.roomsCount,
+        bookingDetailsErrorInfo.vehiclesCount,
+      ];
+
+      const isFormValid = requiredFields.every(field => field === "");
+
+      if (isFormValid) {
+        setFormType("FORM_THREE");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [formErrorUpdateFlag]);
+
   console.log(hallData);
+  console.log(serviceProviderData);
+
+  const validateFormTwo = ()=> {
+    if(!bookingDetails.eventTypeInfo.eventType) {
+      handleBookingDetailsErrorInfo("eventTypeInfo", "Event type is required");
+    } else {
+      handleBookingDetailsErrorInfo("eventTypeInfo", "");
+    }
+    if(!bookingDetails.guestsCount) {
+      handleBookingDetailsErrorInfo("guestsCount", "Guests count is required");
+    } else {
+      handleBookingDetailsErrorInfo("guestsCount", "");
+    }
+    if(!bookingDetails.roomsCount) {
+      handleBookingDetailsErrorInfo("roomsCount", "Rooms count is required");
+    } else {
+      handleBookingDetailsErrorInfo("roomsCount", "");
+    }
+    if(!bookingDetails.vehiclesCount) {
+      handleBookingDetailsErrorInfo("vehiclesCount", "Vehicles count is required");
+    } else {
+      handleBookingDetailsErrorInfo("vehiclesCount", "");
+    }
+
+    setFormErrorUpdateFlag(prevFlag => !prevFlag);
+  }
 
   const handlePrevBtnClick = () => {
     switch (formType) {
@@ -142,12 +225,10 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
         break;
       case "FORM_TWO":
         setFormProgress(50);
-        // validateFormTwo();
-        setFormType("FORM_THREE");
+        validateFormTwo();
         break;
       case "FORM_THREE":
         setFormProgress(75);
-        // validateFormThree();
         setFormType("FORM_FOUR");
         break;
       case "FORM_FOUR":
@@ -158,29 +239,74 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
     }
   };
 
-  const handleFormSubmit = () => {
-    setFormType("FORM_ONE");
-    handleClose();
+  const handleFormSubmit = async () => {
     try {
-    //   const [year, month, day] = bookingInfoStore.bookingDate.split('/').map(Number);
-    // const [startHour, startMinute] = bookingInfoStorestartTime.split(':').map(Number);
+      const parsedStartDateObject = parseDate(
+        bookingInfoStore.bookingStartDate,
+        "-"
+      );
+      const parsedEndDateObject = parseDate(
+        bookingInfoStore.bookingEndDate,
+        "-"
+      );
+      parsedStartDateObject.setHours(
+        parseInt(bookingInfoStore.startTime.split(":")[0]),
+        0,
+        0,
+        0
+      );
+      parsedEndDateObject.setHours(
+        parseInt(bookingInfoStore.endTime.split(":")[0]),
+        0,
+        0,
+        0
+      );
 
-      // const postData = {
-      //   hallId: hallData._id,
-      //   hallCity: hallData.hallCity,
-      //   vendorTypeId: "6612e8bddfb65ff32fa575f1",
-      //   bookingTimeStamp: 
-      // }
+      const postData = {
+        hallId: hallData._id,
+        hallCity: hallData.hallCity,
+        vendorTypeId: serviceProviderData.vendorTypeId,
+        eventId: bookingDetails.eventTypeInfo.eventTypeId,
+        customerId: userInfoStore.userDetails?.Document?._id,
+        bookingType: "HALL",
+        bookCaterer: bookingDetails.catererRequirement.value,
+        bookingStartDateTimestamp: parsedStartDateObject,
+        bookingEndDateTimestamp: parsedEndDateObject,
+        bookingDuration: parseInt(bookingInfoStore.bookingDuration.split(":")[0]),
+        bookingStatusRemark: "",
+
+        guestsCount: parseInt(bookingDetails.guestsCount),
+        roomsCount: parseInt(bookingDetails.roomsCount),
+        parkingRequirement: bookingDetails.parkingRequirement.value,
+        vehiclesCount: parseInt(bookingDetails.vehiclesCount),
+        customerVegRate: parseInt(bookingDetails.expectedVegRate),
+        customerNonVegRate: parseInt(bookingDetails.expectedNonVegRate),
+        customerVegItemsList: bookingDetails.vegMenu,
+        customerNonVegItemsList: bookingDetails.nonVegMenu,
+        customerInfo: "",
+        customerSuggestion: bookingDetails.customerSuggestion,
+      }
+
+      const response = await axios.post("http://localhost:8000/eventify_server/bookingMaster/", postData);
+      console.log(response);
     } catch (error) {
       console.log(error);
     }
+
+    setFormType("FORM_ONE");
+    handleClose();
   };
 
   return (
-    <Dialog open={open} keepMounted onClose={()=> {
-      setFormType("FORM_ONE");
-      handleClose();
-    }} maxWidth="md">
+    <Dialog
+      open={open}
+      keepMounted
+      onClose={() => {
+        setFormType("FORM_ONE");
+        handleClose();
+      }}
+      maxWidth="md"
+    >
       <Dialog
         open={submissionConfirmationDialog}
         onClose={handleSubmissionConfirmationDialogClose}
@@ -413,8 +539,15 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
             <div className="container preferences__container">
               <div className="inputFields__wrapper">
                 <div className="wrapper">
-                  <div className="title">Event Type</div>
-                  <div className="input__wrapper">
+                  <div className="title">Event Type <span>*</span></div>
+                  <div
+                    className="input__wrapper"
+                    style={
+                      bookingDetailsErrorInfo.eventTypeInfo
+                        ? { border: "2px solid red" }
+                        : {}
+                    }
+                  >
                     <CurrencyRupeeIcon className="icon" />
                     <div className="divider"></div>
                     <Select
@@ -457,10 +590,18 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                       isSearchable
                     />
                   </div>
+                  {bookingDetailsErrorInfo.eventTypeInfo && (
+                    <div className="inputError">
+                      <ErrorIcon className="icon" />
+                      <p>{bookingDetailsErrorInfo.eventTypeInfo}</p>
+                    </div>
+                  )}
                 </div>
                 <div className="wrapper">
-                  <div className="title">Caterer Requirement</div>
-                  <div className="input__wrapper">
+                  <div className="title">Caterer Requirement <span>*</span></div>
+                  <div
+                    className="input__wrapper"
+                  >
                     <CurrencyRupeeIcon className="icon" />
                     <div className="divider"></div>
                     <Select
@@ -509,8 +650,15 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
               </div>
               <div className="inputFields__wrapper">
                 <div className="wrapper">
-                  <div className="title">No. of Guests Required</div>
-                  <div className="input__wrapper">
+                  <div className="title">No. of Guests Required <span>*</span></div>
+                  <div
+                    className="input__wrapper"
+                    style={
+                      bookingDetailsErrorInfo.guestsCount
+                        ? { border: "2px solid red" }
+                        : {}
+                    }
+                  >
                     <PeopleAltIcon className="icon" />
                     <div className="divider"></div>
                     <input
@@ -527,27 +675,57 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                       }
                     />
                   </div>
+                  {bookingDetailsErrorInfo.guestsCount && (
+                    <div className="inputError">
+                      <ErrorIcon className="icon" />
+                      <p>{bookingDetailsErrorInfo.guestsCount}</p>
+                    </div>
+                  )}
                 </div>
                 <div className="wrapper">
-                  <div className="title">No. of Rooms Required</div>
-                  <div className="input__wrapper">
+                  <div className="title">No. of Rooms Required <span>*</span></div>
+                  <div
+                    className="input__wrapper"
+                    style={
+                      bookingDetailsErrorInfo.roomsCount
+                        ? { border: "2px solid red" }
+                        : {}
+                    }
+                  >
                     <BedIcon className="icon" />
                     <div className="divider"></div>
-                    <input 
+                    <input
                       type="number"
                       name="roomCount"
                       value={bookingDetails.roomsCount}
                       className="input"
                       placeholder="Enter room count"
-                      onChange={(event)=> handleBookingDetailsInfo("roomsCount", event.target.value)}
+                      onChange={(event) =>
+                        handleBookingDetailsInfo(
+                          "roomsCount",
+                          event.target.value
+                        )
+                      }
                     />
                   </div>
+                  {
+                    bookingDetailsErrorInfo.roomsCount && (
+                      <div className="inputError">
+                        <ErrorIcon className="icon" />
+                        <p>
+                          {bookingDetailsErrorInfo.roomsCount}
+                        </p>
+                      </div>
+                    )
+                  }
                 </div>
               </div>
               <div className="inputFields__wrapper">
                 <div className="wrapper">
-                  <div className="title">Parking Requirement</div>
-                  <div className="input__wrapper">
+                  <div className="title">Parking Requirement <span>*</span></div>
+                  <div 
+                    className="input__wrapper"
+                  >
                     <LocalParkingIcon className="icon" />
                     <div className="divider"></div>
                     <Select
@@ -594,19 +772,41 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   </div>
                 </div>
                 <div className="wrapper">
-                  <div className="title">No. Of Vehicles</div>
-                  <div className="input__wrapper">
+                  <div className="title">No. Of Vehicles <span>*</span></div>
+                  <div 
+                    className="input__wrapper"
+                    style={
+                      bookingDetailsErrorInfo.vehiclesCount
+                        ? { border: "2px solid red" }
+                        : {}
+                    }  
+                  >
                     <FaCar className="icon" />
                     <div className="divider"></div>
-                    <input 
+                    <input
                       type="number"
                       name="vehiclesCount"
                       value={bookingDetails.vehiclesCount}
                       className="input"
                       placeholder="Enter vehicle count"
-                      onChange={(event) => handleBookingDetailsInfo("vehiclesCount", event.target.value)}
+                      onChange={(event) =>
+                        handleBookingDetailsInfo(
+                          "vehiclesCount",
+                          event.target.value
+                        )
+                      }
                     />
                   </div>
+                  {
+                    bookingDetailsErrorInfo.vehiclesCount && (
+                      <div className="inputError">
+                        <ErrorIcon className="icon" />
+                        <p>
+                          {bookingDetailsErrorInfo.vehiclesCount}
+                        </p>
+                      </div>
+                    )
+                  }
                 </div>
               </div>
               {bookingDetails.catererRequirement.value && (
@@ -617,13 +817,18 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                       <div className="input__wrapper">
                         <CurrencyRupeeIcon className="icon" />
                         <div className="divider"></div>
-                        <input 
+                        <input
                           type="number"
                           name="expectedVegRate"
                           value={bookingDetails.expectedVegRate}
                           className="input"
                           placeholder="enter your expected rate/plate"
-                          onChange={(event) => handleBookingDetailsInfo("expectedVegRate", event.target.value)}
+                          onChange={(event) =>
+                            handleBookingDetailsInfo(
+                              "expectedVegRate",
+                              event.target.value
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -632,13 +837,18 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                       <div className="input__wrapper">
                         <CurrencyRupeeIcon className="icon" />
                         <div className="divider"></div>
-                        <input 
+                        <input
                           type="number"
                           name="expectedNonVegRate"
                           value={bookingDetails.expectedNonVegRate}
                           className="input"
                           placeholder="enter your expected rate/plate"
-                          onChange={(event) => handleBookingDetailsInfo("expectedNonVegRate", event.target.value)}
+                          onChange={(event) =>
+                            handleBookingDetailsInfo(
+                              "expectedNonVegRate",
+                              event.target.value
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -655,7 +865,12 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                           value={bookingDetails.vegMenu}
                           placeholder="enter items desired in veg menu"
                           className="input textArea"
-                          onChange={(event) => handleBookingDetailsInfo("vegMenu", event.target.value)}
+                          onChange={(event) =>
+                            handleBookingDetailsInfo(
+                              "vegMenu",
+                              event.target.value
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -670,7 +885,12 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                           value={bookingDetails.nonVegMenu}
                           placeholder="enter items desired in veg menu"
                           className="input textArea"
-                          onChange={(event) => handleBookingDetailsInfo("nonVegMenu", event.target.value)}
+                          onChange={(event) =>
+                            handleBookingDetailsInfo(
+                              "nonVegMenu",
+                              event.target.value
+                            )
+                          }
                         />
                       </div>
                     </div>
@@ -687,12 +907,16 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   <div className="input__wrapper disabledInput__wrapper">
                     <PersonIcon className="icon" />
                     <div className="divider"></div>
-                    <input 
-                      type="text" 
-                      value={userInfoStore.userDetails?.Document?.customerName.split(' ')[0]}
+                    <input
+                      type="text"
+                      value={
+                        userInfoStore.userDetails?.Document?.customerName.split(
+                          " "
+                        )[0]
+                      }
                       className="input"
                       disabled
-                      readOnly  
+                      readOnly
                     />
                   </div>
                 </div>
@@ -701,11 +925,15 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   <div className="input__wrapper disabledInput__wrapper">
                     <PersonIcon className="icon" />
                     <div className="divider"></div>
-                    <input 
-                      type="text" 
-                      value={userInfoStore.userDetails?.Document?.customerName.split(' ')[1]} 
-                      className="input" 
-                      disabled  
+                    <input
+                      type="text"
+                      value={
+                        userInfoStore.userDetails?.Document?.customerName.split(
+                          " "
+                        )[1]
+                      }
+                      className="input"
+                      disabled
                       readOnly
                     />
                   </div>
@@ -764,7 +992,12 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                     value={bookingDetails.customerSuggestion}
                     className="input textArea"
                     placeholder="your message to the hall owner..."
-                    onChange={(event)=> handleBookingDetailsInfo("customerSuggestion", event.target.value)}
+                    onChange={(event) =>
+                      handleBookingDetailsInfo(
+                        "customerSuggestion",
+                        event.target.value
+                      )
+                    }
                   />
                 </div>
               </div>
@@ -774,16 +1007,16 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
             <div
               className="container dateTime__container"
               style={{ width: "50%" }}
-            > 
+            >
               <div className="inputField__wrapper">
-                <div className="title">Booking Date</div>
+                <div className="title">Booking Start Date</div>
                 <div className="input__wrapper disabledInput__wrapper">
                   <CalendarMonthIcon className="icon" />
                   <div className="divider"></div>
                   <input
                     type="text"
                     name="bookingDate"
-                    value={bookingInfoStore.bookingDate}
+                    value={bookingInfoStore.bookingStartDate}
                     className="input"
                     disabled
                     readOnly
@@ -798,9 +1031,28 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   <input
                     type="text"
                     name="startTime"
-                    value={bookingInfoStore.startTime ? bookingInfoStore.startTime : "HH:MM"}
+                    value={
+                      bookingInfoStore.startTime
+                        ? bookingInfoStore.startTime
+                        : "HH:MM"
+                    }
                     className="input"
                     disabled
+                  />
+                </div>
+              </div>
+              <div className="inputField__wrapper">
+                <div className="title">Booking End Date</div>
+                <div className="input__wrapper disabledInput__wrapper">
+                  <CalendarMonthIcon className="icon" />
+                  <div className="divider"></div>
+                  <input
+                    type="text"
+                    name="bookingDate"
+                    value={bookingInfoStore.bookingEndDate}
+                    className="input"
+                    disabled
+                    readOnly
                   />
                 </div>
               </div>
@@ -812,7 +1064,11 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   <input
                     type="text"
                     name="endTime"
-                    value={bookingInfoStore.endTime ? bookingInfoStore.endTime : "HH:MM"}
+                    value={
+                      bookingInfoStore.endTime
+                        ? bookingInfoStore.endTime
+                        : "HH:MM"
+                    }
                     className="input"
                     disabled
                   />
@@ -826,7 +1082,13 @@ export default function BookingDetailsDialog({ open, handleClose, hallData }) {
                   <input
                     name="bookingDuration"
                     type="text"
-                    value={bookingInfoStore.bookingDuration ? bookingInfoStore.bookingDuration : "HH:MM"}
+                    value={
+                      bookingInfoStore.bookingDuration
+                        ? `${
+                            bookingInfoStore.bookingDuration.split(":")[0]
+                          } hour`
+                        : "HH:MM"
+                    }
                     className="input"
                     disabled
                     readOnly
@@ -875,4 +1137,5 @@ BookingDetailsDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   hallData: PropTypes.object.isRequired,
+  serviceProviderData: PropTypes.object.isRequired,
 };

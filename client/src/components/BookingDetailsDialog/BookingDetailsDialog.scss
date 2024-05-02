@@ -216,6 +216,10 @@
           text-decoration: none;
 
           margin-bottom: 0.2rem;
+
+          span {
+            color: red;
+          }
         }
 
         .input__wrapper {
@@ -272,33 +276,32 @@
             height: 5rem;
             text-transform: none !important;
           }
+        }
+        
+        .inputError {
+          width: 100%;
+          display: flex;
+          flex-direction: row;
+          justify-content: flex-start;
+          align-items: center;
+          // position: absolute;
+          color: red;
 
-          
-          .inputError {
-            width: 100%;
-            display: flex;
-            flex-direction: row;
-            justify-content: flex-start;
-            align-items: center;
-            // position: absolute;
-            color: red;
-  
-            margin-top: 0.3rem;
-            margin-bottom: -0.5rem;
-  
-            .icon {
-              width: 18px;
-              margin-right: 0.25rem;
-            }
-  
-            p {
-              font-size: 14px;
-              font-family: var(--font-family-1);
-              font-style: normal;
-              text-transform: none;
-              text-decoration: none;
-              font-weight: 500;
-            }
+          margin-top: 0.3rem;
+          margin-bottom: -0.5rem;
+
+          .icon {
+            width: 18px;
+            margin-right: 0.25rem;
+          }
+
+          p {
+            font-size: 14px;
+            font-family: var(--font-family-1);
+            font-style: normal;
+            text-transform: none;
+            text-decoration: none;
+            font-weight: 500;
           }
         }
 
@@ -338,6 +341,10 @@
             text-decoration: none;
   
             margin-bottom: 0.2rem;
+
+            span {
+              color: red;
+            }
           }
 
           .input__wrapper {
@@ -399,36 +406,34 @@
             .textArea {
               height: 5rem;
               text-transform: none !important;
-            }
+            }  
+          }
 
-            
-            .inputError {
-              width: 100%;
-              display: flex;
-              flex-direction: row;
-              justify-content: flex-start;
-              align-items: center;
-              // position: absolute;
-              color: red;
-    
-              margin-top: 0.3rem;
-              margin-bottom: -0.5rem;
-    
-              .icon {
-                width: 18px;
-                margin-right: 0.25rem;
-              }
-    
-              p {
-                font-size: 14px;
-                font-family: var(--font-family-1);
-                font-style: normal;
-                text-transform: none;
-                text-decoration: none;
-                font-weight: 500;
-              }
+          .inputError {
+            width: 100%;
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-start;
+            align-items: center;
+            // position: absolute;
+            color: red;
+  
+            margin-top: 0.3rem;
+            margin-bottom: -0.5rem;
+  
+            .icon {
+              width: 18px;
+              margin-right: 0.25rem;
             }
-
+  
+            p {
+              font-size: 14px;
+              font-family: var(--font-family-1);
+              font-style: normal;
+              text-transform: none;
+              text-decoration: none;
+              font-weight: 500;
+            }
           }
 
           .disabledInput__wrapper {  // for disabled input

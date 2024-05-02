@@ -450,14 +450,12 @@
                     margin-bottom: 1rem;
                 }
     
-                .inputError {
+                .comments {
                     width: 100%;
                     display: flex;
                     flex-direction: row;
                     justify-content: flex-start;
                     align-items: center;
-          
-                    color: red;
           
                     margin-bottom: 1rem;
 
@@ -474,6 +472,14 @@
                       text-decoration: none;
                       font-weight: 500;
                     }
+                  }
+
+                  .inputError {
+                    color: red;
+                  }
+
+                  .inputSuccess {
+                    color: #36c87f;
                   }
             }
 

@@ -241,6 +241,22 @@
               }
             }
 
+            .expiredSlot {
+              position: absolute;
+              width: 100%;
+              height: 100%;
+              display: none;
+              opacity: 0;
+              z-index: 1;
+              cursor: not-allowed;
+              
+              .icon {
+                font-size: 28px;
+                font-weight: 600;
+                color: #ffffff;
+              }
+            }
+
             &:hover {
               .availableSlot {
                 display: flex;
@@ -248,6 +264,23 @@
                 justify-content: center;
                 align-items: center;
                 transform: translateY(-1px);
+              }
+            }
+          }
+
+          .expiredTimeSlot {
+            background-color: rgba($color: #CCCCCC, $alpha: 0.75) !important;
+
+            &:hover {
+              .expiredSlot {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                opacity: 1;
+                z-index: 10;
+              }
+              .availableSlot {
+                display: none;
               }
             }
           }

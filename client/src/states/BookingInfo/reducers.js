@@ -1,14 +1,15 @@
 import { SET_DATA } from "./actions";
 
 const initialState = {  
-    bookingStartDate: "",  // yyyy/mm/dd
+    bookingStartDate: "",  // yyyy-mm-dd
     bookingStartDay: "", // Monday, Tuesday  etc..
-    bookingEndDate: "", // yyyy/mm/dd
+    bookingEndDate: "", // yyyy-mm-dd
     bookingEndDay: "", // Monday, Tuesday  etc..
     startTime: "",  // HH:MM
     endTime: "",  // HH:MM
     bookingDuration: "", // HH:MM
-    errorInfo: "",
+    errorInfo: "",  // to display error messages
+    comments: "", // to display success messages
   };
   
 export default function bookingInfoReducer(state = initialState, action) {

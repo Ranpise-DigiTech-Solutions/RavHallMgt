@@ -155,16 +155,8 @@ router.get("/getHallAvailability", async (req, res) => {
   const { hallId, startDate, endDate } = req.query;
   const hallObjectId = new mongoose.Types.ObjectId(hallId);
   
-  // const startDateOfWeek = new Date(startDate);
-  // const endDateOfWeek = new Date(endDate);
-  // startDateOfWeek.setHours(0, 0, 0, 0);
-  // endDateOfWeek.setHours(23, 0, 0, 0);
   const startDateOfWeek = new Date(startDate);
   const endDateOfWeek = new Date(endDate);
-  console.log("ENTERED");
-  console.log(hallId);
-  console.log(new Date(startDate));
-  console.log(new Date(endDate));
 
   try {
     const hallBookings = await hallBookingMaster.aggregate([
@@ -203,6 +195,62 @@ router.get("/getHallAvailability", async (req, res) => {
     }
 
     return res.status(200).json(hallBookings);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+});
+
+router.get("/getHallBookings", async (req, res) => {
+
+  const { hallId, bookingStartDateTimestamp, bookingEndDateTimestamp } = req.query;  //date format - mongodb format
+  const hallObjectId = new mongoose.Types.ObjectId(hallId);
+  const startDate = new Date(bookingStartDateTimestamp);
+  const endDate = new Date(bookingEndDateTimestamp);
+  console.log(startDate);
+  console.log(endDate);
+  console.log(bookingStartDateTimestamp);
+  console.log(bookingEndDateTimestamp);
+  try {
+    const hallBookings = await hallBookingMaster.aggregate([
+      {
+        $match: {
+          hallId: hallObjectId,
+          $or: [
+            {
+              $and: [
+                { bookingStartDateTimestamp: { $lte: endDate } },
+                { bookingEndDateTimestamp: { $gte: startDate } }
+              ]
+            },
+            {
+              $and: [
+                { bookingStartDateTimestamp: { $lte: endDate } },
+                { bookingEndDateTimestamp: null } // Handling bookings that extend beyond the selected date
+              ]
+            }
+          ],
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          count: { $ifNull: ["$count", 0] }
+        }
+      }
+    ]);
+    console.log(hallBookings);
+    if(hallBookings.length === 0) {
+      return res.status(200).json({ count: 0 });
+    }
+
+    return res.status(200).json(hallBookings[0]);
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
