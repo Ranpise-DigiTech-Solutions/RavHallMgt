@@ -172,3 +172,4 @@ const Destinations = () => {
 
 // export default MotionWrap(Destinations, "");
 export default Destinations;
+

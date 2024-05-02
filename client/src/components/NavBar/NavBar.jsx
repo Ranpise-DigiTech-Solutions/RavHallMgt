@@ -23,11 +23,11 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import useMediaQuery from '@mui/material/useMediaQuery';
-
+import UserProfileLeftPanel from '../../components/UserProfileLeftPanel/UserProfileLeftPanel';
 import { Images } from "../../constants";
 import {
   UserAuthDialog,
-  RegistrationForm
+  RegistrationForm,
 } from '../../components';
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
@@ -42,7 +42,7 @@ export default function NavBar() {
   const userInfoStore = useSelector((state) => state.userInfo);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false); // New state for mobile menu
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const dispatch = useDispatch();
 
@@ -132,6 +132,18 @@ export default function NavBar() {
     setMobileMenuOpen(!mobileMenuOpen);
   };
 
+  // Function to handle menu item clicks
+  const handleMenuItemClick = (componentKey) => {
+    console.log(componentKey);
+    // Add any additional functionality you need
+  };
+
+  // Function to handle setting the active component
+  const handleSetActiveComponent = (componentKey) => {
+    console.log('Active component:', componentKey);
+    // Add any additional functionality you need
+  };
+
   // Add media query for mobile view
   const isMobile = useMediaQuery('(max-width:768px)');
 
@@ -163,37 +175,52 @@ export default function NavBar() {
                 onClick={toggleMobileMenu}
                 onKeyDown={toggleMobileMenu}
               >
-                <List>
-                  {/* Add your menu items here */}
-                  <ListItem button>
-                    <ListItemText primary="Venues" />
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemText primary="Our Value" />
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemText primary="Contact Us" />
-                  </ListItem>
-                  <ListItem button>
-                    <ListItemText primary="Get Started" />
-                  </ListItem>
-                </List>
+                {user ? (
+                  <UserProfileLeftPanel
+                    user={user}
+                    handleLogout={handleLogout}
+                    handleMenuItemClick={handleMenuItemClick}
+                    setActiveComponent={handleSetActiveComponent} // Pass the handleSetActiveComponent function as a prop
+                  />
+                ) : (
+                  <List>
+                    {/* Add your menu items here */}
+                    <ListItem button onClick={() => handleMenuItemClick('venues')}>
+                      <ListItemText primary="Venues" />
+                    </ListItem>
+                    <ListItem button onClick={() => handleMenuItemClick('ourValue')}>
+                      <ListItemText primary="Our Value" />
+                    </ListItem>
+                    <ListItem button onClick={() => handleMenuItemClick('contactUs')}>
+                      <ListItemText primary="Contact Us" />
+                    </ListItem>
+                    <ListItem button onClick={() => handleMenuItemClick('getStarted')}>
+                      <ListItemText primary="Get Started" />
+                    </ListItem>
+                    <ListItem button onClick={handleSignInButtonClick}>
+                      <ListItemIcon>
+                        <PersonAdd fontSize="small" />
+                      </ListItemIcon>
+                      <ListItemText primary="Sign In" />
+                    </ListItem>
+                  </List>
+                )}
               </Box>
             </Drawer>
           </div>
         ) : (
           // Desktop view
           <div className="tags__wrapper">
-            <a href="#" className="tag">
+            <a href="#" className="tag" onClick={() => handleMenuItemClick('venues')}>
               Venues
             </a>
-            <a href="#" className="tag">
+            <a href="#" className="tag" onClick={() => handleMenuItemClick('ourValue')}>
               Our Value
             </a>
-            <a href="#" className="tag">
+            <a href="#" className="tag" onClick={() => handleMenuItemClick('contactUs')}>
               Contact Us
             </a>
-            <a href="#" className="tag">
+            <a href="#" className="tag" onClick={() => handleMenuItemClick('getStarted')}>
               Get Started
             </a>
             {user ? (
@@ -222,90 +249,87 @@ export default function NavBar() {
                     sx: {
                       overflow: "visible",
                       filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
-                      mt:1.5,
+                      mt: 1.5,
                       "& .MuiAvatar-root": {
-                      width: 32,
-                      height: 32,
-                      ml: -0.5,
-                      mr: 1,
+                        width: 32,
+                        height: 32,
+                        ml: -0.5,
+                        mr: 1,
                       },
                       "&::before": {
-                      content: '""',
-                      display: "block",
-                      position: "absolute",
-                      top: 0,
-                      right: 14,
-                      width: 10,
-                      height: 10,
-                      bgcolor: "background.paper",
-                      transform: "translateY(-50%) rotate(45deg)",
-                      zIndex: 0,
+                        content: '""',
+                        display: "block",
+                        position: "absolute",
+                        top: 0,
+                        right: 14,
+                        width: 10,
+                        height: 10,
+                        bgcolor: "background.paper",
+                        transform: "translateY(-50%) rotate(45deg)",
+                        zIndex: 0,
                       },
-                      },
-                      }}
-                      transformOrigin={{ horizontal: "right", vertical: "top" }}
-                      anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-                      >
-                      <MenuItem onClick={handleUserProfileClose}>
-                      <Avatar /> Profile
-                      </MenuItem>
-                      <MenuItem onClick={handleUserProfileClose}>
-                      <Avatar /> My account
-                      </MenuItem>
-                      <Divider />
-                      <MenuItem onClick={handleUserProfileClose}>
-                      <ListItemIcon>
+                    },
+                  }}
+                  transformOrigin={{ horizontal: "right", vertical: "top" }}
+                  anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+                >
+                  <MenuItem onClick={() => handleMenuItemClick('profile')}>
+                    <Avatar /> Profile
+                  </MenuItem>
+                  <MenuItem onClick={() => handleMenuItemClick('myAccount')}>
+                    <Avatar /> My account
+                  </MenuItem>
+                  <Divider />
+                  <MenuItem onClick={handleRegistrationDialogOpen}>
+                    <ListItemIcon>
                       <PersonAdd fontSize="small" />
-                      </ListItemIcon>
-                      Add another account
-                      </MenuItem>
-                      <MenuItem onClick={handleUserProfileClose}>
-                      <ListItemIcon>
+                    </ListItemIcon>
+                    Add another account
+                  </MenuItem>
+                  <MenuItem onClick={() => handleMenuItemClick('settings')}>
+                    <ListItemIcon>
                       <Settings fontSize="small" />
-                      </ListItemIcon>
-                      Settings
-                      </MenuItem>
-                      <MenuItem onClick={()=> {
-                      handleUserProfileClose();
-                      handleLogout();
-                      }}>
-                      <ListItemIcon>
+                    </ListItemIcon>
+                    Settings
+                  </MenuItem>
+                  <MenuItem onClick={handleLogout}>
+                    <ListItemIcon>
                       <Logout fontSize="small" />
-                      </ListItemIcon>
-                      Logout
-                      </MenuItem>
-                      </Menu>
-                      </React.Fragment>
-                      ) : (
-                      <Button
-                                   variant="contained"
-                                   className="button"
-                                   onClick={handleSignInButtonClick}
-                                 >
-                      Sign In
-                      </Button>
-                      )}
-                      </div>
-                      )}
-                      </div>
-                      {isSignInDialogOpen && (
-                      <div className="signInDialog">
-                      <UserAuthDialog
-                               open={isSignInDialogOpen}
-                               handleClose={handleSignInDialogClose}
-                               setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
-                               handleRegistrationDialogOpen={handleRegistrationDialogOpen}
-                             />
-                      </div>
-                      )}
-                      {isRegistrationDialogOpen && (
-                      <div className="userRegistrationDialog">
-                      <RegistrationForm
-                               open={isRegistrationDialogOpen}
-                               handleClose={handleRegistrationDialogClose}
-                             />
-                      </div>
-                      )}
-                      </div>
-                      );
-                      }
+                    </ListItemIcon>
+                    Logout
+                  </MenuItem>
+                </Menu>
+              </React.Fragment>
+            ) : (
+              <Button
+                variant="contained"
+                className="button"
+                onClick={handleSignInButtonClick}
+              >
+                Sign In
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+      {isSignInDialogOpen && (
+        <div className="signInDialog">
+          <UserAuthDialog
+            open={isSignInDialogOpen}
+            handleClose={handleSignInDialogClose}
+            setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
+            handleRegistrationDialogOpen={handleRegistrationDialogOpen}
+          />
+        </div>
+      )}
+      {isRegistrationDialogOpen && (
+        <div className="userRegistrationDialog">
+          <RegistrationForm
+            open={isRegistrationDialogOpen}
+            handleClose={handleRegistrationDialogClose}
+          />
+        </div>
+      )}
+    </div>
+  );
+}

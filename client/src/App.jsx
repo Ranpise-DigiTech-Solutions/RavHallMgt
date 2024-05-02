@@ -16,6 +16,8 @@ import {
   fetchVendorTypesData,
   fetchCountriesData
 } from "./states/Data";
+import { ProfileForm, Dashboard,MyCart, OrderHistoryPage, Notification, Favorites, SettingsComponent,OrderDetailsPage } from './components';
+
 
 function App() {
 
@@ -91,6 +93,30 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/UserProfilePage" element={<UserProfilePage />} />
+          </Routes>
+          <Routes>
+            <Route path="/ProfileForm" element={<ProfileForm />} />
+          </Routes>
+          <Routes>
+            <Route path="/Dashboard" element={<Dashboard />} />
+          </Routes>
+          <Routes>
+            <Route path="/YourCart" element={<MyCart />} />
+          </Routes>
+          <Routes>
+            <Route path="/OrderHistory" element={<OrderHistoryPage />} />
+          </Routes>
+          <Routes>
+            <Route path="/Notifications" element={<Notification />} />
+          </Routes> 
+          <Routes>
+            <Route path="/Favourites" element={<Favorites />} />
+          </Routes> 
+          <Routes>
+            <Route path="/Settings" element={<SettingsComponent />} />
+          </Routes>
+          <Routes>
+            <Route path="/OrderDetailsPage" element={<OrderDetailsPage />} />
           </Routes>
         </ClerkProvider>
       );

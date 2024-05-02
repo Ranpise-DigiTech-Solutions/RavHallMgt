@@ -1,5 +1,9 @@
 import React from 'react';
 import './Notifications.scss';
+import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
+
+
+  
 
 class Notification extends React.Component {
   constructor(props) {
@@ -16,6 +20,11 @@ class Notification extends React.Component {
   }
 
   clearNotifications = () => {
+    const [activeComponent, setActiveComponent] = useState(null);
+
+    const handleSetActiveComponent = (component) => {
+        setActiveComponent(component);
+    };
     this.setState({ messages: [] });
   }
 
@@ -49,6 +58,10 @@ class NotificationCard extends React.Component {
   render() {
     const { title, body, time } = this.props.message;
     return (
+      <>
+      <div className="left-panel-container">
+      <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
+    </div>
       <div className='notification__card'>
         <div className='message-header' onClick={this.toggleDetails}>
           <div className='title'>{title}</div>
@@ -59,6 +72,7 @@ class NotificationCard extends React.Component {
           <div className='message-body'>{body}</div>
         )}
       </div>
+      </>
     );
   }
 }

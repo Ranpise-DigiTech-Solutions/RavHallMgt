@@ -2,8 +2,15 @@ import { useEffect, useState, useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Dashboard.scss';
 import Chart from 'chart.js/auto';
+import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
 
 const Dashboard = () => {
+    const [activeComponent, setActiveComponent] = useState(null);
+
+    const handleSetActiveComponent = (component) => {
+        setActiveComponent(component);
+    };
+
     const chartRef = useRef(null);
     const bookingChartRef = useRef(null);
     const analyticsCurveRef = useRef(null);
@@ -183,6 +190,10 @@ const Dashboard = () => {
         );
     };
     return (
+        <>
+        <div className="left-panel-container">
+      <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
+    </div>
         <div className="dashboard-page__container">
             <h1>Analytics Dashboard</h1>
             {analyticsData && (
@@ -236,6 +247,7 @@ const Dashboard = () => {
                 </div>
             </div>
         </div>
+        </>
     );
     
 };

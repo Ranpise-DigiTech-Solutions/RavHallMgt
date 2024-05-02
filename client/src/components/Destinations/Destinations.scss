@@ -53,6 +53,7 @@
             font-family: var(--font-family);
             font-weight: 800;
             line-height: 1.5rem;
+            padding: 10px;
           }
         }
 
@@ -98,7 +99,8 @@
       overflow: visible;
 
       .card {
-        border-radius: 35px;
+        // border-radius: 35px;
+        border-radius: 2rem;
         height: 400px;
         width: 700px;
         transition: all 0.4s ease-out;
@@ -111,10 +113,15 @@
             height: 440px;
             width: 740px;
             margin-right: 5rem;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            transform: translateY(-5px);
-        }  
 
+        }  
+        .title{
+          color: #ff8000;
+        }
+        img{
+          filter: brightness(50%);
+        }
+        
       }
 
   }

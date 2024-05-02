@@ -1,13 +1,18 @@
 import React, { useState, useRef } from 'react';
 import './ProfileForm.scss';
 import DefaultImage from "../../assets/upload-photo-here.jpg";
-import EditIcon from "../../assets/edit.svg";
 import UploadingAnimation from "../../assets/uploading.gif.mp4";
+import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
 
 const ProfileForm = () => {
+  const [activeComponent, setActiveComponent] = useState(null);
+
+    const handleSetActiveComponent = (component) => {
+        setActiveComponent(component);
+    };
   const [avatarURL, setAvatarURL] = useState(DefaultImage);
   const fileUploadRef = useRef();
-  const [userName, setUserName] = useState('Chirag'); // Example name, replace with actual name
+  const [userName, setUserName] = useState('Chirag');
   const [personalFormData, setPersonalFormData] = useState({
     firstName: 'Chirag',
     lastName: 'A K',
@@ -35,6 +40,7 @@ const ProfileForm = () => {
   const [personalSaveButtonText, setPersonalSaveButtonText] = useState('Save');
   const [contactFormDisabled, setContactFormDisabled] = useState(true);
   const [contactSaveButtonText, setContactSaveButtonText] = useState('Save');
+  const [showSaveImageButton, setShowSaveImageButton] = useState(false);
 
   const handleImageUpload = (event) => {
     event.preventDefault();
@@ -55,12 +61,19 @@ const ProfileForm = () => {
       const reader = new FileReader();
       reader.onload = () => {
         setAvatarURL(reader.result);
+        setShowSaveImageButton(true); // Show "Save" button after image upload
       };
       reader.readAsDataURL(uploadedFile);
     } catch (error) {
       console.error(error);
       setAvatarURL(DefaultImage);
     }
+  };
+
+  const handleSaveImage = () => {
+    // Implement your logic to save the image here
+    console.log('Image saved:', avatarURL);
+    setShowSaveImageButton(false); // Hide "Save" button after saving
   };
 
   const handlePersonalInputChange = (event) => {
@@ -135,43 +148,53 @@ const ProfileForm = () => {
   };
 
   return (
+    <>
+    <div className="left-panel-container">
+      <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
+    </div>
     <div className="UserProfile__container">
-      <div className="coverpage"></div>
-      <div className="image-upload-container">
-        <img 
-          src={avatarURL}
-          alt="Avatar"
-          className="avatar-image"
-        />
-        <div className="user-name sideheading">
-          <strong>{userName}</strong>
-        </div>
-        <form encType='multipart/form-data'>
+    <div className="coverpage"></div>
+    <div className="image-upload-container">
+      <img
+        src={avatarURL}
+        alt="Avatar"
+        className="avatar-image"
+      />
+      <div className="user-name sideheading">
+        <strong>{userName}</strong>
+      </div>
+      <div className="button-container">
+        <button
+          type='button'
+          onClick={handleImageUpload}
+          className='upload-button'>
+          Upload Image
+        </button>
+        {showSaveImageButton && (
           <button
             type='button'
-            onClick={handleImageUpload}
-            className='edit-button'>
-            <img
-              src={EditIcon}
-              alt="Edit"
-              className='edit-icon' 
-            />
+            onClick={handleSaveImage}
+            className='save-button'>
+            Save
           </button>
-          <input 
-            type="file"
-            ref={fileUploadRef}
-            onChange={uploadImageDisplay}
-            hidden
-          />
-        </form>  
+        )}
       </div>
+      <form encType='multipart/form-data'>
+        <input
+          type="file"
+          ref={fileUploadRef}
+          onChange={uploadImageDisplay}
+          hidden
+        />
+      </form>
+    </div>
       <div className='personal-information'>
         <button className='edittext' onClick={handlePersonalEditClick}>
           {personalFormDisabled ? 'Edit Personal Info' : 'Cancel'}
         </button>
         <strong><h2 className='sideheading'>Personal Information</h2></strong>
         <p>Update your information about you and details here</p>
-        <div className="customForm"> 
+        <div className="customForm">
           <div className="input-row">
             <div className="input-group">
               <label htmlFor="firstName">First Name:</label>
@@ -233,191 +256,193 @@ const ProfileForm = () => {
                 value={personalFormData.NewPassword}
                 onChange={handlePersonalInputChange}
                 disabled={personalFormDisabled}
-              />
-            </div>
-          </div>
-          {!personalFormDisabled && (
-            <button
-              type="submit"
-              className="save-button"
-              onClick={handlePersonalSave}
-            >
-              {personalSaveButtonText}
-            </button>
-          )}
-        </div>
-      </div>
-      <hr /> 
-      <div className='contact-information'>
-        <button className='edittext' onClick={handleContactEditClick}>
-          {contactFormDisabled ? 'Edit Contact Info' : 'Cancel'}
-        </button>
-        <strong><h2 className='sideheading'>Contact Information</h2></strong>
-        <p>Update your contact details here</p>
-        <div className="customForm"> 
-          <div className="input-row">
-            <div className="input-group">
-              <label htmlFor="mobileNumber">Mobile Number:</label>
-              <input
-                type="text"
-                id="mobileNumber"
-                name="mobileNumber"
-                value={contactFormData.mobileNumber}
-                onChange={handleContactInputChange}
-                disabled={contactFormDisabled}
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="email">Email:</label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={contactFormData.email}
-                onChange={handleContactInputChange}
-                disabled={contactFormDisabled}
-              />
-            </div>
-          </div>
-          <div className='input-row'>
-            <div className="input-group">
-              <label htmlFor="altMobileNumber">Alt Mobile Number:</label>
-              <input
-                type="text"
-                id="altMobileNumber"
-                name="altMobileNumber"
-                value={contactFormData.altMobileNumber}
-                onChange={handleContactInputChange}
-                disabled={contactFormDisabled}
-              />
-            </div>
-            <div className="input-group">
-              <label htmlFor="altEmail">Alt Email:</label>
-              <input
-                type="email"
-                id="altEmail"
-                name="altEmail"
-                value={contactFormData.altEmail}
-                onChange={handleContactInputChange}
-                disabled={contactFormDisabled}
-              />
-            </div>
-          </div>
-          {!contactFormDisabled && (
-            <button
-              type="submit"
-              className="save-button"
-              onClick={handleContactSave}
-            >
-              {contactSaveButtonText}
-            </button>
-          )}
-        </div>
-      </div>
-      <hr />
-      <div className='address-information'>
-        <p className='edittext' onClick={handleAddressEditClick}>
-          {addressFormDisabled ? 'Edit Address Info' : 'Cancel'}
-        </p>
-        <strong><h2 className='sideheading'>Address Information</h2></strong>
-        <p>Update your address details here</p>
-        <form onSubmit={handleAddressSubmit}>
-          <div className="customForm">
-            <div className="input-row">
-              <div className="input-group">
-                <label htmlFor="address">Address:</label>
-                <input
-                  type="text"
-                  id="address"
-                  name="address"
-                  value={addressFormData.address}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-              <div className="input-group">
-                <label htmlFor="landmark">Landmark:</label>
-                <input
-                  type="text"
-                  id="landmark"
-                  name="landmark"
-                  value={addressFormData.landmark}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-            </div>
-            <div className="input-row">
-              <div className="input-group">
-                <label htmlFor="city">City:</label>
-                <input
-                  type="text"
-                  id="city"
-                  name="city"
-                  value={addressFormData.city}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-              <div className="input-group">
-                <label htmlFor="taluk">Taluk:</label>
-                <input
-                  type="text"
-                  id="taluk"
-                  name="taluk"
-                  value={addressFormData.taluk}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-            </div>
-            <div className="input-row">
-              <div className="input-group">
-                <label htmlFor="state">State:</label>
-                <input
-                  type="text"
-                  id="state"
-                  name="state"
-                  value={addressFormData.state}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-              <div className="input-group">
-                <label htmlFor="country">Country:</label>
-                <input
-                  type="text"
-                  id="country"
-                  name="country"
-                  value={addressFormData.country}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-            </div>
-            <div className="input-row">
-              <div className="input-group">
-                <label htmlFor="pincode">Pincode:</label>
-                <input
-                  type="text"
-                  id="pincode"
-                  name="pincode"
-                  value={addressFormData.pincode}
-                  onChange={handleAddressInputChange}
-                  disabled={addressFormDisabled}
-                />
-              </div>
-            </div>
-            {!addressFormDisabled && (
-              <button type="submit" className="save-button">Save</button>
-            )}
-          </div>
-        </form>
-      </div>
-      <hr />
-    </div>
-  );
-};
+                             />
+                           </div>
+                         </div>
+                         {!personalFormDisabled && (
+                           <button
+                             type="submit"
+                             className="save-button"
+                             onClick={handlePersonalSave}
+                           >
+                             {personalSaveButtonText}
+                           </button>
+                         )}
+                       </div>
+                     </div>
+                     <hr /> 
+                     <div className='contact-information'>
+                       <button className='edittext' onClick={handleContactEditClick}>
+                         {contactFormDisabled ? 'Edit Contact Info' : 'Cancel'}
+                       </button>
+                       <strong><h2 className='sideheading'>Contact Information</h2></strong>
+                       <p>Update your contact details here</p>
+                       <div className="customForm"> 
+                         <div className="input-row">
+                           <div className="input-group">
+                             <label htmlFor="mobileNumber">Mobile Number:</label>
+                             <input
+                               type="text"
+                               id="mobileNumber"
+                               name="mobileNumber"
+                               value={contactFormData.mobileNumber}
+                               onChange={handleContactInputChange}
+                               disabled={contactFormDisabled}
+                             />
+                           </div>
+                           <div className="input-group">
+                             <label htmlFor="email">Email:</label>
+                             <input
+                               type="email"
+                               id="email"
+                               name="email"
+                               value={contactFormData.email}
+                               onChange={handleContactInputChange}
+                               disabled={contactFormDisabled}
+                             />
+                           </div>
+                         </div>
+                         <div className='input-row'>
+                           <div className="input-group">
+                             <label htmlFor="altMobileNumber">Alt Mobile Number:</label>
+                             <input
+                               type="text"
+                               id="altMobileNumber"
+                               name="altMobileNumber"
+                               value={contactFormData.altMobileNumber}
+                               onChange={handleContactInputChange}
+                               disabled={contactFormDisabled}
+                             />
+                           </div>
+                           <div className="input-group">
+                             <label htmlFor="altEmail">Alt Email:</label>
+                             <input
+                               type="email"
+                               id="altEmail"
+                               name="altEmail"
+                               value={contactFormData.altEmail}
+                               onChange={handleContactInputChange}
+                               disabled={contactFormDisabled}
+                             />
+                           </div>
+                         </div>
+                         {!contactFormDisabled && (
+                           <button
+                             type="submit"
+                             className="save-button"
+                             onClick={handleContactSave}
+                           >
+                             {contactSaveButtonText}
+                           </button>
+                         )}
+                       </div>
+                     </div>
+                     <hr />
+                     <div className='address-information'>
+                       <p className='edittext' onClick={handleAddressEditClick}>
+                         {addressFormDisabled ? 'Edit Address Info' : 'Cancel'}
+                       </p>
+                       <strong><h2 className='sideheading'>Address Information</h2></strong>
+                       <p>Update your address details here</p>
+                       <form onSubmit={handleAddressSubmit}>
+                         <div className="customForm">
+                           <div className="input-row">
+                             <div className="input-group">
+                               <label htmlFor="address">Address:</label>
+                               <input
+                                 type="text"
+                                 id="address"
+                                 name="address"
+                                 value={addressFormData.address}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                             <div className="input-group">
+                               <label htmlFor="landmark">Landmark:</label>
+                               <input
+                                 type="text"
+                                 id="landmark"
+                                 name="landmark"
+                                 value={addressFormData.landmark}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                           </div>
+                           <div className="input-row">
+                             <div className="input-group">
+                               <label htmlFor="city">City:</label>
+                               <input
+                                 type="text"
+                                 id="city"
+                                 name="city"
+                                 value={addressFormData.city}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                             <div className="input-group">
+                               <label htmlFor="taluk">Taluk:</label>
+                               <input
+                                 type="text"
+                                 id="taluk"
+                                 name="taluk"
+                                 value={addressFormData.taluk}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                           </div>
+                           <div className="input-row">
+                             <div className="input-group">
+                               <label htmlFor="state">State:</label>
+                               <input
+                                 type="text"
+                                 id="state"
+                                 name="state"
+                                 value={addressFormData.state}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                             <div className="input-group">
+                               <label htmlFor="country">Country:</label>
+                               <input
+                                 type="text"
+                                 id="country"
+                                 name="country"
+                                 value={addressFormData.country}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                           </div>
+                           <div className="input-row">
+                             <div className="input-group">
+                               <label htmlFor="pincode">Pincode:</label>
+                               <input
+                                 type="text"
+                                 id="pincode"
+                                 name="pincode"
+                                 value={addressFormData.pincode}
+                                 onChange={handleAddressInputChange}
+                                 disabled={addressFormDisabled}
+                               />
+                             </div>
+                           </div>
+                           {!addressFormDisabled && (
+                             <button type="submit" className="save-button">Save</button>
+                           )}
+                         </div>
+                       </form>
+                     </div>
+                     <hr />
+                   </div></>
 
-export default ProfileForm;
+                 );
+                };
+                
+                export default ProfileForm;
 
+                

@@ -4,8 +4,13 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { PackagesCard } from '../../sub-components';
-
+import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
 const Favorites = () => {
+  const [activeComponent, setActiveComponent] = useState(null);
+
+    const handleSetActiveComponent = (component) => {
+        setActiveComponent(component);
+    };
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -27,12 +32,16 @@ const Favorites = () => {
   };
 
   return (
+    <><div className="left-panel-container">
+    <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
+  </div>
     <div className="userFavorites__container">
         <h1><b>Your favorites</b></h1>
       <motion.div className="favorites__wrapper">
         {renderCards()}
       </motion.div>
     </div>
+    </>
   );
 };
 
