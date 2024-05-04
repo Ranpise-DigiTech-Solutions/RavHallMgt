@@ -1,11 +1,16 @@
 // Import necessary modules and components
 import "./HallDescription.scss"; // Import SCSS file
-import ReactStars from "react-stars";
-import { FaMapMarkerAlt } from "react-icons/fa";
-import Button from "@mui/material/Button";
-import Carousel from "react-multi-carousel";
 
+import ReactStars from "react-stars";
+import Carousel from "react-multi-carousel";
 import PropTypes from "prop-types";
+
+import { FaMapMarkerAlt } from "react-icons/fa";
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import FavoriteBorderOutlinedIcon from '@mui/icons-material/FavoriteBorderOutlined';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import ShareOutlinedIcon from '@mui/icons-material/ShareOutlined';
+import { FaPenNib } from "react-icons/fa6";
 
 // Define Slider component
 const Slider = ({ hallData }) => {
@@ -70,33 +75,24 @@ const Slider = ({ hallData }) => {
             color2={"#ffd700"}
             edit={false}
           />
-
-          {/* <Button
-            variant="contained"
-            className="button"
-            sx={{
-              backgroundColor: "orange",
-              "&:hover": {
-                backgroundColor: "darkorange", // Change to your desired shade of orange
-              },
-            }}
-          >
-            Book Now
-          </Button> */}
           <div className="menu__wrapper">
             <div className="photosMenu menuOption">
+              <PhotoLibraryIcon className="icon" />
               <p>10 Photos</p>
             </div>
             <div className="verticalLine"></div>
             <div className="favouriteMenu menuOption">
+              <FavoriteBorderOutlinedIcon className="icon" />
               <p>Shortlist</p>
             </div>
             <div className="verticalLine"></div>
             <div className="reviewMenu menuOption">
+              <FaPenNib className="icon" />
               <p>Write a Review</p>
             </div>
             <div className="verticalLine"></div>
-            <div className="shareMenu">
+            <div className="shareMenu menuOption">
+              <ShareOutlinedIcon className="icon" />
               <p>Share</p>
             </div>
           </div>

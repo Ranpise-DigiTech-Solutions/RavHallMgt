@@ -10,13 +10,14 @@ import { useSelector, useDispatch } from "react-redux";
 import Tooltip from "@mui/material/Tooltip";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
-import DoNotDisturbIcon from "@mui/icons-material/DoNotDisturb";
+import LockIcon from '@mui/icons-material/Lock';
 
 import "./AvailabilityCalendar.scss";
 import "react-datepicker/dist/react-datepicker.css";
 import "react-multi-carousel/lib/styles.css";
 
 import { bookingInfoActions } from "../../states/BookingInfo";
+import { firebaseAuth } from "../../firebaseConfig.js";
 
 export default function AvailabilityCalendar({ hallData }) {
   const timeSlots = {
@@ -54,15 +55,16 @@ export default function AvailabilityCalendar({ hallData }) {
     Saturday: { date: "", timeSlots: { ...timeSlots } },
     Sunday: { date: "", timeSlots: { ...timeSlots } },
   };
-  console.log("CALENDAR", calendar);
   const [availabilityCalendar, setAvailabilityCalendar] = useState(calendar);
   const containerRef = useRef(null);
   const [startDate, setStartDate] = useState(new Date());
   const [startDateOfWeek, setStartDateOfWeek] = useState(null);
   const [endDateOfWeek, setEndDateOfWeek] = useState(null);
+  const [isUserLoggedIn, setIsUserLoggedIn] = useState(false); //user login status
 
   const dispatch = useDispatch();
   const bookingInfoStore = useSelector((state) => state.bookingInfo);
+  const userInfoStore = useSelector((state) => state.userInfo);
 
   const startOfWeek = (date) => {
     const d = new Date(date);
@@ -127,8 +129,6 @@ export default function AvailabilityCalendar({ hallData }) {
   const getAvailability = async () => {
     try {
       if (startDateOfWeek && endDateOfWeek) {
-        // const formattedStartDateOfWeek = getFormattedDate(startDateOfWeek)
-        // const formattedEndDateOfWeek = getFormattedDate(endDateOfWeek)
         const response = await axios.get(
           `http://localhost:8000/eventify_server/hallBookingMaster/getHallAvailability?hallId=${hallData._id}&startDate=${startDateOfWeek}&endDate=${endDateOfWeek}`
         );
@@ -522,6 +522,19 @@ export default function AvailabilityCalendar({ hallData }) {
     bookingInfoStore.endTime,
   ]);
 
+  useEffect(()=> {
+    try {
+      const currentUser = firebaseAuth.currentUser;
+      if (currentUser) {
+        setIsUserLoggedIn(true);
+      } else {
+        setIsUserLoggedIn(false);
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  }, [userInfoStore.userAuthStateChangeFlag]);
+
   const handlePrevWeek = () => {
     setAvailabilityCalendar(calendar);
     setStartDate((prevStartDate) => {
@@ -594,145 +607,166 @@ export default function AvailabilityCalendar({ hallData }) {
             <FaChevronRight className="icon" />
           </div>
         </div>
-        <div className="days__wrapper">
-          <div className="sub-wrapper">
-            <div className="sub-title" style={{ visibility: "hidden" }}>
-              Hours
-            </div>
-            <div className="title" style={{ visibility: "hidden" }}>
-              Hours
-            </div>
-          </div>
-          {availabilityCalendar &&
-            Object.keys(availabilityCalendar).map((day) => {
-              const dayInfo = availabilityCalendar[day]; // Access day information
-
-              // Check if dayInfo exists before accessing its properties
-              if (!dayInfo) return null; // Skip rendering if dayInfo is null or undefined
-
-              return (
-                <div
-                  key={day}
-                  className={`sub-wrapper ${
-                    (bookingInfoStore.bookingStartDate &&
-                    bookingInfoStore.bookingEndDate
-                      ? isDateInRange(
-                          dayInfo.date,
-                          bookingInfoStore.bookingStartDate,
-                          bookingInfoStore.bookingEndDate
-                        )
-                      : dayInfo.date === formatDate(startDate)) &&
-                    "currentSelection"
-                  }`}
-                >
-                  <div className="sub-title">
-                    {dayInfo.date.substring(0, 5)}
+        <>
+          {isUserLoggedIn ? (
+            <div className="calendar">
+              <div className="days__wrapper">
+                <div className="sub-wrapper">
+                  <div className="sub-title" style={{ visibility: "hidden" }}>
+                    Hours
                   </div>
-                  <div className="title">{day}</div>
+                  <div className="title" style={{ visibility: "hidden" }}>
+                    Hours
+                  </div>
                 </div>
-              );
-            })}
-        </div>
-        {/* <div className="scrollBar__wrapper" ref={containerRef}>
-        </div> */}
-        <div className="content__wrapper" ref={containerRef}>
-          <div className="timeSlots">
-            <div className="timeSlots__wrapper">
-              {Object.keys(timeSlots).map((timeSlot, index) => (
-                <div key={index} className="time-slot">
-                  {timeSlot.toString().padStart(2, "0") + ":00"}
-                </div>
-              ))}
-            </div>
-          </div>
-          {availabilityCalendar &&
-            Object.keys(availabilityCalendar).map((day) => {
-              const dayInfo = availabilityCalendar[day]; // Access day information
+                {availabilityCalendar &&
+                  Object.keys(availabilityCalendar).map((day) => {
+                    const dayInfo = availabilityCalendar[day]; // Access day information
 
-              // Check if dayInfo exists before accessing its properties
-              if (!dayInfo) return null; // Skip rendering if dayInfo is null or undefined
+                    // Check if dayInfo exists before accessing its properties
+                    if (!dayInfo) return null; // Skip rendering if dayInfo is null or undefined
 
-              // check if the date is less than the current date or not
-              const isExpiredDate =
-                parseDate(dayInfo.date, "/") < new Date().setHours(0, 0, 0, 0); 
-              
-              //TODO check the freezeDate to block the booking dates. 
-
-              return (
-                <motion.div
-                  key={day}
-                  className="availableSlots__wrapper"
-                  initial={{ opacity: 0 }} // Initial opacity
-                  animate={{ opacity: 1 }} // Animation when component enters the DOM
-                  exit={{ opacity: 0 }} // Animation when component exits the DOM
-                  transition={{ duration: 0.5 }} // Animation duration
-                  onClick={(e) => isExpiredDate ? e.preventDefault() : handleDateChange(dayInfo.date, day)}
-                >
-                  <div
-                    className={`timeSlots__wrapper ${
-                      (bookingInfoStore.bookingStartDate &&
-                      bookingInfoStore.bookingEndDate
-                        ? isDateInRange(
-                            dayInfo.date,
-                            bookingInfoStore.bookingStartDate,
-                            bookingInfoStore.bookingEndDate
-                          )
-                        : dayInfo.date === formatDate(startDate)) &&
-                      "currentSelection"
-                    }`}
-                  >
-                    {Object.entries(dayInfo.timeSlots).map(
-                      ([timeSlot, isBooked]) => (
-                        <Tooltip
-                          key={timeSlot}
-                          title={
-                            isExpiredDate
-                              ? "This slot is expired"
-                              : isBooked
-                              ? "This slot is already booked!"
-                              : "This slot is currently available!"
-                          }
-                          placement="top"
-                          enterDelay={1500}
-                          leaveDelay={0}
-                        >
-                          <div
-                            className={`time-slot ${
-                              isExpiredDate && "expiredTimeSlot"
-                            } ${
-                              bookingInfoStore.startTime &&
-                              bookingInfoStore.endTime &&
-                              isDateInRange(
+                    return (
+                      <div
+                        key={day}
+                        className={`sub-wrapper ${
+                          (bookingInfoStore.bookingStartDate &&
+                          bookingInfoStore.bookingEndDate
+                            ? isDateInRange(
                                 dayInfo.date,
                                 bookingInfoStore.bookingStartDate,
                                 bookingInfoStore.bookingEndDate
-                              ) &&
-                              isSelectedSlot(dayInfo.date, timeSlot) &&
-                              "selectedTimeSlot"
-                            }`}
-                            onClick={(e) => isExpiredDate ? e.preventDefault() : handleTimeChange(timeSlot, isBooked)}
-                            
-                          >
-                            {isBooked ? (
-                              <span className="unAvailableSlot">NA</span>
-                            ) : (
-                              <span className="availableSlot">Book</span>
-                            )}
-                            <span className="selectedSlot">
-                              <CheckCircleOutlineIcon className="icon" />
-                            </span>
-                            <span className="expiredSlot">
-                              {/* <DoNotDisturbIcon className="icon" /> */}
-                            </span>
-                          </div>
-                        </Tooltip>
-                      )
-                    )}
+                              )
+                            : dayInfo.date === formatDate(startDate)) &&
+                          "currentSelection"
+                        }`}
+                      >
+                        <div className="sub-title">
+                          {dayInfo.date.substring(0, 5)}
+                        </div>
+                        <div className="title">{day}</div>
+                      </div>
+                    );
+                  })}
+              </div>
+              <div className="content__wrapper" ref={containerRef}>
+                <div className="timeSlots">
+                  <div className="timeSlots__wrapper">
+                    {Object.keys(timeSlots).map((timeSlot, index) => (
+                      <div key={index} className="time-slot">
+                        {timeSlot.toString().padStart(2, "0") + ":00"}
+                      </div>
+                    ))}
                   </div>
-                </motion.div>
-              );
-            })}
-        </div>
+                </div>
+                {availabilityCalendar &&
+                  Object.keys(availabilityCalendar).map((day) => {
+                    const dayInfo = availabilityCalendar[day]; // Access day information
+
+                    // Check if dayInfo exists before accessing its properties
+                    if (!dayInfo) return null; // Skip rendering if dayInfo is null or undefined
+
+                    // check if the date is less than the current date or not
+                    const isExpiredDate =
+                      parseDate(dayInfo.date, "/") <
+                      new Date().setHours(0, 0, 0, 0) +
+                        (parseInt(hallData.hallFreezDay) + 1) *
+                          24 *
+                          60 *
+                          60 *
+                          1000;
+
+                    return (
+                      <motion.div
+                        key={day}
+                        className="availableSlots__wrapper"
+                        initial={{ opacity: 0 }} // Initial opacity
+                        animate={{ opacity: 1 }} // Animation when component enters the DOM
+                        exit={{ opacity: 0 }} // Animation when component exits the DOM
+                        transition={{ duration: 0.5 }} // Animation duration
+                        onClick={(e) =>
+                          isExpiredDate
+                            ? e.preventDefault()
+                            : handleDateChange(dayInfo.date, day)
+                        }
+                      >
+                        <div
+                          className={`timeSlots__wrapper ${
+                            (bookingInfoStore.bookingStartDate &&
+                            bookingInfoStore.bookingEndDate
+                              ? isDateInRange(
+                                  dayInfo.date,
+                                  bookingInfoStore.bookingStartDate,
+                                  bookingInfoStore.bookingEndDate
+                                )
+                              : dayInfo.date === formatDate(startDate)) &&
+                            "currentSelection"
+                          }`}
+                        >
+                          {Object.entries(dayInfo.timeSlots).map(
+                            ([timeSlot, isBooked]) => (
+                              <Tooltip
+                                key={timeSlot}
+                                title={
+                                  isExpiredDate
+                                    ? "This slot is expired"
+                                    : isBooked
+                                    ? "This slot is already booked!"
+                                    : "This slot is currently available!"
+                                }
+                                placement="top"
+                                enterDelay={1500}
+                                leaveDelay={0}
+                              >
+                                <div
+                                  className={`time-slot ${
+                                    isExpiredDate && "expiredTimeSlot"
+                                  } ${
+                                    bookingInfoStore.startTime &&
+                                    bookingInfoStore.endTime &&
+                                    isDateInRange(
+                                      dayInfo.date,
+                                      bookingInfoStore.bookingStartDate,
+                                      bookingInfoStore.bookingEndDate
+                                    ) &&
+                                    isSelectedSlot(dayInfo.date, timeSlot) &&
+                                    "selectedTimeSlot"
+                                  }`}
+                                  onClick={(e) =>
+                                    isExpiredDate
+                                      ? e.preventDefault()
+                                      : handleTimeChange(timeSlot, isBooked)
+                                  }
+                                >
+                                  {isBooked ? (
+                                    <span className="unAvailableSlot">NA</span>
+                                  ) : (
+                                    <span className="availableSlot">Book</span>
+                                  )}
+                                  <span className="selectedSlot">
+                                    <CheckCircleOutlineIcon className="icon" />
+                                  </span>
+                                  <span className="expiredSlot">
+                                    {/* <DoNotDisturbIcon className="icon" /> */}
+                                  </span>
+                                </div>
+                              </Tooltip>
+                            )
+                          )}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+              </div>
+            </div>
+          ) : (
+            <div className="unavailableMessageInfo__wrapper">
+              <LockIcon className="icon" />
+              <h2 className="title">This Content is Locked</h2>
+              <p className="desc">Please subscribe to our site to unlock this content</p>
+            </div>
+          )}
+        </>
       </div>
     </div>
   );

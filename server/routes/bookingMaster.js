@@ -17,7 +17,7 @@ router.get("/", async (req, res) => {
 
 router.post("/", async (req, res) => { 
     const postData = req.body;
-    // console.log(data);
+    console.log(postData);
     if(!postData) {
         return res.status(404).json({message: "Request Body attachment not found!!"});
     }
@@ -51,20 +51,24 @@ router.post("/", async (req, res) => {
     };
 
     const newDocument = new bookingMaster(updatedData);
+    console.log("ENTERED 1")
 
     if(!newDocument) {
         return res.status(404).json({message: "Operation Failed!!"});
     }
-
+    console.log("ENTERED 2")
+    
     try {
         const savedDocument = await newDocument.save();
         
+        console.log("ENTERED 2")
         // Update the Firestore document with the new ID
         await updateDoc(docRef, {currentId: newId});
 
         return res.status(200).json(savedDocument);
-    } catch(err) {
-        return res.status(500).json(err);
+    } catch(error) {
+        console.error(error);
+        return res.status(500).json(error);
     }
 });
 

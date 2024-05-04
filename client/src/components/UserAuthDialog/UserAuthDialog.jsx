@@ -63,7 +63,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 export default function UserAuthDialog({
   open,
   handleClose,
-  setUserAuthStateChangeFlag,
   handleRegistrationDialogOpen
 }) {
   const theme = useTheme();
@@ -247,7 +246,7 @@ export default function UserAuthDialog({
           userType: userType,
           vendorType: ""
         }));
-        setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+        dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
         setLoadingScreen(false);
         handleClose(); // Close the Entire Login/Register Dialog after Sign-In
       } catch (error) {
@@ -424,7 +423,7 @@ export default function UserAuthDialog({
         userType: userType,
         vendorType: vendorInfo.vendorTypeInfo?.vendorType
       }));
-      setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
       setLoadingScreen(false);
       handleClose(); // Close the Entire Login/Register Dialog after Sign-In
       handleRegistrationDialogOpen();
@@ -1541,6 +1540,5 @@ export default function UserAuthDialog({
 UserAuthDialog.propTypes = {
   open: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  setUserAuthStateChangeFlag: PropTypes.func.isRequired,
   handleRegistrationDialogOpen: PropTypes.func.isRequired
 };

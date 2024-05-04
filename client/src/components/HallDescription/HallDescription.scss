@@ -30,8 +30,8 @@
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     bottom: 1rem;
-    left: 6rem;
-    right: 6rem;
+    left: 5rem;
+    right: 5rem;
     z-index: 1;
     border-radius: 1rem;
     padding: 1.5rem;
@@ -59,6 +59,8 @@
     }
 
     .menu__wrapper {
+      height: 1.5rem;
+      width: 100%;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
@@ -67,15 +69,28 @@
 
       margin-top: 1rem;
 
-      .verticalLine {
+      .menuOption {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
 
-        &::before {
-          position: absolute;
-          height: 1rem;
-          width: 2px;
-          top: 0;
-          background-color: #cccccc;
+        cursor: pointer;
+
+        .icon {
+          margin-right: 0.3rem;
+          width: 20px;
         }
+
+        p {
+
+        }
+      }
+
+      .verticalLine {
+        height: 90%;
+        width: 1px;
+        background-color: #cccccc;
       }
     }
   }

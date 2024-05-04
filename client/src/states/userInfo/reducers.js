@@ -3,6 +3,7 @@ import { SET_DATA } from "./actions";
 const initialState = {
     userLocation: "",
     userDetails: {},
+    userAuthStateChangeFlag: false,
   };
   
 export default function userInfoReducer(state = initialState, action) {

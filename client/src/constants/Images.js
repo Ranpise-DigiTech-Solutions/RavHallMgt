@@ -28,6 +28,8 @@ import welcomePageThankYou from '../assets/welcomePageThankYou.png';
 import welcomePageBg from '../assets/welcomePageBg.jpg';
 import advertisement1 from '../assets/advertisement1.jpg';
 import advertisement2 from '../assets/advertisement2.jpg';
+import successLogo from '../assets/successLogo.png';
+import congratsBg from '../assets/congratsBg.jpg';
 
 export default {
     logo,
@@ -59,5 +61,7 @@ export default {
     welcomePageThankYou,
     welcomePageBg,
     advertisement1,
-    advertisement2
+    advertisement2,
+    successLogo,
+    congratsBg
 };

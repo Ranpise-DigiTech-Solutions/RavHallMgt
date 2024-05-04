@@ -32,7 +32,6 @@ export default function NavBar() {
   const [isRegistrationDialogOpen, setIsRegistrationDialogOpen] = useState(false);
   const [prevScrollY, setPrevScrollY] = useState(0);
   const [user, setUser] = useState(null);
-  const [userAuthStateChangeFlag, setUserAuthStateChangeFlag] = useState(false);
   const userInfoStore = useSelector((state) => state.userInfo);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -64,7 +63,7 @@ export default function NavBar() {
   const handleLogout = async () => {
     try {
       await firebaseAuth.signOut(); // Sign out the current user
-      setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
       dispatch(userInfoActions("userDetails", {}));
       console.log('User logged out successfully');
     } catch (error) { // Handle Error condition
@@ -93,7 +92,30 @@ export default function NavBar() {
     } catch (error) {
       console.error(error.message);
     }
-  }, [userAuthStateChangeFlag]);
+  }); // dependency array => [userAuthStateChangeFlag]
+
+  useEffect(() => {
+    try {
+      console.log("ENTERED")
+      const currentUser = firebaseAuth.currentUser;
+      console.log(currentUser);
+
+      if (currentUser) {
+        // User is signed in
+        setUser(currentUser);
+      } else {
+        // No user is signed in
+        setUser(null);
+      }
+      if (!userInfoStore.userDetails) {
+        // only if user details are not already available in redux store.. proceed to get it from db
+      }
+
+      // return () => unsubscribe();
+    } catch (error) {
+      console.error(error.message);
+    }
+  }, [userInfoStore.userAuthStateChangeFlag]);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -257,7 +279,6 @@ export default function NavBar() {
           <UserAuthDialog
             open={isSignInDialogOpen}
             handleClose={handleSignInDialogClose}
-            setUserAuthStateChangeFlag={setUserAuthStateChangeFlag}
             handleRegistrationDialogOpen={handleRegistrationDialogOpen}
           />
         </div>
