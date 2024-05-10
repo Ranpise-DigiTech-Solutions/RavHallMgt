@@ -10,9 +10,6 @@
     background-color: #302E2E !important;
 }
 
-.navbar__container {
-    position: relative;
-
     .navbar__wrapper {
         width: 100%;
         top: 0;
@@ -65,7 +62,7 @@
            
         }
     
-        .container {
+        .tags__wrapper {
             display: flex;
             flex-direction: row;
             justify-content: center;
@@ -125,4 +122,4 @@
         }
     
     }
-}
+

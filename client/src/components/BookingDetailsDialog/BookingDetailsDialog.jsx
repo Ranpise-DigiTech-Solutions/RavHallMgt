@@ -321,7 +321,7 @@ export default function BookingDetailsDialog({
         postData
       );
       console.log(response);
-      handleBookingDetailsInfo("bookingId", response.data?._id);
+      handleBookingDetailsInfo("bookingId", response.data?.documentId);
     } catch (error) {
       console.log(error);
       setIsLoading(false);

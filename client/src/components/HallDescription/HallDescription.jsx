@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 // Import necessary modules and components
 import "./HallDescription.scss"; // Import SCSS file
 
@@ -14,6 +15,15 @@ import { FaPenNib } from "react-icons/fa6";
 
 // Define Slider component
 const Slider = ({ hallData }) => {
+
+  // const [showPopup, setShowPopup] = useState(false);
+  // const [bookingDetails, setBookingDetails] = useState({
+  //   // Populate with initial booking details or fetch them as required
+  // });
+
+  // const handleBooking = () => {
+  //   setShowPopup(true); // This should set showPopup state to true when "Book Now" button is clicked
+  // };
 
   const responsive = {
     desktop: {
