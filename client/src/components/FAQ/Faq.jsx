@@ -3,7 +3,7 @@ import './faq.scss';
 
 // Default questions and answers
 const defaultQuestions = [
-  { question: 'What Are The Types Of Events That Can Be Hosted At This Venue?', answer: 'You can host a variety of events including weddings, corporate meetings, and private parties.' },
+  { question: 'What Are The Types Of Events?', answer: 'You can host a variety of events including weddings, corporate meetings, and private parties.' },
   { question: 'Why is the sky blue?', answer: 'The sky appears blue to the human eye because the short waves of blue light are scattered more than other colors by the gases and particles in the Earth\'s atmosphere.' },
   { question: 'Will we ever discover aliens?', answer: 'The existence of extraterrestrial life is still a matter of speculation and ongoing research.' },
   { question: 'How much does the Earth weigh?', answer: 'The Earth has a mass of approximately 5.97 x 10^24 kilograms.' },
@@ -19,7 +19,7 @@ const FAQ = ({ questions = defaultQuestions }) => {
   };
 
   return (
-    <div className="faq">
+    <div className="faq__container">
       <h2>Frequently Asked Questions</h2>
       <div className="accordion">
         {questions.map((item, index) => (

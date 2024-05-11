@@ -15,7 +15,7 @@
         justify-content: center;
         align-items: flex-start;
 
-        .sub-wrapper {
+        .sub__wrapper {
             width: 100%;
             height: max-content;
             display: flex;
@@ -23,8 +23,11 @@
             justify-content: center;
             align-items: stretch;
 
+            margin-bottom: 2rem;
+
             .column1 {
                 width: 67.5%;
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 align-items: center;
@@ -43,6 +46,31 @@
 
                 padding: 3rem 3rem 0 1.5rem;
             }
+
+            @media only screen and (max-width: 767px) {
+                
+                width: 100%;
+                height: auto;
+                flex-direction: column;
+
+                margin-bottom: 0;
+
+                .column2 {
+                    width: 100%;
+                    padding: 15px;
+                }
+
+                .column1 {
+                    width: 100%;
+                    padding: 15px;
+                }
+            }
+        }
+
+        @media only screen and (max-width: 767px) {
+            // border: none;    
+            outline: none;
+            margin: 100px 10px 10px 10px;
         }
     
     }

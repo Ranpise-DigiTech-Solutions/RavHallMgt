@@ -317,6 +317,11 @@ export default function AdditionalVendorDetails({
           </button>
         </div>
       </div>
+      <div className="advertisement__wrapper">
+        <div className="img__wrapper">
+          <img src={Images.advertisement2} alt="" />
+        </div>
+      </div>
       <div className="availabilityChecker__wrapper">
         <div className="title__wrapper">
           <p className="title">Check availability</p>
@@ -419,11 +424,6 @@ export default function AdditionalVendorDetails({
             <button className="btn" onClick={handleBookBtnClick}>
               Book Now
             </button>
-          </div>
-        </div>
-        <div className="advertisement__wrapper">
-          <div className="img__wrapper">
-            <img src={Images.advertisement2} alt="" />
           </div>
         </div>
       </div>

@@ -256,22 +256,6 @@ export default function NavBar() {
               Sign In
             </Button>
           )}
-          {/* <>
-            <SignedIn>
-              <div className="userButton">
-                <UserButton />
-              </div>
-            </SignedIn>
-            <SignedOut>
-              <Button
-                variant="contained"
-                className="button"
-                onClick={handleSignInButtonClick}
-              >
-                Sign In
-              </Button>
-            </SignedOut>
-          </> */}
         </div>
       </div>
       {isSignInDialogOpen && (

@@ -82,11 +82,11 @@ export default function DescriptionPage() {
           />
           <div className="DescriptionPage__container">
             <div className="main__wrapper">
-              <div className="sub-wrapper">
+              <div className="sub__wrapper">
                 <div className="column1">
                   <HallDescription hallData={hallData} />
-                  <AvailabilityCalendar hallData={hallData} />
                   <AboutPage />
+                  <AvailabilityCalendar hallData={hallData} />
                 </div>
                 <div className="column2">
                   <AdditionalVendorDetails
@@ -104,7 +104,7 @@ export default function DescriptionPage() {
               <FAQ />
             </div>
           </div>
-          <Footer />
+          {/* <Footer /> */}
         </>
       )}
     </div>

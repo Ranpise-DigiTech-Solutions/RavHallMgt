@@ -6,7 +6,7 @@
 .availabilityCalendar__wrapper {
   width: 100%;
   // padding: 4rem 3rem 2rem 3rem;
-  padding-top: 4rem;
+  padding-top: 1rem;
   padding-bottom: 2rem;
   display: flex;
   flex-direction: column;
@@ -19,7 +19,7 @@
     width: 100%;
 
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
 
     font-size: 27.2px;
@@ -28,6 +28,7 @@
     text-decoration: none;
     font-style: normal;
 
+    padding-left: 2rem;
     margin-bottom: 2rem;
   }
 
@@ -90,10 +91,11 @@
           0,
           0.2
         ); /* Adjust selected color as needed */
-      }
+      } 
     }
 
     .calendar {
+      width: 100%;
 
       .days__wrapper {
         width: 100%;
@@ -130,7 +132,7 @@
 
       .content__wrapper {
         width: 100%;
-        height: 50vh;
+        height: 55vh;
         display: flex;
         flex-direction: row;
         justify-content: center;
@@ -352,4 +354,95 @@
     // }
 
   }
+
+  @media only screen and (max-width: 767px) {
+
+    padding-bottom: 1rem;
+
+    .heading {
+      font-size: 22px;
+      padding-left: 0;
+    }
+
+    .contents__wrapper {
+
+      .seven-day-date-picker {
+
+        .arrow {
+          width: 1.5rem;
+          height: 1.5rem;
+
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          color: #000000;
+
+          padding: 0.5rem;
+
+          .icon {
+            z-index: 10;
+            color: #000000;
+          }
+        }
+
+        .date-range {
+          margin: 0 1rem;
+          font-size: 15px;
+        }
+      }
+
+      .calendar {
+        overflow-x: hidden;
+
+        .days__wrapper {
+          .sub-wrapper {
+            width: 2.25rem;
+            margin: 0 0.15rem;
+
+            .sub-title {
+              width: 100%;
+              height: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+              flex-wrap: wrap;
+              text-wrap: wrap;
+
+              font-size: 10px;
+            }
+
+            .title {
+              display: none;
+            }
+          }
+        }
+
+        .content__wrapper {
+          height: 40vh;
+
+          .timeSlots {
+            .timeSlots__wrapper {
+              width: 2rem;
+              width: 100%;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+
+              .time-slot {
+                font-size: 10px;
+              }
+            }
+          }
+
+          .availableSlots__wrapper {
+            margin: 0 0.15rem;
+
+            .timeSlots__wrapper {
+              width: 2.25rem !important;
+            }
+          }
+        }
+      }
+    }
+  } 
 }

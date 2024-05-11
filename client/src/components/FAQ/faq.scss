@@ -1,11 +1,25 @@
 @import url("https://fonts.googleapis.com/css?family=Hind:300,400&display=swap");
 
-.faq
-{
-  width: 95%;
-  margin:80px 50px 50px 50px;
+.faq__container {
+  width: 100%;
+  padding:1rem;
+  margin: 2rem 0 0 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: center;
+
+  h2{
+    margin-bottom: 2rem;
+    font-size: 24px;
+    font-weight: 800;
+  }
 }
+
+.accordion {
+  width: 100%;
+}
+
 .accordion .accordion-item {
   border-bottom: 1px solid #e5e5e5;
 }
@@ -35,13 +49,13 @@
   border: 1px solid #03b5d2;
 }
 .accordion button .accordion-title {
-  padding: 1em 1.5em 1em 0;
+  padding: 1em 1.5em 1em 1rem;
 }
 .accordion button .icon {
   display: inline-block;
   position: absolute;
   top: 18px;
-  right: 0;
+  right: 1rem;
   width: 22px;
   height: 22px;
   border: 1px solid;
@@ -92,8 +106,32 @@
   margin: 2em 0;
   color: black;
 }
-.faq h2
-{
-  color: black;
-  font-size: 30px;
+
+@media only screen and (max-width: 767px) {
+  .faq__container {
+    width: auto;
+    margin:2rem 0rem 0rem 0rem;
+    justify-content: center;
+    align-items: center;
+
+    h2 {
+      width: 100%;
+    }
+
+    .accordion {
+
+      .accordion-title {
+        font-size: 16px;
+        text-wrap: wrap;
+      }
+
+      .icon {
+        width: 20px;
+      }
+
+      .accordion-content {
+        padding: 0 1rem;
+      }
+    }
+  }
 }

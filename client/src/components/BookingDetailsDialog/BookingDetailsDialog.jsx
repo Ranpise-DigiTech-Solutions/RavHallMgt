@@ -341,6 +341,7 @@ export default function BookingDetailsDialog({
         handleClose();
       }}
       maxWidth="md"
+      fullWidth
     >
       {isLoading && (
         <div>
@@ -450,7 +451,7 @@ export default function BookingDetailsDialog({
         </div>
       ) : (
         <div className="bookingDetailsMain__container">
-          <div>
+          <div className="headings__wrapper">
             <h1 className="heading">booking form</h1>
             <h6 className="sub-heading">
               Fill in the below details to continue

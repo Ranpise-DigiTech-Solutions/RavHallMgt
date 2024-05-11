@@ -42,12 +42,12 @@ class VenueSummary extends Component {
           {/* Operating Time */}
           <div className="venue-details">
             <OperatingTimeIcon />
-            <p><strong>Operating Time</strong> <br/>{"venue.operatingTime"}</p>
+            <p><strong>Operating Time</strong> <br/>Yes</p>
           </div>
           {/* Alcohol */}
           <div className="venue-details">
             <AlcoholIcon />
-            <p><strong>Alcohol</strong><br/> {"venue.alcohol" ? 'Yes' : 'No'}</p>
+            <p><strong>Alcohol</strong><br/> Yes</p>
           </div>
         </div>
       </div>

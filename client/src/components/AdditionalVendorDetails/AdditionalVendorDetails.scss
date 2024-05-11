@@ -148,7 +148,7 @@
     .similarVendors__wrapper {
         width: 100%;
 
-        margin-bottom: 3rem;
+        margin-bottom: 2rem;
 
         .title__wrapper {
             width: 100%;
@@ -329,6 +329,30 @@
         }
     }
 
+    .advertisement__wrapper {
+        width: 100%;
+        height: 15rem;
+        margin: 0 0 2rem 0;
+        background-color: #36c87f;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .img__wrapper {
+            width: 100%;
+            height: 80%;
+            flex-grow: 1;
+            img{
+                height: 100%;
+                width: 100%;
+                object-fit: cover;
+                object-position: center;
+                background-repeat: no-repeat;
+            }
+        }
+    }
+
     .availabilityChecker__wrapper {
         width: 100%;
         font-family: var(--font-family-1);
@@ -418,6 +442,7 @@
                         align-items: center;
 
                         .label {
+                            color: rgba($color: #000000, $alpha: 1);
                             color: rgba($color: #000000, $alpha: 1);
                             font-size: 15px;
                             margin-right: 0.5rem;
@@ -525,28 +550,30 @@
         }
     }
 
-    .advertisement__wrapper {
-        width: 100%;
-        height: 18rem;
-        margin-top: 3rem;
-        background-color: #36c87f;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
+    @media only screen and (max-width: 767px) {
+        
+        .pricingInformation__wrapper {
+            display: none;
+            opacity: 0;
+        }
 
-        .img__wrapper {
-            width: 100%;
-            height: 80%;
-            flex-grow: 1;
-            img{
-                height: 100%;
-                width: 100%;
-                object-fit: cover;
-                object-position: center;
-                background-repeat: no-repeat;
+        .similarVendors__wrapper {
+            display: none;
+            opacity: 0;
+        }
+
+        .advertisement__wrapper {
+            display: none;
+            opacity: 0;
+        }
+
+        .availabilityChecker__wrapper {
+            .title__wrapper {
+                .title {
+                    font-size: 22px;
+                }
             }
         }
-    }
+    }    
 
 }

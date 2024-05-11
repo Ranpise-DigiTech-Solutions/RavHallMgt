@@ -77,14 +77,17 @@ const Slider = ({ hallData }) => {
               <FaMapMarkerAlt /> {hallData.hallTaluk}, {hallData.hallCity}, {hallData.hallState}
             </a>
           </h3>
-          <ReactStars
-            count={5}
-            value={4} // Initially set to 4 stars
-            onChange={ratingChanged}
-            size={40}
-            color2={"#ffd700"}
-            edit={false}
-          />
+          <div className="stars-container">
+            <ReactStars
+              count={5}
+              value={4} // Initially set to 4 stars
+              onChange={ratingChanged}
+              size={40}
+              color2={"#ffd700"}
+              edit={false}
+              className="stars-icon"
+            />
+          </div>
           <div className="menu__wrapper">
             <div className="photosMenu menuOption">
               <PhotoLibraryIcon className="icon" />
