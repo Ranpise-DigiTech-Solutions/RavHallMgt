@@ -6,16 +6,7 @@ import mongoose from "mongoose";
 import { serviceProviderMaster } from '../models/index.js';
 import { firebaseStorage } from '../database/FirebaseDb.js';
 router.get("/", async (req, res) => {
-
-    const { serviceProviderId } = req.query;
-
-    if(!serviceProviderId) {
-        return res.status(404).json({message: "Service provider id required!"});
-    }
-
-    const filter = {
-        _id: new mongoose.Types.ObjectId(serviceProviderId),
-    };
+    const filter = {};
 
     try {
         const serviceProviderDetails = await serviceProviderMaster.find(filter);
