@@ -1,17 +1,23 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef ,useEffect} from 'react';
 import './ProfileForm.scss';
 import DefaultImage from "../../assets/upload-photo-here.jpg";
 import EditIcon from "../../assets/edit.svg";
 import UploadingAnimation from "../../assets/uploading.gif.mp4";
+import { useSelector } from "react-redux";
 
+import axios from 'axios';
+
+import { firebaseApp } from '../../firebaseConfig';
+import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 const ProfileForm = () => {
+  
   const [avatarURL, setAvatarURL] = useState(DefaultImage);
   const fileUploadRef = useRef();
-  const [userName, setUserName] = useState('Chirag'); // Example name, replace with actual name
+  const [userName, setUserName] = useState('xxx');
   const [personalFormData, setPersonalFormData] = useState({
-    firstName: 'Chirag',
-    lastName: 'A K',
-    gender: 'male',
+    firstName: '',
+    lastName: '',
+    gender: null,
     CurrentPassword: '',
     NewPassword: '',
   });
@@ -35,13 +41,141 @@ const ProfileForm = () => {
   const [personalSaveButtonText, setPersonalSaveButtonText] = useState('Save');
   const [contactFormDisabled, setContactFormDisabled] = useState(true);
   const [contactSaveButtonText, setContactSaveButtonText] = useState('Save');
+  const [showSaveImageButton, setShowSaveImageButton] = useState(false);
+  const [profilePictureURL, setProfilePictureURL] = useState('');
+  const userInfoStore = useSelector((state) => state.userInfo);
+  const userId = userInfoStore.userDetails?.Document?._id; 
+  const userType=userInfoStore.userDetails.userType;
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        // Fetch user profile based on user type
+        const response = await axios.get(`http://localhost:8000/eventify_server/${userType === 'CUSTOMER' ? 'customerMaster' : 'serviceProviderMaster'}/${userId}`);
+        const userData = response.data;
+        //user maybe vendor or customer so fileds follows the suffix either vendor or customer 
+        let prefix = userType.toLowerCase(); // Lowercase userType for consistency,
+        const fullName = userData[`${prefix}Name`];
+        setUserName(fullName);
+        const nameParts = fullName.split(" ");
+        // Extract first name
+        const firstName = nameParts.shift(); // Remove and get the first part
 
+        // Remaining parts are last name
+        const lastName = nameParts.join(" ");
+        const profilePictureField = `${prefix}ProfileImage`;
+        setProfilePictureURL(userData[profilePictureField]||DefaultImage );
+        setPersonalFormData({
+          firstName:  firstName,
+          lastName: lastName,
+          gender: userData[`${prefix}Gender`],
+          CurrentPassword: '',
+          NewPassword: '',
+        });
+        setContactFormData({
+          mobileNumber: userData[`${prefix}Contact`],
+          email: userData[`${prefix}Email`],
+          altMobileNumber: userData[`${prefix}AltMobileNumber`],
+          altEmail: userData[`${prefix}AltEmail`],
+        });
+        setAddressFormData({
+          address: userData[`${prefix}Address`],
+          landmark:  userData[`${prefix}Landmark`],
+          city: userData[`${prefix}City`],
+          taluk: userData[`${prefix}Taluk`],
+          state: userData[`${prefix}State`],
+          country: userData[`${prefix}Country`],
+          pincode: userData[`${prefix}Pincode`],
+        });
+
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
+  }, [userType]);
+//updating edited fields to database
+const handleFormSubmit = async (formType) => {
+  try {
+    let updatedData = {};
+    const prefix = userType.toLowerCase(); // Lowercase userType for consistency
+
+    // Include only the modified personal information properties
+    if (!personalFormDisabled) {
+      updatedData = {
+        ...updatedData,
+        [`${prefix}Name`]: `${personalFormData.firstName} ${personalFormData.lastName}`,
+        [`${prefix}Gender`]: personalFormData.gender,
+        // Add other personal information properties as needed
+      };
+    }
+
+    // Include only the modified contact information properties
+    if (!contactFormDisabled) {
+      updatedData = {
+        ...updatedData,
+        [`${prefix}Contact`]: contactFormData.mobileNumber,
+        [`${prefix}Email`]: contactFormData.email,
+        [`${prefix}AltMobileNumber`]: contactFormData.altMobileNumber,
+        [`${prefix}AltEmail`]: contactFormData.altEmail,
+      };
+    }
+
+    // Include only the modified address information properties
+    if (!addressFormDisabled) {
+      updatedData = {
+        ...updatedData,
+        [`${prefix}Address`]: addressFormData.address,
+        [`${prefix}Landmark`]: addressFormData.landmark,
+        [`${prefix}City`]: addressFormData.city,
+        [`${prefix}Taluk`]: addressFormData.taluk,
+        [`${prefix}State`]: addressFormData.state,
+        [`${prefix}Country`]: addressFormData.country,
+        [`${prefix}Pincode`]: addressFormData.pincode,
+      };
+    }
+
+    // Send PATCH request to update user data
+    await axios.patch(
+      `http://localhost:8000/eventify_server/${
+        userType === 'CUSTOMER' ? 'customerMaster' : 'serviceProviderMaster'
+      }/${userId}`,
+      updatedData
+    );
+   
+
+    // If the request is successful, update UI or show a success message
+    console.log('User data updated successfully!');
+
+    // Disable the corresponding form after successful submission
+    switch (formType) {
+      case 'personal':
+        setPersonalFormDisabled(true);
+        setPersonalSaveButtonText('Edit');
+        break;
+      case 'contact':
+        setContactFormDisabled(true);
+        setContactSaveButtonText('Edit');
+        break;
+      case 'address':
+        setAddressFormDisabled(true);
+        break;
+      default:
+        break;
+    }
+  } catch (error) {
+    console.error('Error updating user data:', error);
+    // Handle error - show error message or revert changes in the UI
+  }
+};
+
+ 
   const handleImageUpload = (event) => {
     event.preventDefault();
     fileUploadRef.current.click();
   };
-
-  const uploadImageDisplay = async () => {
+  /* 
+ const uploadImageDisplay = async () => {
     try {
       setAvatarURL(UploadingAnimation);
       const uploadedFile = fileUploadRef.current.files[0];
@@ -53,16 +187,84 @@ const ProfileForm = () => {
 
       // Update avatarURL with the uploaded image
       const reader = new FileReader();
-      reader.onload = () => {
+      reader.onload = ()=> {
         setAvatarURL(reader.result);
+        setShowSaveImageButton(true);
       };
       reader.readAsDataURL(uploadedFile);
+     
     } catch (error) {
       console.error(error);
       setAvatarURL(DefaultImage);
     }
   };
+  
+ 
+  
+  
+  const handleSaveImage = () => {
+    // Implement your logic to save the image here
+    console.log('Image saved:', avatarURL);
+    setShowSaveImageButton(false); // Hide "Save" button after saving
+  };
+*/
+// Function to upload image to Firebase Storage with user type-based folder structure
+const uploadImageToFirebase = async (file, userType) => {
+  try {
+    // Determine the folder based on the user type
+    const folder = userType === 'CUSTOMER' ? 'CUSTOMER' : 'VENDOR';
 
+    // Create a storage reference with the folder structure
+    const storage = getStorage(firebaseApp);
+    const storageRef = ref(storage, `${folder}/userProfile/${file.name}`);
+
+    // Upload file to the storage reference
+    await uploadBytes(storageRef, file);
+
+    // Get the download URL of the uploaded file
+    const downloadURL = await getDownloadURL(storageRef);
+
+    // Return the download URL
+    return downloadURL;
+  } catch (error) {
+    console.error('Error uploading image to Firebase Storage:', error);
+    throw error;
+  }
+};
+
+// Update the uploadImageDisplay function to use uploadImageToFirebase with user type
+const uploadImageDisplay = async () => {
+  try {
+    setAvatarURL(UploadingAnimation);
+    const uploadedFile = fileUploadRef.current.files[0];
+
+    // Upload the file to Firebase Storage based on user type
+    const downloadURL = await uploadImageToFirebase(uploadedFile, userType);
+
+    // Update avatarURL with the uploaded image URL
+    setAvatarURL(downloadURL);
+    setShowSaveImageButton(true);
+  } catch (error) {
+    console.error('Error uploading image to Firebase:', error);
+    setAvatarURL(DefaultImage);
+  }
+};
+
+const handleSaveImage = async () => {
+  try {
+    // Send PATCH request to update user data with the image URL
+    const updatedData = { [`${userType.toLowerCase()}ProfileImage`]: avatarURL };
+    await axios.patch(
+      `http://localhost:8000/eventify_server/${userType === 'CUSTOMER' ? 'customerMaster' : 'serviceProviderMaster'}/${userId}`,
+      updatedData
+    );
+
+    console.log('User profile picture updated successfully!');
+    setShowSaveImageButton(false); // Hide "Save" button after saving
+  } catch (error) {
+    console.error('Error updating user profile picture:', error);
+  }
+};
   const handlePersonalInputChange = (event) => {
     const { name, value } = event.target;
     setPersonalFormData({
@@ -86,7 +288,21 @@ const ProfileForm = () => {
     event.preventDefault();
     // Handle saving personal information here
     console.log("Saving personal information:", personalFormData);
-    setPersonalFormDisabled(true); // Disable form after saving
+    handleFormSubmit('personal');
+  };
+  
+  const handleContactSave = (event) => {
+    event.preventDefault();
+    // Handle saving contact information here
+    console.log("Saving contact information:", contactFormData);
+    handleFormSubmit('contact');
+  };
+  
+  const handleAddressSubmit = (event) => {
+    event.preventDefault();
+    // Handle address information form submission
+    console.log("Saving address information:", addressFormData);
+    handleFormSubmit('address');
   };
 
   const handleContactInputChange = (event) => {
@@ -108,12 +324,7 @@ const ProfileForm = () => {
     setContactFormDisabled(!contactFormDisabled);
   };
 
-  const handleContactSave = (event) => {
-    event.preventDefault();
-    // Handle saving contact information here
-    console.log("Saving contact information:", contactFormData);
-    setContactFormDisabled(true); // Disable form after saving
-  };
+ 
 
   const handleAddressInputChange = (event) => {
     const { name, value } = event.target;
@@ -127,44 +338,45 @@ const ProfileForm = () => {
     setAddressFormDisabled(!addressFormDisabled);
   };
 
-  const handleAddressSubmit = (event) => {
-    event.preventDefault();
-    // Handle address information form submission
-    console.log("Saving address information:", addressFormData);
-    setAddressFormDisabled(true); // Disable form after submission
-  };
+
 
   return (
     <div className="UserProfile__container">
       <div className="coverpage"></div>
       <div className="image-upload-container">
-        <img 
-          src={avatarURL}
-          alt="Avatar"
-          className="avatar-image"
-        />
-        <div className="user-name sideheading">
-          <strong>{userName}</strong>
-        </div>
-        <form encType='multipart/form-data'>
+      <img
+        src={profilePictureURL}
+        alt="Avatar"
+        className="avatar-image"
+      />
+      <div className="user-name sideheading">
+        <strong>{userName}</strong>
+      </div>
+      <div className="button-container">
+        <button
+          type='button'
+          onClick={handleImageUpload}
+          className='upload-button'>
+          Edit Image
+        </button>
+        {showSaveImageButton && (
           <button
             type='button'
-            onClick={handleImageUpload}
-            className='edit-button'>
-            <img
-              src={EditIcon}
-              alt="Edit"
-              className='edit-icon' 
-            />
+            onClick={handleSaveImage}
+            className='save-button'>
+            Save
           </button>
-          <input 
-            type="file"
-            ref={fileUploadRef}
-            onChange={uploadImageDisplay}
-            hidden
-          />
-        </form>  
+        )}
       </div>
+      <form encType='multipart/form-data'>
+        <input
+          type="file"
+          ref={fileUploadRef}
+          onChange={uploadImageDisplay}
+          hidden
+        />
+      </form>
+    </div>
       <div className='personal-information'>
         <button className='edittext' onClick={handlePersonalEditClick}>
           {personalFormDisabled ? 'Edit Personal Info' : 'Cancel'}
@@ -198,18 +410,30 @@ const ProfileForm = () => {
           </div>
           <div className='input-row'>
             <div className="input-group">
-              <label htmlFor="gender">Gender:</label>
-              <select
-                id="gender"
-                name="gender"
-                value={personalFormData.gender}
-                onChange={handlePersonalInputChange}
-                disabled={personalFormDisabled}
-              >
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
+            <label htmlFor="gender">Gender:</label>
+    {personalFormDisabled ? (
+      <input
+        type="text"
+        id="gender"
+        name="gender"
+        value={personalFormData.gender ? personalFormData.gender : 'Not selected'}
+        readOnly // Make it read-only when not editing
+        disabled={personalFormDisabled}
+      />
+    ) : (
+      <select
+        id="gender"
+        name="gender"
+        value={personalFormData.gender ? personalFormData.gender : ''}
+        onChange={handlePersonalInputChange}
+        disabled={personalFormDisabled}
+      >
+        <option value="">Not selected</option>
+        <option value="male">Male</option>
+        <option value="female">Female</option>
+        <option value="other">Other</option>
+      </select>
+    )}
             </div>
           </div>
           <div className="input-row">
@@ -237,14 +461,14 @@ const ProfileForm = () => {
             </div>
           </div>
           {!personalFormDisabled && (
-            <button
+           <button
               type="submit"
               className="save-button"
               onClick={handlePersonalSave}
-            >
-              {personalSaveButtonText}
-            </button>
-          )}
+           >
+          {personalSaveButtonText}
+         </button>
+           )}
         </div>
       </div>
       <hr /> 
@@ -304,14 +528,14 @@ const ProfileForm = () => {
             </div>
           </div>
           {!contactFormDisabled && (
-            <button
-              type="submit"
-              className="save-button"
-              onClick={handleContactSave}
-            >
-              {contactSaveButtonText}
-            </button>
-          )}
+         <button
+         type="submit"
+         className="save-button"
+         onClick={handleContactSave}
+         >
+         {contactSaveButtonText}
+        </button>
+         )}
         </div>
       </div>
       <hr />
@@ -409,8 +633,10 @@ const ProfileForm = () => {
               </div>
             </div>
             {!addressFormDisabled && (
-              <button type="submit" className="save-button">Save</button>
-            )}
+             <button type="submit" className="save-button" onClick={handleAddressSubmit}>
+              Save
+            </button>
+              )}
           </div>
         </form>
       </div>

@@ -5,6 +5,18 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 import { vendorMaster } from '../models/index.js';
 
+router.get("/", async (req, res) => {
+    try {
+        // Add logic here to fetch data from the database
+        const data = await vendorMaster.find(); // Example: fetching all vendorMaster documents
+
+        // Send the fetched data in the response
+        return res.status(200).json(data);
+    } catch (error) {
+        return res.status(500).json({message: error.message});
+    }
+});
+
 router.post('/', async (req, res) => {
     const newDocument = new vendorMaster(req.body);
 

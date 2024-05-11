@@ -104,7 +104,7 @@ export default function DescriptionPage() {
               <FAQ />
             </div>
           </div>
-          {/* <Footer /> */}
+          <Footer />
         </>
       )}
     </div>

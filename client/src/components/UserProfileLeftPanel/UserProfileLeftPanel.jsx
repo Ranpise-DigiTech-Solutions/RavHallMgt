@@ -1,14 +1,37 @@
-import React from "react";
+import {React,useState} from "react";
 import logo from '../../assets/logo.png';
 import { MdDashboard } from 'react-icons/md';
+import { useSelector, useDispatch } from "react-redux";
+import { firebaseAuth } from "../../firebaseConfig.js";
+import { userInfoActions } from "../../states/UserInfo/index.js";
+import { useNavigate } from "react-router-dom";
 
 export default function UserDashboard({ setActiveComponent }) {
+  const navigateTo = useNavigate();
+ 
+  const userInfoStore = useSelector((state) => state.userInfo);
+  const userType = userInfoStore.userDetails.userType;
+  const dispatch = useDispatch();
+  console.log(userType);
+  const [userAuthStateChangeFlag, setUserAuthStateChangeFlag] = useState(false);
+  const handleLogout = async () => {
+    try {
+      await firebaseAuth.signOut(); // Sign out the current user
+      setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      dispatch(userInfoActions("userDetails", {}));
+      console.log('User logged out successfully');
+      navigateTo('/');
+    } catch (error) { // Handle Error condition
+      console.error('Error logging out:', error.message);
+    }
+  };
+ 
     const handleItemClick = (componentKey) => {
         setActiveComponent(componentKey);
       };
     return (
       <div className="fixed top-0 left-0 bottom-0 flex flex-col items-center w-80 overflow-hidden text-gray-400 bg-gray-900 rounded dashboardbox">
-        <a className="flex items-center w-full px-3 mt-3" href="#">
+        <a className="flex items-center w-full px-3 mt-3" href="" onClick={() => navigateTo("/")}>
         <div>
       {/* Use your logo PNG here */}
       <img src={logo} alt="Logo" style={{ width: '50px', height: 'auto' }} />
@@ -17,18 +40,28 @@ export default function UserDashboard({ setActiveComponent }) {
         </a>
         <div className="w-full px-2">
           <MenuSection >
+          {(userType === "VENDOR" || userType === "ADMIN") && (
+             <>
           <MenuItem icon={<MdDashboard />} text="Dashboard" onClick={() => handleItemClick('dashboard')}/>
+          </>)}
+          
              <MenuItem icon={<UserIcon />} text="View Profile" onClick={() => handleItemClick('profile')}/> 
+             {userType === "CUSTOMER" && (
+            <>
             <MenuItem icon={<HeartIcon />} text="Favorites" onClick={() => handleItemClick('packages')}  />
+            
             <MenuItem icon={<CartIcon />} text="Your Cart" onClick={() => handleItemClick('mycart')} />
+            </>)}
             <MenuItem icon={<HistoryIcon />} onClick={() => handleItemClick('orderHistory')}  text="Booking History" />
             <MenuItem icon={<BellIcon />} text="Notifications" onClick={() => handleItemClick('Notifications')} />
             <MenuItem icon={<SettingsIcon />} text="Settings" onClick={() => handleItemClick('settings')}  />
+            
           </MenuSection>
         </div>
         <a
         className="flex items-center justify-center w-full h-16 mt-auto bg-gray-800 hover:bg-gray-700 hover:text-gray-300"
         href="#"
+        onClick={handleLogout} 
       >
         <svg
           className="w-6 h-6 stroke-current"

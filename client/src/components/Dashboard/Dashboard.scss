@@ -1,4 +1,4 @@
-.vendor-dashboard-page__container {
+.dashboard-page {
     padding: 20px;
     margin-top: 20px;
     background-color: white;
@@ -42,7 +42,6 @@
         display: flex;
         flex-wrap: wrap;
         justify-content: space-between;
-
         h2 {
             margin-bottom: 10px;
             font-weight: bold;
@@ -61,10 +60,39 @@
         position: relative;
         overflow: hidden;
 
+        #analytics-curve {
+            width: 600px !important;
+            height: 400px !important;
+        }
+
         canvas {
             width: 100%;
             max-width: 100%;
             height: auto;
+        }
+
+        .analytics-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 10px;
+        }
+
+        .analytics-item {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+            h2 {
+                margin-bottom: 10px;
+                font-weight: bold;
+                color: #333;
+            }
+
+            p {
+                font-size: 1.2rem;
+                font-weight: bold;
+            }
         }
 
         .city-location {
@@ -104,40 +132,50 @@
                     color: #555;
                 }
             }
+            
         }
-        .feedback_form {
-            background: #fff;
-            margin-top: 100px;            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            margin: 20px auto;
-            max-width: 800px;
+        .upcoming-events {
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 20px;
     
             h2 {
-                margin-bottom: 10px;
+                margin-bottom: 20px;
+                font-size: larger;
                 font-weight: bold;
                 color: #333;
             }
     
-            .feedback-item {
-                background-color: #f9f9f9;
-                padding: 20px;
-                border-radius: 8px;
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-                margin-top: 15px;
+            .event-list {
+                .event-item {
+                    background-color: #ffe0b2;
+                    padding: 15px;
+                    margin-bottom: 15px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     
-                p {
-                    margin-bottom: 10px;
-                    font-size: 1.2rem;
-    
-                    strong {
+                    h3 {
+                        margin-bottom: 10px;
+                        color: #333;
                         font-weight: bold;
                     }
+    
+                    p {
+                        margin: 5px 0;
+                        color: #555;
+                        .clock-icon {
+                            float: right; /* Align the icon to the right */
+                            margin-left: 10px; /* Add some space between the text and the icon */
+                            margin-top: 2px; /* Adjust vertical alignment if needed */
+                        }
+                        
+                    }
+                    
+                    
                 }
             }
         }
     }
-
-
-    
 }

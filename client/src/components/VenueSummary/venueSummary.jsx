@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import { Component } from 'react';
 import './VenueSummary.scss'; // Import SCSS file
 import CapacityIcon from '@mui/icons-material/People';
 import ParkingSlotsIcon from '@mui/icons-material/LocalParking';
@@ -6,7 +6,6 @@ import RoomsAvailableIcon from '@mui/icons-material/Hotel';
 import FoodTypeIcon from '@mui/icons-material/Fastfood';
 import OperatingTimeIcon from '@mui/icons-material/Schedule';
 import AlcoholIcon from '@mui/icons-material/WineBar';
-import CateringPolicyIcon from '@mui/icons-material/Policy';
 import { FiberManualRecord } from '@mui/icons-material';
 
 class VenueSummary extends Component {

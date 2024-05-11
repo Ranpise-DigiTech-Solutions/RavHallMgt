@@ -5,6 +5,8 @@ import "./NavBar.scss";
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import Button from "@mui/material/Button";
+import { Link } from 'react-router-dom';
+
 
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
@@ -17,6 +19,7 @@ import PersonAdd from '@mui/icons-material/PersonAdd';
 import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 
+
 import { Images } from "../../constants";
 import {
   UserAuthDialog,
@@ -25,6 +28,7 @@ import {
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
 // import { SignedIn, SignedOut, UserButton} from "@clerk/clerk-react";
+
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -35,12 +39,15 @@ export default function NavBar() {
   const userInfoStore = useSelector((state) => state.userInfo);
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
-
+console.log(userInfoStore.userDetails.userType);
   const dispatch = useDispatch();
 
   const handleUserProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
+    
+   
   };
+  
   const handleUserProfileClose = () => {
     setAnchorEl(null);
   };
@@ -216,11 +223,11 @@ export default function NavBar() {
                 transformOrigin={{ horizontal: "right", vertical: "top" }}
                 anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
               >
-                <MenuItem onClick={handleUserProfileClose}>
-                  <Avatar /> Profile
+                 <MenuItem  >
+                 <Link to="/UserProfilePage"><Avatar /> Profile</Link>
                 </MenuItem>
                 <MenuItem onClick={handleUserProfileClose}>
-                  <Avatar /> My account
+                <Avatar /> My account
                 </MenuItem>
                 <Divider />
                 <MenuItem onClick={handleUserProfileClose}>
