@@ -1,4 +1,3 @@
-// Import statements for your components
 import React, { useState } from 'react';
 import './UserProfilePage.scss'
 import UserProfileLeftPanel from '../../components/UserProfileLeftPanel/UserProfileLeftPanel';
@@ -7,12 +6,16 @@ import SettingsComponent from '../../components/UserSettings/UserSettings';
 import MyCart from '../../components/MyCart/MyCart';
 import Favorites from '../../components/Favorites/Favorites';
 import Notification from '../../components/Notifications/Notifications';
-import Dashboard from '../../components/DashboardAdmin/Dashboard';
-import VendorDashboard from '../../components/DashboardVendor/Dashboard';
+import Dashboard from '../../components/Dashboard/Dashboard';
 import ProfileForm from '../../components/UserProfile/ProfileForm';
+import { useSelector } from 'react-redux';
+
 const UserProfilePage = () => {
+  // Get userType from Redux store
+  //const userType = useSelector(state => state.userInfo.userDetails.userType);
+
   // State to manage which component is currently active/selected
-  const [activeComponent, setActiveComponent] = useState('profile'); // default component
+  const [activeComponent, setActiveComponent] = useState('');
 
   // Function to render the right component based on the active state
   const renderComponent = () => {
@@ -30,9 +33,9 @@ const UserProfilePage = () => {
       case 'Notifications':
           return <Notification/>;
       case 'dashboard':
-            return <Dashboard/>;
+            return <Dashboard  />; // Pass userType to Dashboard
       default:
-        return <Dashboard />;
+        return <ProfileForm />;
     }
   };
 

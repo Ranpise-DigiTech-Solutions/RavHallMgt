@@ -41,6 +41,34 @@
           box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
           transform: translateY(-5px);
         }
+        .cnfrm-btn{
+          position: absolute; 
+          background-color: #FF7F50;
+          color: #fff;
+          border: none;
+          padding: 5px 10px;
+          border-radius: 3px;
+          transition: background-color 0.3s;
+          right: 20px;
+          bottom:10px;
+            &:hover {
+              background-color: #f86d3b;
+            }
+        }
+        .reject-btn{
+          position: absolute; 
+          background-color: red;
+          color: #fff;
+          border: none;
+          padding: 5px 10px;
+          border-radius: 3px;
+          transition: background-color 0.3s;
+          right: 105px;
+          bottom:10px;
+            &:hover {
+              background-color: #6f2003;
+            }
+        }
         .view-btn {
             position: absolute; /* Position the button */
             background-color: #007bff;
@@ -93,17 +121,21 @@
             display: flex;
             align-items: center;
         
-            &.Confirmed {
+            &.confirmed {
               background-color: #38b000;
             }
         
-            &.Pending {
+            &.pending {
               background-color: #ffeb3b;
               color: #333;
             }
         
-            &.Canceled {
+            &.rejected {
               background-color: #f44336;
+            }
+            &.onhold {
+              background-color: #ffc107;
+             
             }
         
             .status-icon {
