@@ -7,9 +7,13 @@ import { hallMaster, hallBookingMaster } from "../models/index.js";
 
 router.get("/", async (req, res) => {
   try {
-    console.log("");
+      // Add logic here to fetch data from the database
+      const data = await hallBookingMaster.find(); // Example: fetching all bookingMaster documents
+
+      // Send the fetched data in the response
+      return res.status(200).json(data);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+      return res.status(500).json({message: error.message});
   }
 });
 
@@ -257,8 +261,9 @@ router.get("/getHallBookings", async (req, res) => {
 });
 
 router.post("/", async (req, res) => {
+ 
   const newDocument = new hallBookingMaster(req.body);
-
+     
   if (!newDocument) {
     return res
       .status(404)
@@ -269,6 +274,7 @@ router.post("/", async (req, res) => {
     const savedDocument = await newDocument.save();
     return res.status(200).json(savedDocument);
   } catch (err) {
+    console.error("An error occurred:", err);
     return res.status(500).json(err);
   }
 });

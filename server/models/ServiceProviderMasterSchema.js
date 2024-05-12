@@ -11,7 +11,18 @@ const serviceProviderMasterSchema = new mongoose.Schema({
     vendorCompanyName: { type: String, required: true },
     vendorLocation: { type: String, required: true },
     eventTypes: [{ type: mongoose.Schema.Types.ObjectId, ref: 'eventtypes', required: true }],
-
+    vendorGender:{ type: String },
+    vendorAltMobileNumber:{ type: String,unique: true },
+    vendorAltEmail:{ type: String },
+    vendorAddress:{ type: String },
+    vendorLandmark:{ type: String },
+    vendorCity:{ type: String },
+    vendorTaluk:{ type: String },
+    vendorState:{ type: String },
+    vendorState:{ type: String },
+    vendorCountry:{ type: String },
+    vendorPincode:{ type: String },
+    vendorProfileImage: { type: String },
     programId: { type: String, required: true },
 }, { timestamps: true });
 

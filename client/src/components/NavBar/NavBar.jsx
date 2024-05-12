@@ -4,6 +4,8 @@ import "./NavBar.scss";
 
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { Link } from 'react-router-dom';
+
 import Button from "@mui/material/Button";
 import Tooltip from "@mui/material/Tooltip";
 import Avatar from "@mui/material/Avatar";
@@ -51,6 +53,7 @@ export default function NavBar() {
   const handleUserProfileClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
+  
   const handleUserProfileClose = () => {
     setAnchorEl(null);
   };

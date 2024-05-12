@@ -23,7 +23,7 @@ export {default as HallInformation} from './HallInformation/HallInformation';
 export {default as AvailabilityCalendar} from './AvailabilityCalendar/AvailabilityCalendar';
 export {default as AdditionalVendorDetails} from './AdditionalVendorDetails/AdditionalVendorDetails';
 export {default as BookingDetailsDialog} from './BookingDetailsDialog/BookingDetailsDialog';
-export {default as Dashboard} from './DashboardAdmin/Dashboard';
+export {default as Dashboard} from './Dashboard/Dashboard';
 export {default as Favorites} from './Favorites/Favorites';
 export {default as MyCart} from './MyCart/MyCart';
 export {default as Notification} from './Notifications/Notifications'; 

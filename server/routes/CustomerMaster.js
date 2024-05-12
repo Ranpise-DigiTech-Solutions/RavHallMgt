@@ -34,6 +34,22 @@ router.get("/", async (req, res) => {
     }
 });
 
+router.get("/:customerId", async (req, res) => {
+    const customerId = req.params.customerId;
+
+    try {
+        const customer = await customerMaster.findById(customerId);
+
+        if (!customer) {
+            return res.status(404).json({ message: "Customer not found" });
+        }
+
+        return res.status(200).json(customer);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+});
+
 router.post("/", async (req, res) => { 
     const newDocument = new customerMaster(req.body);
 
@@ -48,48 +64,74 @@ router.post("/", async (req, res) => {
         return res.status(500).json(err);
     }
 });
-
-router.patch('/updateCustomer', async (req, res) => {
-    
-    if(!req.body || !req.query.userId || !req.query.documentId) {
-        return res.status(404).json({message: "Required Fields missing in the Request body!!"});
-    }
-
-    const {customerProfileImage, ...customerData} = req.body;
-    // const customerProfileImage = req.files.customerProfileImage;
-    const { userId, documentId } = req.query;
-    let customerProfileImageUrl = "";
-    const customerProfileImageRef = ref(firebaseStorage, `CUSTOMER/${userId}/ProfileImage/`);
-
-    // console.log(customerProfileImage);
-    // return res.status(200).json({message: req.body});
+router.patch('/:customerId', async (req, res) => {
+    console.log(req.body);
+    const customerId = req.params.customerId;
+    const updatedData = req.body;
 
     try {
-        if(customerProfileImage) {
-            await uploadBytes(customerProfileImageRef, customerProfileImage);
-            customerProfileImageUrl = await getDownloadURL(customerProfileImageRef);
+        const updatedCustomer = await customerMaster.findByIdAndUpdate(
+            { _id: customerId},
+            { $set: updatedData },
+            { new: true ,upsert: true}
+        );
+
+        if (!updatedCustomer) {
+            return res.status(404).json({ message: 'Customer not found' });
         }
 
-        const postBody = {
-            ...customerData,
-            customerProfileImage: customerProfileImageUrl
+        return res.status(200).json(updatedCustomer);
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+});
+
+
+router.patch('/uploadUserImage', async (req, res) => {
+    try {
+        // Check if required fields are present in the request
+        if (!req.files || !req.files.customerProfileImage) {
+            return res.status(400).send('No image file was uploaded.');
         }
 
+        const { userType, userId } = req.query;
+        const file = req.files.customerProfileImage;
+        const folderName = userType;
+        const userProfileFolder = `${folderName}/userProfile`;
+        const fileName = `${userProfileFolder}/${userId}/${Date.now()}_${file.name}`;
+        const firebaseFile = firebaseStorage.ref().child(fileName);
+
+        // Upload the file to Firebase Storage
+        const snapshot = await firebaseFile.put(file.data);
+
+        // Get the public download URL
+        const downloadURL = await snapshot.ref.getDownloadURL();
+
+        // Ensure userId is in the correct ObjectId format
+        const mongoose = require('mongoose');
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ message: 'Invalid userId format' });
+        }
+
+        // Update the customer document with the download URL
         const updatedDocument = await customerMaster.findByIdAndUpdate(
-            documentId,
-            postBody,
+            userId,
+            { customerProfileImage: downloadURL },
             { new: true }
         );
-        
+
         if (!updatedDocument) {
             return res.status(404).json({ message: "Document not found!" });
         }
-        
+
         return res.status(200).json(updatedDocument);
-    } catch(error) {
-        console.log(error.message);
-        return res.status(500).json(error.message);
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send('Something went wrong');
     }
 });
+
+
+
 
 export default router;

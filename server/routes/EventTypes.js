@@ -34,6 +34,23 @@ router.get("/", async (req, res) => {
         return res.status(500).json({message: error.message});
     }
 });
+router.get("/getEventName/:eventId", async (req, res) => {
+    const { eventId } = req.params;
+
+    try {
+        const eventDetails = await eventTypes.findById(eventId);
+
+        if (!eventDetails) {
+            return res.status(404).json({ message: "No event found for the provided ID" });
+        }
+
+        const eventName = eventDetails.eventName;
+        return res.status(200).json({ eventName });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+});
+
 
 router.get("/getEventId", async (req, res) => {
 

@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react'
 import { ClerkProvider } from "@clerk/clerk-react";
 import { BrowserRouter, Route, Routes, useNavigate } from "react-router-dom";
 import { useDispatch } from 'react-redux';
+import axios from 'axios';
+
 
 import './App.scss'
 import { 
@@ -60,7 +62,29 @@ function App() {
       getLocation();
     }
   }, []);
+  useEffect(() => {
+    const eventSource = new EventSource('http://localhost:8000/eventify_server/dashboard/userVisits');
+    eventSource.onmessage = function(event) {
+      console.log('User visits:', JSON.parse(event.data));
+    
 
+      // Convert userVisitsData to a JSON string for storage
+      const userVisitsDataString = JSON.stringify(JSON.parse(event.data).userVisits);
+
+      // Store in session storage
+      sessionStorage.setItem('userVisits', userVisitsDataString);
+    };
+    eventSource.onerror = function(error) {
+      console.error('EventSource failed:', error);
+      eventSource.close();
+    };
+  
+    return () => {
+      eventSource.close();
+    };
+  }, []);
+  
+  
   useEffect(()=> {
 
     try {
@@ -119,7 +143,9 @@ function App() {
   return (
     <>
         <BrowserRouter>
+       
           <ClerkProviderWithRoutes />
+          
         </BrowserRouter>
     </>
     )

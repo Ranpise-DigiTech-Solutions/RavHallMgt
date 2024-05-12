@@ -11,23 +11,24 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide({ open, handleClose }) {
+export default function AlertDialogSlide({ open, handleConfirm, handleCancel, message }) {
   return (
     <Dialog
       open={open}
       TransitionComponent={Transition}
       keepMounted
-      onClose={handleClose}
+      onClose={handleCancel}
       aria-describedby="alert-dialog-slide-description"
     >
       <DialogTitle>{"Alert"}</DialogTitle>
       <DialogContent>
         <DialogContentText id="alert-dialog-slide-description">
-          This section is under construction. We will provide details soon.
+          {message}
         </DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={handleClose}>Ok</Button>
+        <Button onClick={handleConfirm}>Confirm</Button>
+        <Button onClick={handleCancel}>Cancel</Button>
       </DialogActions>
     </Dialog>
   );

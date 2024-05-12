@@ -15,7 +15,7 @@ export default function Footer() {
     const form = useRef();
     const [showFAQ, setShowFAQ] = useState(false);
 
-   
+    const constructionMessage = "This section is under construction. We will provide details soon.";
     const handleLinkClick = () => {
       setOpenDialog(true);
   };
@@ -125,7 +125,7 @@ export default function Footer() {
                     <p>Made by Ranpise DigiTech Solutions</p>
                 </div>
             </div>
-            <AlertDialogSlide open={openDialog} handleClose={handleCloseDialog} />
+            <AlertDialogSlide open={openDialog} handleClose={handleCloseDialog} message={constructionMessage} />
             <CompanyFAQ isOpen={showFAQ} onClose={() => setShowFAQ(false)}  />
         </div>
     );

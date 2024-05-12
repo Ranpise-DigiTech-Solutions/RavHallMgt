@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import logo from '../../assets/logo.png';
 import { MdDashboard } from 'react-icons/md';
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import './UserProfileLeftPanel.scss'
 export default function UserProfileLeftPanel({ setActiveComponent }) {
