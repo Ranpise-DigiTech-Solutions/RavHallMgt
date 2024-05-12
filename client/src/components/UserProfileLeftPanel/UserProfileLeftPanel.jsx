@@ -1,34 +1,93 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from '../../assets/logo.png';
 import { MdDashboard } from 'react-icons/md';
+import { firebaseAuth } from "../../firebaseConfig.js";
+import { userInfoActions } from "../../states/UserInfo/index.js";
+import { useDispatch } from "react-redux";
+import { useNavigate } from 'react-router-dom';
+import './UserProfileLeftPanel.scss'
+export default function UserProfileLeftPanel({ setActiveComponent }) {
+  const navigate = useNavigate();
+  const [userAuthStateChangeFlag, setUserAuthStateChangeFlag] = useState(false);
+  const dispatch = useDispatch();
 
-export default function UserDashboard({ setActiveComponent }) {
-    const handleItemClick = (componentKey) => {
-        setActiveComponent(componentKey);
-      };
-    return (
-      <div className="fixed top-0 left-0 bottom-0 flex flex-col items-center w-80 overflow-hidden text-gray-400 bg-gray-900 rounded dashboardbox">
-        <a className="flex items-center w-full px-3 mt-3" href="#">
+  const handleItemClick = (componentKey) => {
+    setActiveComponent(componentKey);
+    console.log(componentKey);
+    switch (componentKey) {
+      case 'home':
+      navigate('/');
+      break;
+      case 'dashboard':
+        navigate('/Dashboard');
+        break;
+      case 'profile':
+        navigate('/ProfileForm');
+        break;
+      case 'packages':
+        navigate('/Favourites');
+        break;
+      case 'mycart':
+        navigate('/YourCart');
+        break;
+      case 'orderHistory':
+        navigate('/OrderHistory');
+        break;
+      case 'Notifications':
+        navigate('/Notifications');
+        break;
+      case 'settings':
+        navigate('/settings');
+        break;
+        case 'hallForm':
+          navigate('/ServiceDetails');
+          break;
+      default:
+        break;
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await firebaseAuth.signOut(); // Sign out the current user
+      console.log('User signed out');
+      setUserAuthStateChangeFlag(prevFlag => !prevFlag);
+      dispatch(userInfoActions("userDetails", {}));
+      console.log('User details cleared');
+      alert('User logged out successfully'); // Display a success message
+      navigate('/'); // Navigate to the home page
+    } catch (error) {
+      // Handle Error condition
+      console.error('Error logging out:', error.message);
+      alert('Error logging out. Please try again.'); // Display an error message
+    }
+  };
+  
+  return (
+    <div className="fixed top-0 bottom-0 flex flex-col items-center overflow-hidden text-gray-400 bg-gray-900 dashboardbox">
+      <a className="flex items-center w-full px-3 mt-3" href="#">
         <div>
-      {/* Use your logo PNG here */}
-      <img src={logo} alt="Logo" style={{ width: '50px', height: 'auto' }} />
-    </div>
-          <span className="ml-2 text-sm font-bold">EventifyConnect</span>
-        </a>
-        <div className="w-full px-2">
-          <MenuSection >
-          <MenuItem icon={<MdDashboard />} text="Dashboard" onClick={() => handleItemClick('dashboard')}/>
-             <MenuItem icon={<UserIcon />} text="View Profile" onClick={() => handleItemClick('profile')}/> 
-            <MenuItem icon={<HeartIcon />} text="Favorites" onClick={() => handleItemClick('packages')}  />
-            <MenuItem icon={<CartIcon />} text="Your Cart" onClick={() => handleItemClick('mycart')} />
-            <MenuItem icon={<HistoryIcon />} onClick={() => handleItemClick('orderHistory')}  text="Booking History" />
-            <MenuItem icon={<BellIcon />} text="Notifications" onClick={() => handleItemClick('Notifications')} />
-            <MenuItem icon={<SettingsIcon />} text="Settings" onClick={() => handleItemClick('settings')}  />
-          </MenuSection>
+          {/* Use your logo PNG here */}
+          <img src={logo} alt="Logo" style={{ width: '50px', height: 'auto' }} />
         </div>
-        <a
+        <span className="ml-2 text-sm font-bold">EventifyConnect</span>
+      </a>
+      <div className="w-full px-2">
+        <MenuSection>
+          <MenuItem icon={<MdDashboard />} text="Dashboard" onClick={() => handleItemClick('dashboard')} />
+          <MenuItem icon={<UserIcon />} text="View Profile" onClick={() => handleItemClick('profile')} />
+          <MenuItem icon={<HeartIcon />} text="Favorites" onClick={() => handleItemClick('packages')} />
+          <MenuItem icon={<CartIcon />} text="Your Cart" onClick={() => handleItemClick('mycart')} />
+          <MenuItem icon={<HistoryIcon />} text="Booking History" onClick={() => handleItemClick('orderHistory')} />
+          <MenuItem icon={<BellIcon />} text="Notifications" onClick={() => handleItemClick('Notifications')} />
+          <MenuItem icon={<SettingsIcon />} text="Settings" onClick={() => handleItemClick('settings')} />
+          <MenuItem icon={<HallFormIcon />} text="Hall Form" onClick={() => handleItemClick('hallForm')} />
+          <MenuItem icon={<HomeIcon />} text="Home" onClick={() => handleItemClick('home')} />
+        </MenuSection>
+      </div>
+      <div
         className="flex items-center justify-center w-full h-16 mt-auto bg-gray-800 hover:bg-gray-700 hover:text-gray-300"
-        href="#"
+        onClick={handleLogout}
       >
         <svg
           className="w-6 h-6 stroke-current"
@@ -45,7 +104,7 @@ export default function UserDashboard({ setActiveComponent }) {
           />
         </svg>
         <span className="ml-2 text-sm font-medium">Logout</span>
-      </a>
+      </div>
     </div>
   );
 }
@@ -72,19 +131,19 @@ function MenuItem({ icon, text, onClick }) {
     </div>
   );
 }
-  
-  const HeartIcon = () => (
-    <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,21 L10.55,19.7051771 C5.4,15.1242507 2,12.1029973 2,8.39509537 C2,5.37384196 4.42,3 7.5,3 C9.24,3 10.91,3.79455041 12,5.05013624 C13.09,3.79455041 14.76,3 16.5,3 C19.58,3 22,5.37384196 22,8.39509537 C22,12.1029973 18.6,15.1242507 13.45,19.7149864 L12,21 Z" />
-    </svg>
-  );
-  
-  
-const DashboardIcon=() =>(
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor"/>
-</svg>
+
+const HeartIcon = () => (
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12,21 L10.55,19.7051771 C5.4,15.1242507 2,12.1029973 2,8.39509537 C2,5.37384196 4.42,3 7.5,3 C9.24,3 10.91,3.79455041 12,5.05013624 C13.09,3.79455041 14.76,3 16.5,3 C19.58,3 22,5.37384196 22,8.39509537 C22,12.1029973 18.6,15.1242507 13.45,19.7149864 L12,21 Z" />
+  </svg>
 );
+
+const DashboardIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" fill="currentColor" />
+  </svg>
+);
+
 const CartIcon = () => (
   <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7.2998 5H22L20 12H8.37675M21 16H9L7 3H4M4 8H2M5 11H2M6 14H2M10 20C10 20.5523 9.55228 21 9 21C8.44772 21 8 20.5523 8 20C8 19.4477 8.44772 19 9 19C9.55228 19 10 19.4477 10 20ZM21 20C21 20.5523 20.5523 21 20 21C19.4477 21 19 20.5523 19 20C19 19.4477 19.4477 19 20 19C20.5523 19 21 19.4477 21 20Z" />
@@ -97,6 +156,16 @@ const HistoryIcon = () => (
   </svg>
 );
 
+const HomeIcon = () => (
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+  </svg>
+);
+const HallFormIcon = () => (
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+  </svg>
+);
 const BellIcon = () => (
   <svg
     width="24"
@@ -118,31 +187,34 @@ const BellIcon = () => (
           id="vector (Stroke)_2"
           fillRule="evenodd"
           clipRule="evenodd"
-            d="M8.28966 2.36993C10.5476 1.24631 13.1934 1.20809 15.4828 2.26601L15.6874 2.36056C18.0864 3.46909 19.6223 5.87083 19.6223 8.51353L19.6223 9.82417C19.6223 10.8777 19.8519 11.9185 20.2951 12.8742L20.5598 13.445C21.7754 16.0663 20.1923 19.1303 17.3509 19.6555L17.2146 18.918L17.3509 19.6555L17.1907 19.6851C13.6756 20.3349 10.0711 20.3349 6.55594 19.6851C3.6763 19.1529 2.15285 15.967 3.54631 13.3914L3.77272 12.9729C4.3316 11.9399 4.62426 10.7839 4.62426 9.60942L4.62426 8.28813C4.62426 5.77975 6.04397 3.48746 8.28966 2.36993ZM14.8536 3.62766C12.9772 2.76057 10.8086 2.7919 8.95794 3.71284C7.22182 4.57679 6.12426 6.34893 6.12426 8.28813L6.12426 9.60942C6.12426 11.0332 5.76949 12.4345 5.09201 13.6867L4.86561 14.1052C3.95675 15.785 4.95039 17.863 6.82857 18.2101C10.1635 18.8265 13.5832 18.8265 16.9181 18.2101L17.0783 18.1805C18.9561 17.8334 20.0024 15.8084 19.199 14.076L18.9343 13.5053C18.3994 12.3518 18.1223 11.0956 18.1223 9.82416L18.1223 8.51353C18.1223 6.45566 16.9263 4.58543 15.0582 3.72221L14.8536 3.62766Z"
-            fill="#BFBFBF"
-          />
-          <path
-            id="vector (Stroke)_3"
-            fillRule="evenodd"
-            clipRule="evenodd"
-            d="M8.74719 14.4995C8.74719 14.0853 9.08298 13.7495 9.49719 13.7495L14.4972 13.7495C14.9114 13.7495 15.2472 14.0853 15.2472 14.4995C15.2472 14.9137 14.9114 15.2495 14.4972 15.2495L9.49719 15.2495C9.08298 15.2495 8.74719 14.9137 8.74719 14.4995Z"
-            fill="#BFBFBF"
-          />
-        </g>
+          d="M8.28966 2.36993C10.5476 1.24631 13.1934 1.20809 15.4828 2.26601L15.6874 2.36056C18.0864 3.46909 19.6223 5.87083 19.6223 8.51353L19.6223 9.82417C19.6223 10.8777 19.8519 11.9185 20.2951 12.8742L20.5598 13.445C21.7754 16.0663 20.1923 19.1303 17.3509 19.6555L17.2146 18.918L17.3509 19.6555L17.1907 19.6851C13.6756 20.3349 10.0711 20.3349 6.55594 19.6851C3.6763 19.1529 2.15285 15.967 3.54631 13.3914L3.77272 12.9729C4.3316 11.9399 4.62426 10.7839 4.62426 9.60942L4.62426 8.28813C4.62426 5.77975 6.04397 3.48746 8.28966 2.36993ZM14.8536 3.62766C12.9772 2.76057 10.8086 2.7919 8.95794 3.71284C7.22182 4.57679 6.12426 6.34893 6.12426 8.28813L6.12426 9.60942C6.12426 11.0332 5.76949 12.4345 5.09201 13.6867L4.86561 14.1052C3.95675 15.785 4.95039 17.863 6.82857 18.2101C10.1635 18.8265 13.5832 18.8265 16.9181 18.2101L17.0783 18.1805C18.9561 17.8334 20.0024 15.8084 19.199 14.076L18.9343 13.5053C18.3994 12.3518 18.1223 11.0956 18.1223 9.82416L18.1223 8.51353C18.1223 6.45566 16.9263 4.58543 15.0582 3.72221L14.8536 3.62766Z"
+          fill="#BFBFBF"
+        />
+        <path
+          id="vector (Stroke)_3"
+          fillRule="evenodd"
+          clipRule="evenodd"
+          d="M8.74719 14.4995C8.74719 14.0853 9.08298 13.7495 9.49719 13.7495L14.4972 13.7495C14.9114 13.7495 15.2472 14.0853 15.2472 14.4995C15.2472 14.9137 14.9114 15.2495 14.4972 15.2495L9.49719 15.2495C9.08298 15.2495 8.74719 14.9137 8.74719 14.4995Z"
+          fill="#BFBFBF"
+        />
       </g>
-    </svg>
-  );
-  
-  
-  
-  const SettingsIcon = () => (
-    <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.195 12.155c-.036-.255-.08-.512-.135-.765l1.938-1.507c.34-.263.418-.739.178-1.1l-1.954-3.386a.724.724 0 00-.726-.377l-2.426.196c-.295-.222-.61-.409-.947-.556l-.372-2.54A.724.724 0 0013.75 2h-3.5a.724.724 0 00-.725.648l-.372 2.54c-.337.147-.652.334-.947.556l-2.426-.196a.724.724 0 00-.726.377l-1.953 3.386a.724.724 0 00.178 1.1l1.938 1.507c-.055.253-.099.51-.135.765l-1.938 1.507c-.34.263-.418.739-.178 1.1l1.954 3.386c.154.267.415.437.726.377l2.426-.196c.294.222.609.409.947.556l.372 2.54c.05.343.343.601.695.601h3.5c.352 0 .645-.258.695-.601l.372-2.54c.337-.147.652-.334.947-.556l2.426.196c.311.026.572-.11.726-.377l1.954-3.386c.24-.36.162-.837-.178-1.1l-1.938-1.507zM12 15a3 3 0 100-6 3 3 0 000 6z" />
-    </svg>
-  );
+    </g>
+  </svg>
+);
 
-  const UserIcon = () => (
-    <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z"/><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
-    </svg>
-  );
+const SettingsIcon = () => (
+<svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.195 12.155c-.036-.255-.08-.512-.135-.765l1.938-1.507c.34-.263.418-.739.178-1.1l-1.954-3.386a.724.724 0 00-.726-.377l-2.426.196c-.295-.222-.61-.409-.947-.556l-.372-2.54A.724.724 0 0013.75 2h-3.5a.724.724 0 00-.725.648l-.372 2.54c-.337.147-.652.334-.947.556l-2.426-.196a.724.724 0 00-.726.377l-1.953 3.386a.724.724 0 00.178 1.1l1.938 1.507c-.055.253-.099.51-.135.765l-1.938 1.507c-.34.263-.418.739-.178 1.1l1.954 3.386c.154.267.415.437.726.377l2.426-.196c.294.222.609.409.947.556l.372 2.54c.05.343.343.601.695.601h3.5c.352 0 .645-.258.695-.601l.372-2.54c.337-.147.652-.334.947-.556l2.426.196c.311.026.572-.11.726-.377l1.954-3.386c.24-.36.162-.837-.178-1.1l-1.938-1.507zM12 15a3 3 0 100-6 3 3 0 000 6z" />
+</svg>
+);
+
+// const UserIcon = () => (
+// <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z" /><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
+// </svg>
+// );
+const UserIcon = () => (
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
+);

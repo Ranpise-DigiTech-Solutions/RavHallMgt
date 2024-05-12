@@ -4,8 +4,16 @@ import axios from 'axios';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
 import { PackagesCard } from '../../sub-components';
-
+import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
+import { useMediaQuery } from 'react-responsive';
+import { NavBar } from '..';
 const Favorites = () => {
+  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const [activeComponent, setActiveComponent] = useState(null);
+
+    const handleSetActiveComponent = (component) => {
+        setActiveComponent(component);
+    };
   const [data, setData] = useState([]);
 
   useEffect(() => {
@@ -27,12 +35,18 @@ const Favorites = () => {
   };
 
   return (
+    <>
+     {isMobile && <NavBar />}
+    <div className="left-panel-container">
+    <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
+  </div>
     <div className="userFavorites__container">
         <h1><b>Your favorites</b></h1>
       <motion.div className="favorites__wrapper">
         {renderCards()}
       </motion.div>
     </div>
+    </>
   );
 };
 

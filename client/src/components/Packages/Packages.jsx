@@ -240,40 +240,38 @@ export default function Packages() {
     return pageNumbers;
   };
   
-  return (
-    <div className="packages__container" id="packages" ref={wrapperRef}>
-       
-      <div className="tags__wrapper">
-        {["Top Rated", "Most Popular", "Most Liked", "Oldest" ,"Available"].map(
-          (item, index) => (
-            <div
-              key={index}
-              onClick={() => {handleCardFilter(item)}}
-              className={`tag ${
-                activeFilter === item ? "active" : ""
-              }`}
-            >
-              {item}
-            </div>
-          )
-        )}
+
+    return (
+      <div className="packages__container" id="packages" ref={wrapperRef}>
+        <div className="tags__wrapper">
+          {["Top Rated", "Most Popular", "Most Liked", "Oldest" ,"Available"].map(
+            (item, index) => (
+              <div
+                key={index}
+                onClick={() => {handleCardFilter(item)}}
+                className={`tag ${activeFilter === item ? "active" : ""}`}
+              >
+                {item}
+              </div>
+            )
+          )}
+        </div>
+        <motion.div
+          className="packages__wrapper"
+          animate={animateCard}
+          transition={{ duration: 0.5, delayChildren: 0.5 }}
+        >
+          {renderCards()}
+        </motion.div>
+        <div className="packagecount__wrapper">
+          <div className="counter" onClick={() => handlePageChange(1)}><a href="#packages">First</a></div>
+          <div className="counter" onClick={() => handlePageChange(currentPage-1)}><a href="#packages">Previous</a></div>
+          {renderPageNumbers()}
+          <div className="counter" onClick={() => handlePageChange(currentPage+1)}><a href="#packages">Next</a></div>
+          <div className="counter" onClick={() => handlePageChange(totalPages)}><a href="#packages">Last</a></div>
+        </div>
       </div>
-      <motion.div 
-        className="packages__wrapper"
-        animate={animateCard}
-        transition={{ duration: 0.5, delayChildren: 0.5 }}
-      >
-        {renderCards()}
-      </motion.div>
-      <div className="packagecount__wrapper">
-        <div className="counter" onClick={() => handlePageChange(1)}><a href="#packages">First</a></div>
-        <div className="counter" onClick={() => handlePageChange(currentPage-1)}><a href="#packages">Previous</a></div>
-        {
-          renderPageNumbers()
-        }
-        <div className="counter" onClick={() => handlePageChange(currentPage+1)}><a href="#packages">Next</a></div>
-        <div className="counter" onClick={() => handlePageChange(totalPages)}><a href="#packages">Last</a></div>
-      </div>
-    </div>
-  );
+    );
 }
+
+

@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { DestinationsCard } from "../../sub-components";
 // eslint-disable-next-line no-unused-vars
 import { MotionWrap } from '../../wrapper'
-import {Images} from '../../constants';
+import { Images } from '../../constants';
 
 const responsive = {
   desktop: {
@@ -35,8 +35,7 @@ const cardsData = {
     title: "Autumn in Japan | $3,500",
     img: Images.Hall_01,
     video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
   card2: {
@@ -47,8 +46,7 @@ const cardsData = {
     title: "Autumn in Japan | $3,500",
     img: Images.Hall_02,
     video: "",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
   card3: {
@@ -59,8 +57,7 @@ const cardsData = {
     title: "Autumn in Japan | $3,500",
     img: Images.Hall_03,
     video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
   card4: {
@@ -71,8 +68,7 @@ const cardsData = {
     title: "Autumn in Japan | $3,500",
     img: Images.Hall_04,
     video: "",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
   card5: {
@@ -83,8 +79,7 @@ const cardsData = {
     title: "Autumn in USA | $8,500",
     img: Images.Hall_05,
     video: "https://v4.cdnpk.net/videvo_files/video/free/video0483/large_watermarked/_import_60d962f06b3ef8.86089157_FPpreview.mp4",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
   card6: {
@@ -95,8 +90,7 @@ const cardsData = {
     title: "Autumn in USA | $8,500",
     img: Images.Hall_06,
     video: "",
-    description:
-      "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
+    description: "6 excursions to the main cities of the country, admire the beautiful autumn gardens",
     deadline: "7 days",
   },
 };
@@ -108,17 +102,15 @@ const Destinations = () => {
 
   const handleCustomPrevClick = () => {
     if (carouselRef.current) {
-      // carouselRef.current.goToSlide(carouselRef.current.state.currentSlide - 1);
       const currentSlide = carouselRef.current.state.currentSlide;
       const totalSlides = carouselRef.current.state.totalItems;
 
-      // If on the first slide, go to the last slide; otherwise, go to the previous slide
       const targetSlide = currentSlide === 0 ? totalSlides - 1 : currentSlide - 1;
 
       carouselRef.current.goToSlide(targetSlide);
     }
   };
-  
+
   const handleCustomNextClick = () => {
     if (carouselRef.current) {
       carouselRef.current.goToSlide(carouselRef.current.state.currentSlide + 1);
@@ -132,13 +124,12 @@ const Destinations = () => {
           <p className="caption">popularity</p>
           <div className="wrapper">
             <div className="title">
-              <h2>
-                most popular <br /> marriage destinations
-              </h2>
+              <h2>Most Popular</h2>
+              <h2>Marriage Destinations</h2>
             </div>
 
             <div className="navigation__buttons">
-              <button className="main__button button">view all tours</button>
+              <button className="main__button button">View All Tours</button>
 
               <button className="arrow__buttons button" onClick={handleCustomPrevClick}>
                 <ArrowBackIcon />
@@ -151,36 +142,34 @@ const Destinations = () => {
           </div>
         </div>
         <div className="sub__wrapper_2">
-            <Carousel
-              ref={carouselRef}
-              responsive={responsive}
-              dotListClass="custom-dot-list-style"
-              itemClass="carousel-item-padding-40-px"
-              swipeable={true}
-              draggable={false}
-              infinite={true}
-              autoPlay={true}  
-              autoPlaySpeed={4000}
-              keyBoardControl={false}
-              slidesToSlide={1}
-              arrows={false}
-              renderButtonGroupOutside
-              containerClass="carousel-container"
-            >
-              {cardsArray.map((card, index) => (
-                <motion.div
-                  className="card"
-                  key={index}     
-                >
-                  <DestinationsCard key={index} card={card} />
-                </motion.div>
-              ))}
-            </Carousel>
+          <Carousel
+            ref={carouselRef}
+            responsive={responsive}
+            dotListClass="custom-dot-list-style"
+            itemClass="carousel-item-padding-40-px"
+            swipeable={true}
+            draggable={false}
+            infinite={true}
+            autoPlay={true}
+            autoPlaySpeed={4000}
+            keyBoardControl={false}
+            slidesToSlide={1}
+            arrows={false}
+            renderButtonGroupOutside
+            containerClass="carousel-container"
+          >
+            {cardsArray.map((card, index) => (
+              <motion.div className="card" key={index}>
+                <DestinationsCard key={index} card={card} />
+              </motion.div>
+            ))}
+          </Carousel>
         </div>
       </div>
     </div>
   );
-}
+};
 
 // export default MotionWrap(Destinations, "");
 export default Destinations;
+
