@@ -1184,82 +1184,46 @@
     }
 }
 @media (max-width: 768px) {
-    .welcomeScreen__container {
-      height: auto;
-      width: 100%;
-      padding: 1rem;
-    }
-  
-    .contents__wrapper img {
-      width: 60%;
-    }
-  
-    .userProfile {
-      width: auto;
-    }
-  
-    .registrationFormMain__wrapper {
-      height: auto;
-      flex-direction: column;
-    }
-  
+
+.registrationFormMain__wrapper {
+
+
     .img__wrapper {
-      width: 100%;
-      height: 30vh;
+        display: none;
+
+    
+    .bgCover {
+        display: none;
+
+        
+
     }
-  
-    .contents__wrapper {
-      width: 100%;
-      padding: 1rem;
+    // img{
+    //     display: none;
+    // }
+}
+.contents__wrapper{
+    width: 100%;
+
+    .form__container{
+        .userInput__wrapper{
+            .textField__wrapper{
+                display: block;
+
+                .sub-wrapper{
+                    margin: 0;
+                    padding: 0;
+                }
+                .sub-wrapper:nth-child(2){
+                    margin: 1.5rem 0 0 0;
+                } 
+            }
+            .pinCode__wrapper{
+                width: 100%;
+            }
+        }
     }
-  
-    .textField__wrapper {
-      flex-direction: column;
-    }
-  
-    .textField__wrapper .sub-wrapper {
-      margin: 0 !important;
-    }
-  
-    .pinCode__wrapper {
-      width: 100%;
-      padding-right: 0;
-    }
-  
-    .profilePic__wrapper .profilePic {
-      width: 5rem;
-      height: 5rem;
-    }
-  
-    .profilePic__wrapper .profileBtn {
-      width: 40%;
-    }
-  
-    .img__dropZone .imgUploadArea {
-      width: 100%;
-    }
-  
-    .documentArea .closeIcon {
-      right: 1rem;
-    }
-  
-    .textField {
-      width: 100%;
-    }
-  
-    .contactDetails__wrapper {
-      width: 100%;
-    }
-  
-    .subContents__wrapper {
-      width: 100%;
-    }
-  
-    .hallParkingCapacity__wrapper .sub-wrapper {
-      width: 100%;
-    }
-  
-    .navigation__btns {
-      justify-content: center;
-    }
-  }
+}
+}
+
+}

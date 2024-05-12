@@ -31,6 +31,8 @@ import {
 } from '../../components';
 import { firebaseAuth } from "../../firebaseConfig.js";
 import { userInfoActions } from "../../states/UserInfo/index.js";
+import ProfileIcon from '@mui/icons-material/AccountCircle';
+import { useNavigate } from 'react-router-dom';
 
 export default function NavBar() {
   const [scrolled, setScrolled] = useState(false);
@@ -43,6 +45,7 @@ export default function NavBar() {
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const navigate = useNavigate();
 
   const dispatch = useDispatch();
 
@@ -160,20 +163,27 @@ export default function NavBar() {
 
         {isMobile ? (
           // Mobile view
-          <div>
+          <div >
             <IconButton onClick={toggleMobileMenu} color="inherit">
               {mobileMenuOpen ? <CloseIcon /> : <MenuIcon />}
             </IconButton>
             <Drawer
+             
               anchor="right"
               open={mobileMenuOpen}
               onClose={toggleMobileMenu}
             >
               <Box
-                sx={{ width: 250 }}
+                sx={{
+                  width: 250,
+                  height: '100vh',
+                  bgcolor: 'rgb(17, 24, 39)', // Set the background color to red
+                  color: 'rgb(156, 163, 175)', // Set the text color to white
+                }}
                 role="presentation"
                 onClick={toggleMobileMenu}
                 onKeyDown={toggleMobileMenu}
+                
               >
                 {user ? (
                   <UserProfileLeftPanel
@@ -183,7 +193,7 @@ export default function NavBar() {
                     setActiveComponent={handleSetActiveComponent} // Pass the handleSetActiveComponent function as a prop
                   />
                 ) : (
-                  <List>
+                  <List >
                     {/* Add your menu items here */}
                     <ListItem button onClick={() => handleMenuItemClick('venues')}>
                       <ListItemText primary="Venues" />
@@ -198,7 +208,7 @@ export default function NavBar() {
                       <ListItemText primary="Get Started" />
                     </ListItem>
                     <ListItem button onClick={handleSignInButtonClick}>
-                      <ListItemIcon>
+                    <ListItemIcon style={{ color: 'rgb(156, 163, 175)' }}>
                         <PersonAdd fontSize="small" />
                       </ListItemIcon>
                       <ListItemText primary="Sign In" />
@@ -223,6 +233,11 @@ export default function NavBar() {
             <a href="#" className="tag" onClick={() => handleMenuItemClick('getStarted')}>
               Get Started
             </a>
+            {user && (
+    <a className="tag" onClick={() => navigate('/ProfileForm')}>
+      <ProfileIcon fontSize="small" /> Profile
+    </a>
+  )}
             {user ? (
               <React.Fragment>
                 <Tooltip title="Account settings">

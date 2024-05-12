@@ -3,8 +3,11 @@ import './ProfileForm.scss';
 import DefaultImage from "../../assets/upload-photo-here.jpg";
 import UploadingAnimation from "../../assets/uploading.gif.mp4";
 import UserProfileLeftPanel from '../UserProfileLeftPanel/UserProfileLeftPanel';
+import { useMediaQuery } from 'react-responsive';
+import { NavBar } from '..';
 
 const ProfileForm = () => {
+  const isMobile = useMediaQuery({ maxWidth: 767 });
   const [activeComponent, setActiveComponent] = useState(null);
 
     const handleSetActiveComponent = (component) => {
@@ -149,6 +152,7 @@ const ProfileForm = () => {
 
   return (
     <>
+     {isMobile && <NavBar />}
     <div className="left-panel-container">
       <UserProfileLeftPanel setActiveComponent={handleSetActiveComponent} />
     </div>
