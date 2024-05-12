@@ -39,6 +39,9 @@ export default function UserProfileLeftPanel({ setActiveComponent }) {
       case 'settings':
         navigate('/settings');
         break;
+        case 'hallForm':
+          navigate('/ServiceDetails');
+          break;
       default:
         break;
     }
@@ -78,6 +81,7 @@ export default function UserProfileLeftPanel({ setActiveComponent }) {
           <MenuItem icon={<HistoryIcon />} text="Booking History" onClick={() => handleItemClick('orderHistory')} />
           <MenuItem icon={<BellIcon />} text="Notifications" onClick={() => handleItemClick('Notifications')} />
           <MenuItem icon={<SettingsIcon />} text="Settings" onClick={() => handleItemClick('settings')} />
+          <MenuItem icon={<HallFormIcon />} text="Hall Form" onClick={() => handleItemClick('hallForm')} />
           <MenuItem icon={<HomeIcon />} text="Home" onClick={() => handleItemClick('home')} />
         </MenuSection>
       </div>
@@ -157,7 +161,11 @@ const HomeIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
   </svg>
 );
-
+const HallFormIcon = () => (
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+  </svg>
+);
 const BellIcon = () => (
   <svg
     width="24"
@@ -200,8 +208,13 @@ const SettingsIcon = () => (
 </svg>
 );
 
+// const UserIcon = () => (
+// <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+//   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z" /><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
+// </svg>
+// );
 const UserIcon = () => (
-<svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16,16A7,7,0,1,0,9,9,7,7,0,0,0,16,16ZM16,4a5,5,0,1,1-5,5A5,5,0,0,1,16,4Z" /><path d="M17,18H15A11,11,0,0,0,4,29a1,1,0,0,0,1,1H27a1,1,0,0,0,1-1A11,11,0,0,0,17,18ZM6.06,28A9,9,0,0,1,15,20h2a9,9,0,0,1,8.94,8Z" />
-</svg>
+  <svg className="w-6 h-6 stroke-current" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+  </svg>
 );

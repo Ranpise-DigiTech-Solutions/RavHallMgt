@@ -26,8 +26,7 @@ export {default as BookingDetailsDialog} from './BookingDetailsDialog/BookingDet
 export {default as Dashboard} from './DashboardAdmin/Dashboard';
 export {default as Favorites} from './Favorites/Favorites';
 export {default as MyCart} from './MyCart/MyCart';
-export {default as OrderHistoryPage} from './OrderHistoryPage/OrderHistoryPage';
 export {default as Notification} from './Notifications/Notifications'; 
 export {default as SettingsComponent} from './UserSettings/UserSettings'; 
+export {default as HallForm} from './HallForm/HallForm'
 // export {default as OrderHistoryPage} from './OrderHistoryPage/OrderHistoryPage'
-export {default as OrderDetailsPage} from './OrderDetailsPage/OrderDetailsPage';

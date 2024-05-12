@@ -8,15 +8,14 @@ import './App.scss'
 import { 
   HomePage,
   DescriptionPage,
-  UserProfilePage,
-} from './pages'
+  } from './pages'
 import {
   fetchCitiesOfCountryData,
   fetchEventTypesData,
   fetchVendorTypesData,
   fetchCountriesData
 } from "./states/Data";
-import { ProfileForm, Dashboard,MyCart, OrderHistoryPage, Notification, Favorites, SettingsComponent,OrderDetailsPage } from './components';
+import { ProfileForm, Dashboard,MyCart, Notification, Favorites, SettingsComponent, HallForm } from './components';
 
 
 function App() {
@@ -92,9 +91,6 @@ function App() {
             <Route path="/DescriptionPage" element={<DescriptionPage />} />
           </Routes>
           <Routes>
-            <Route path="/UserProfilePage" element={<UserProfilePage />} />
-          </Routes>
-          <Routes>
             <Route path="/ProfileForm" element={<ProfileForm />} />
           </Routes>
           <Routes>
@@ -102,9 +98,6 @@ function App() {
           </Routes>
           <Routes>
             <Route path="/YourCart" element={<MyCart />} />
-          </Routes>
-          <Routes>
-            <Route path="/OrderHistory" element={<OrderHistoryPage />} />
           </Routes>
           <Routes>
             <Route path="/Notifications" element={<Notification />} />
@@ -116,8 +109,9 @@ function App() {
             <Route path="/Settings" element={<SettingsComponent />} />
           </Routes>
           <Routes>
-            <Route path="/OrderDetailsPage" element={<OrderDetailsPage />} />
+            <Route path="/ServiceDetails" element={<HallForm />} />
           </Routes>
+          
         </ClerkProvider>
       );
   }
