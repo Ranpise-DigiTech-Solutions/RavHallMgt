@@ -44,14 +44,14 @@ export default function DescriptionPage() {
     try {
       const getServiceProviderData = async (hallData) => {
         const response = await axios.get(
-          `http://localhost:8000/eventify_server/serviceProviderMaster/?serviceProviderId=${hallData.hallUserId}`
+          `${import.meta.env.VITE_SERVER_URL}/eventify_server/serviceProviderMaster/?serviceProviderId=${hallData.hallUserId}`
         );
         setServiceProviderData(response.data[0]);
       };
       
       const getHallData = async () => {
         const response = await axios.get(
-          `http://localhost:8000/eventify_server/hallMaster/getHallDetails/?hallId=${hallId}`
+          `${import.meta.env.VITE_SERVER_URL}/eventify_server/hallMaster/getHallDetails/?hallId=${hallId}`
         );
         setHallData(response.data[0]);
         getServiceProviderData(response.data[0]);

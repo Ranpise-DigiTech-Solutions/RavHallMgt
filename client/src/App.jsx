@@ -23,9 +23,9 @@ import { ProfileForm, Dashboard,MyCart, Notification, Favorites, SettingsCompone
 function App() {
 
   const publishableKey = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-  const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
-  const hereAppId = import.meta.env.GOOGLE_MAPS_APP_ID;
-  const hereApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
+  // const googleMapsApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
+  // const hereAppId = import.meta.env.GOOGLE_MAPS_APP_ID;
+  // const hereApiKey = import.meta.env.GOOGLE_MAPS_API_KEY;
 
   const dispatch = useDispatch();
 
@@ -33,6 +33,7 @@ function App() {
     throw new Error("Missing Publishable Key")
   }
 
+  
   useEffect(() => {
 
     const getLocation = () => {
@@ -62,8 +63,9 @@ function App() {
       getLocation();
     }
   }, []);
+
   useEffect(() => {
-    const eventSource = new EventSource('http://localhost:8000/eventify_server/dashboard/userVisits');
+    const eventSource = new EventSource(`${import.meta.env.VITE_SERVER_URL}/eventify_server/dashboard/userVisits`);
     eventSource.onmessage = function(event) {
       console.log('User visits:', JSON.parse(event.data));
     

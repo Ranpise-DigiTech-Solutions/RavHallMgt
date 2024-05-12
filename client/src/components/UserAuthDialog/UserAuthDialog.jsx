@@ -234,7 +234,7 @@ export default function UserAuthDialog({
       try {
         // verify wether user exists and verify his password before signing-in
         const response = await axios.post(
-          "http://localhost:8000/eventify_server/userAuthentication/loginWithPassword/",
+          `${import.meta.env.VITE_SERVER_URL}/eventify_server/userAuthentication/loginWithPassword/`,
           postData
         );
         const userCredential = await signInWithEmailAndPassword(firebaseAuth, inputValue, signInPasswordValue);
@@ -401,7 +401,7 @@ export default function UserAuthDialog({
       const user = userCredential.user;
       
       const url =
-        "http://localhost:8000/eventify_server/userAuthentication/registerUser";
+        `${import.meta.env.VITE_SERVER_URL}/eventify_server/userAuthentication/registerUser`;
       let postData = {
         userType,
         data: customerInfo, // Default data for CUSTOMER user type

@@ -74,7 +74,6 @@ export default function PackagesCard({ card }) {
   };
 
   return (
-    
       <div className="packagesCardBox__wrapper">
          {/* Favorite heart icon */}
         <div className="favorite-icon-container" onClick={handleFavoriteClick}>

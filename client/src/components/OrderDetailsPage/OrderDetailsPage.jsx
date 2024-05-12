@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable react/prop-types */
 import React, { useState } from 'react';
 import axios from 'axios';
 import './OrderDetailsPage.scss';
@@ -26,12 +28,12 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
   const updateBookingToconfirm = async (bookingId) => {
     try {
       // Update the bookingStatus in the bookingMaster table
-      const updatedbookingresponse=await axios.put(`http://localhost:8000/eventify_server/bookingMaster/${bookingId}`, {
+      const updatedbookingresponse=await axios.put(`${import.meta.env.VITE_SERVER_URL}/eventify_server/bookingMaster/${bookingId}`, {
         bookingStatus: 'CONFIRMED',
       });
      const updatedbooking=updatedbookingresponse.data;
       // Get the confirmed booking data
-      const confirmedBookingResponse = await axios.get(`http://localhost:8000/eventify_server/bookingMaster/${bookingId}`);
+      const confirmedBookingResponse = await axios.get(`${import.meta.env.VITE_SERVER_URL}/eventify_server/bookingMaster/${bookingId}`);
       const confirmedBooking = confirmedBookingResponse.data;
   
       // Manually add the required fields with default values
@@ -41,7 +43,7 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
       confirmedBooking.finalGuestCount = updatedbooking.guestsCount;
   
       // Post the confirmed booking data to the hallBookingMaster table
-      await axios.post('http://localhost:8000/eventify_server/hallBookingMaster/', confirmedBooking);
+      await axios.post(`${import.meta.env.VITE_SERVER_URL}/eventify_server/hallBookingMaster/`, confirmedBooking);
       fetchBookings();
   
     } catch (error) {
@@ -52,7 +54,7 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
 
   const updateBookingToReject = async (bookingId) => {
     try {
-      await axios.put(`http://localhost:8000/eventify_server/bookingMaster/${bookingId}`, {
+      await axios.put(`${import.meta.env.VITE_SERVER_URL}/eventify_server/bookingMaster/${bookingId}`, {
         bookingStatus: 'REJECTED',
       });
       fetchBookings();
@@ -78,7 +80,7 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
 
   const updateBookingToOnHold = async (bookingId) => {
     try {
-      await axios.put(`http://localhost:8000/eventify_server/bookingMaster/${bookingId}`, {
+      await axios.put(`${import.meta.env.VITE_SERVER_URL}/eventify_server/bookingMaster/${bookingId}`, {
         bookingStatus: 'ONHOLD',
       });
       // Refetch bookings after updating to PENDING

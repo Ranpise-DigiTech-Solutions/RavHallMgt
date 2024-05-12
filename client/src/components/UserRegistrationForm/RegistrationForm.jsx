@@ -777,7 +777,7 @@ export default function RegistrationForm({
           programId: "USER",
           hallUserId: userInfo.userDetails.Document._id,
         };
-        URL = `http://localhost:8000/eventify_server/hallMaster/registerHall/?userId=${userInfo.userDetails.UID}`;
+        URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/hallMaster/registerHall/?userId=${userInfo.userDetails.UID}`;
       } else {
         data = {
           ...otherVendorData,
@@ -819,7 +819,7 @@ export default function RegistrationForm({
           programId: "USER",
           vendorUserId: userInfo.userDetails.Document._id,
         };
-        URL = `http://localhost:8000/eventify_server/vendorMaster/registerVendor/?userId=${userInfo.userDetails.UID}&vendorType=${userInfo.userDetails.vendorType}`;
+        URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/vendorMaster/registerVendor/?userId=${userInfo.userDetails.UID}&vendorType=${userInfo.userDetails.vendorType}`;
       }
     } else {
       const { customerFirstName, customerLastName, ...remainingInfo } =
@@ -848,7 +848,7 @@ export default function RegistrationForm({
 
         programId: "USER", // required-true
       };
-      URL = `http://localhost:8000/eventify_server/customerMaster/updateCustomer/?documentId=${userInfo.userDetails.Document._id}&userId=${userInfo.userDetails.UID}`;
+      URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/customerMaster/updateCustomer/?documentId=${userInfo.userDetails.Document._id}&userId=${userInfo.userDetails.UID}`;
     }
 
     try {
