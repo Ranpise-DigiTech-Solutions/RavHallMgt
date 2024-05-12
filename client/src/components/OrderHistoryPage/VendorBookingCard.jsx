@@ -18,9 +18,13 @@ const VendorBookingCard = ({ order, bookingStatus, onViewDetails }) => {
           <div className="customer-name">
             <strong>Customer Name:</strong> {order.customerData.customerName}
           </div>
-          <div className="date-time">
-            <strong>Booked Date:</strong>{' '}
-            {new Date(order.bookingStartDateTimestamp).toLocaleString()}
+          <div className="date">
+           <strong>Booked Date:</strong>{' '}
+            {new Date(order.bookingStartDateTimestamp).toLocaleDateString()}
+          </div>
+          <div className="time">
+           <strong>Booked Time:</strong>{' '}
+           {new Date(order.bookingStartDateTimestamp).toLocaleTimeString()}
           </div>
           <div className="date-time">
             <strong>Date of booking:</strong>{' '}

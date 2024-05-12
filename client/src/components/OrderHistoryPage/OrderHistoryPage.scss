@@ -1,152 +1,170 @@
 .order-history-page {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    
-    .order-history-panel {
-        position: relative; // Add this line
-        width: 90%;
-        padding: 20px;
-        background-color: #d7e3e3;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   
-      .order-history {
-        h2 {
-          color: #333;
-          font-size: 24px;
-          font-weight: bold;
-          margin-bottom: 20px;
-        }
-        
-        
+ 
+
+  .order-history-panel {
+    width: 96%;
+    max-width: 1200px;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    margin-top: 1.5%;
+    margin-bottom: 1.5%;
+    .order-history {
+      h2 {
+        color: #333;
+        font-size: 28px;
+        font-weight: bold;
+        margin-bottom: 30px;
+        text-align: center;
       }
-  
+
       .order-list {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        grid-gap: 30px;
       }
-  
+
       .order-card {
-        position: relative; /* Make the container for positioning */
+        position: relative;
         background-color: #fff;
         border-radius: 10px;
-        padding: 30px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        padding: 35px;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
         transition: box-shadow 0.3s, transform 0.3s;
-  
+        min-width:350px;
         &:hover {
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+          box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
           transform: translateY(-5px);
         }
-        .cnfrm-btn{
-          position: absolute; 
-          background-color: #FF7F50;
+
+        .cnfrm-btn,
+        .reject-btn {
+          position: absolute;
+          bottom: 10px;
+          padding: 8px 16px;
+          border-radius: 5px;
           color: #fff;
-          border: none;
-          padding: 5px 10px;
-          border-radius: 3px;
+          font-size: 14px;
+          font-weight: bold;
           transition: background-color 0.3s;
+          cursor: pointer;
+        }
+
+        .cnfrm-btn {
+          right: 110px;
+          background-color: #34c759;
+
+          &:hover {
+            background-color: #28a745;
+          }
+        }
+
+        .reject-btn {
           right: 20px;
-          bottom:10px;
-            &:hover {
-              background-color: #f86d3b;
-            }
+          background-color: #dc3545;
+
+          &:hover {
+            background-color: #c82333;
+          }
         }
-        .reject-btn{
-          position: absolute; 
-          background-color: red;
+
+        .view-btn {
+          position: absolute;
+          top: 5px;
+          right: 20px;
+          background-color: #007bff;
           color: #fff;
           border: none;
-          padding: 5px 10px;
-          border-radius: 3px;
+          padding: 8px 16px;
+          border-radius: 5px;
+          cursor: pointer;
           transition: background-color 0.3s;
-          right: 105px;
-          bottom:10px;
-            &:hover {
-              background-color: #6f2003;
-            }
+
+          &:hover {
+            background-color: #0056b3;
+          }
         }
-        .view-btn {
-            position: absolute; /* Position the button */
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 3px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-    
-            &:hover {
-              background-color: #0056b3;
-            }
+
+        .order-info {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 20px;
+          align-items: flex-start;
+          .date{
+            background-color: #ffffcc; /* Light shade of yellow */
+           border-radius: 4px; /* Rounded corners */
+            padding: 2px 4px; /* Add some padding */
           }
-          .order-info {
-            display: flex;
-            flex-wrap: wrap; /* Allow items to wrap to the next line */
-            gap: 20px;
-            align-items: flex-start; /* Align items at the start of the flex container */
+          .time{
+            background-color: #ffffcc; /* Light shade of yellow */
+            border-radius: 4px; /* Rounded corners */
+            padding: 2px 4px; /* Add some padding */
           }
-        
-          .hall-image {
-            flex: 0 0 180px;
-            margin-right: 20px;
-            border-radius: 10px;
-            overflow: hidden;
-        
-            img {
-              width: 100%;
-              height: 100%;
-              object-fit: cover;
-            }
+        }
+
+        .hall-image {
+          flex: 0 0 180px;
+          margin-right: 20px;
+          border-radius: 10px;
+          overflow: hidden;
+
+          img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
           }
-        
-          .info-wrapper {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
+        }
+
+        .info-wrapper {
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        .status {
+          position: absolute;
+          top: 5px;
+          left: 10px;
+          font-weight: bold;
+          padding: 4px 12px;
+          border-radius: 20px;
+          color: #fff;
+          display: flex;
+          align-items: center;
+          font-size: 14px;
+
+          &.confirmed {
+            background-color: #34c759;
           }
-        
-          .status {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            font-weight: bold;
-            padding: 4px 8px;
-            border-radius: 12px;
-            color: #fff;
-            display: flex;
-            align-items: center;
-        
-            &.confirmed {
-              background-color: #38b000;
-            }
-        
-            &.pending {
-              background-color: #ffeb3b;
-              color: #333;
-            }
-        
-            &.rejected {
-              background-color: #f44336;
-            }
-            &.onhold {
-              background-color: #ffc107;
-             
-            }
-        
-            .status-icon {
-              font-size: 20px;
-              margin-right: 5px;
-            }
-        
-            .status-text {
-              font-size: 1rem;
-            }
+
+          &.pending {
+            background-color: #ffc107;
+            color: #333;
+          }
+
+          &.rejected {
+            background-color: #dc3545;
+          }
+
+          &.onhold {
+            background-color: #6c757d;
+          }
+
+          .status-icon {
+            font-size: 16px;
+            margin-right: 5px;
+          }
+          .status-text {
+            font-size: 1rem;
           }
         }
       }
     }
+  }
+}

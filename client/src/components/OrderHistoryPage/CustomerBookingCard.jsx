@@ -8,7 +8,14 @@ const CustomerBookingCard = ({ order, bookingStatus, onViewDetails }) => {
         <div>
           <div className="book-id"><strong>Booking ID: </strong>{order._id}</div>
           <div className="hall-name"><strong>Hall Name:</strong> {order.hallData.hallName}</div>
-          <div className="date-time"><strong>Booked date:</strong> {new Date(order.bookingStartDateTimestamp).toLocaleString()}</div>
+          <div className="date">
+           <strong>Booked Date:</strong>{' '}
+            {new Date(order.bookingStartDateTimestamp).toLocaleDateString()}
+          </div>
+          <div className="time">
+           <strong>Booked Time:</strong>{' '}
+           {new Date(order.bookingStartDateTimestamp).toLocaleTimeString()}
+          </div>
           <div className="date-time"><strong>Date of booking:</strong> {new Date(order.createdAt).toLocaleString()}</div>
           <div className={`status ${bookingStatus.toLowerCase()}`}>
             {bookingStatus === 'CONFIRMED' && <FaCheckCircle className="status-icon" />}

@@ -15,11 +15,16 @@ $icon-color: rgb(43, 29, 29);
 }
 
 .custom-order-detail-page__container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
+  position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
 
   .custom-popup {
     background-color: $background-color;
@@ -184,14 +189,14 @@ $icon-color: rgb(43, 29, 29);
 
             .status-dropdown-menu {
               position: absolute;
-              top: 100%;
-              left: 50%;
-              transform: translateX(-50%);
-              background-color: $background-color;
-              border-radius: $border-radius;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-              padding: 10px;
-              z-index: 1;
+                z-index: 1;
+                background-color: #fff;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+                border-radius: 4px;
+                padding: 8px 0;
+                min-width: 200px;
+                right: 0;
+                bottom: 100%;
 
               .status-option-container {
                 display: flex;
@@ -212,6 +217,10 @@ $icon-color: rgb(43, 29, 29);
                     margin-right: 10px;
                     color: $icon-color;
                   }
+                }
+                .status-option.selected {
+                  background-color: rgb(170, 169, 169);
+                  border-radius: 4px;
                 }
               }
 

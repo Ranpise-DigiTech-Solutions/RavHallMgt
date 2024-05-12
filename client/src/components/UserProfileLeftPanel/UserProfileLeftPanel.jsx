@@ -63,10 +63,18 @@ export default function UserProfileLeftPanel({ setActiveComponent }) {
       alert('Error logging out. Please try again.'); // Display an error message
     }
   };
-  
-  return (
-    <div className="fixed top-0 bottom-0 flex flex-col items-center overflow-hidden text-gray-400 bg-gray-900 dashboardbox">
-      <a className="flex items-center w-full px-3 mt-3" href="#">
+ 
+  const handleLogoClick = (event) => {
+    event.preventDefault(); // Prevent default behavior of the anchor tag
+    navigateTo("/"); // Navigate to the home page
+  };
+
+    const handleItemClick = (componentKey) => {
+        setActiveComponent(componentKey);
+      };
+    return (
+      <div className="fixed top-0 left-0 bottom-0 flex flex-col items-center w-80 overflow-hidden text-gray-400 bg-gray-900 rounded dashboardbox">
+        <a className="flex items-center w-full px-3 mt-3" href="" onClick={() => handleLogoClick()}>
         <div>
           {/* Use your logo PNG here */}
           <img src={logo} alt="Logo" style={{ width: '50px', height: 'auto' }} />

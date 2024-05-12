@@ -4,6 +4,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import './OrderDetailsPage.scss';
 import logo from '../../assets/logo.png';
+import defualtImage from '../../assets/upload-photo-here.jpg';
+import { useNavigate } from "react-router-dom";
 
 import { FaWifi, FaUtensils, FaParking, FaArrowRight, FaCheckCircle, FaExclamationCircle, FaTimesCircle, FaEdit, FaSave, FaTimes, FaUser, FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaHotel, FaUsers, FaClock, FaCarSide, FaBed, FaCommentAlt } from 'react-icons/fa';
 
@@ -12,17 +14,18 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
   const [bookingStatus, setBookingStatus] = useState(order.bookingStatus);
   const [showStatusDropdown, setShowStatusDropdown] = useState(false);
   const [newStatus, setNewStatus] = useState(order.bookingStatus);
+  const [selectedOption, setSelectedOption] = useState(null);
+  const navigate = useNavigate();
  
-
  
-
+  
   const handleViewDetails = () => {
-    // Navigate to the description page when the button is clicked
-    // Implement the navigation logic here
+    navigate(`/DescriptionPage?hallId=${order.hallData._id}`);
   };
 
   const handleStatusChange = (newStatus) => {
     setNewStatus(newStatus);
+    setSelectedOption(newStatus); 
   };
   
   const updateBookingToconfirm = async (bookingId) => {
@@ -104,7 +107,7 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
       <div className="vendor-details">
         <div className="customer-profile">
           <div className="customer-profile-image">
-            <img src={order.customerData.customerProfileImage} alt="Customer Profile" />
+            <img src={order.customerData.customerProfileImage||defualtImage} alt="Customer Profile" />
           </div>
           <div className="customer-contact-details">
             <h2>Customer Contact Details</h2>
@@ -120,11 +123,19 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
           <h2>Booking Details</h2>
           <div className='bookingdata-left'>
           <p><FaUsers /><strong>Booking Type:</strong> {order.bookingType || "Not defined"}</p>
-          <p><FaClock /><strong>Booking Duration:</strong> {order.bookingDuration || "Not defined"} hours</p>
+          <p><FaCalendarAlt />
+           <strong>Booked Date:</strong>{' '}
+            {new Date(order.bookingStartDateTimestamp).toLocaleDateString()}
+            </p>
+            <p><FaClock />
+           <strong>Booked Time:</strong>{' '}
+           {new Date(order.bookingStartDateTimestamp).toLocaleTimeString()}
+           </p>
+           <p><FaParking /><strong>Parking Requirement:</strong> {order.parkingRequirement ? 'Yes' : 'No'}</p>
           <p><FaUsers /> <strong>Guests Count:</strong> {order.guestsCount || "Not defined"}</p>
           <p><FaBed /><strong>Rooms Count:</strong> {order.roomsCount || "Not defined"}</p>
           <p><FaCarSide /><strong>Vehicles Count:</strong> {order.vehiclesCount || "Not defined"}</p>
-          <p><FaParking /><strong>Parking Requirement:</strong> {order.parkingRequirement ? 'Yes' : 'No'}</p>
+         
           </div>
           <div className='bookingdata-right'>
           <p><FaUtensils /><strong>Book Caterer:</strong> {order.bookCaterer ? 'Yes' : 'No'}</p>
@@ -164,17 +175,25 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
         </div>
         </div>
       <div className="booking-details">
-          <h2>Booking Details</h2>
+      <h2>Booking Details</h2>
           <div className='bookingdata-left'>
           <p><FaUsers /><strong>Booking Type:</strong> {order.bookingType || "Not defined"}</p>
-          <p><FaClock /><strong>Booking Duration:</strong> {order.bookingDuration || "Not defined"} hours</p>
-          <p><FaUsers /><strong>Guests Count:</strong> {order.guestsCount || "Not defined"}</p>
-          <p><FaBed /> <strong>Rooms Count:</strong> {order.roomsCount || "Not defined"}</p>
+          <p><FaCalendarAlt />
+           <strong>Booked Date:</strong>{' '}
+            {new Date(order.bookingStartDateTimestamp).toLocaleDateString()}
+            </p>
+            <p><FaClock />
+           <strong>Booked Time:</strong>{' '}
+           {new Date(order.bookingStartDateTimestamp).toLocaleTimeString()}
+           </p>
+           <p><FaParking /><strong>Parking Requirement:</strong> {order.parkingRequirement ? 'Yes' : 'No'}</p>
+          <p><FaUsers /> <strong>Guests Count:</strong> {order.guestsCount || "Not defined"}</p>
+          <p><FaBed /><strong>Rooms Count:</strong> {order.roomsCount || "Not defined"}</p>
           <p><FaCarSide /><strong>Vehicles Count:</strong> {order.vehiclesCount || "Not defined"}</p>
-          <p><FaParking /><strong>Parking Requirement:</strong> {order.parkingRequirement ? 'Yes' : 'No'}</p>
+         
           </div>
           <div className='bookingdata-right'>
-          <p><FaUtensils /> <strong>Book Caterer:</strong> {order.bookCaterer ? 'Yes' : 'No'}</p>
+          <p><FaUtensils /><strong>Book Caterer:</strong> {order.bookCaterer ? 'Yes' : 'No'}</p>
           {order.bookCaterer && (
             <>
               <p><FaUtensils /> <strong>Veg Items List:</strong> {order.customerVegItemsList || 'Not provided'}</p>
@@ -183,9 +202,10 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
               <p><FaUtensils /><strong>Non-Veg Rate:</strong> {order.customerNonVegRate || 'Not provided'}</p>
             </>
           )}
-          </div>
-          <p className="customer-suggestion-full-width"><FaCommentAlt /> <strong>Customer Suggestion:</strong> {order.customerSuggestion || 'No suggestion provided'}</p>
-          </div>
+            </div>
+            <p className="customer-suggestion-full-width"><FaCommentAlt /><strong>Customer Suggestion:</strong> {order.customerSuggestion || 'No suggestion provided'}</p>
+        </div>
+      
         <div className="view-details-button" onClick={handleViewDetails}>
                 <button>
                   View Full Details
@@ -268,15 +288,15 @@ const OrderDetailsPage = ({ order,userId, onClose, userType ,fetchBookings}) => 
                   {showStatusDropdown && (
                     <div className="status-dropdown-menu">
                       <div className="status-option-container">
-                        <div className="status-option" onClick={() => handleStatusChange('ONHOLD')}>
+                        <div className={`status-option ${selectedOption === 'ONHOLD' ? 'selected' : ''}`} onClick={() => handleStatusChange('ONHOLD')}>
                           <FaExclamationCircle className="status-icon" />
                           <span>On Hold</span>
                         </div>
-                        <div className="status-option" onClick={() => handleStatusChange('CONFIRMED')}>
+                        <div className={`status-option ${selectedOption === 'CONFIRMED' ? 'selected' : ''}`}onClick={() => handleStatusChange('CONFIRMED')}>
                           <FaCheckCircle className="status-icon" />
                           <span>Confirm</span>
                         </div>
-                        <div className="status-option" onClick={() => handleStatusChange('REJECTED')}>
+                        <div className={`status-option ${selectedOption === 'REJECTED' ? 'selected' : ''}`} onClick={() => handleStatusChange('REJECTED')}>
                           <FaTimesCircle className="status-icon" />
                           <span>Reject</span>
                         </div>
