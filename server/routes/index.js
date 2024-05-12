@@ -2,7 +2,7 @@ export {default as hallMasterRoute} from './HallMaster.js';
 export {default as eventTypesRoute} from './EventTypes.js';
 export {default as chatBotRoute} from './ChatBot.js';
 export {default as countriesNowRoute} from './CountriesNow.js';
-export {default as bookingMasterRoute} from './bookingMaster.js';
+export {default as bookingMasterRoute} from './BookingMaster.js';
 export {default as customerMasterRoute} from './CustomerMaster.js';
 export {default as vendorTypesRoute} from './VendorTypes.js';
 export {default as venueTypesRoute} from './VenueTypes.js';
