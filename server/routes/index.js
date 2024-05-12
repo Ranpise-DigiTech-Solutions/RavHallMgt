@@ -10,5 +10,5 @@ export {default as hallBookingMasterRoute} from './HallBookingMaster.js';
 export {default as geoLocationTrackerRoute} from './GeoLocationTracker.js';
 export {default as userAuthenticationRoute} from './UserAuthentication.js';
 export {default as serviceProviderMasterRoute} from './ServiceProviderMaster.js';
-export {default as vendorMasterRoute} from './vendorMaster.js';
+export {default as vendorMasterRoute} from './VendorMaster.js';
 export {default as dashboardRoute} from './Dashboard.js';
