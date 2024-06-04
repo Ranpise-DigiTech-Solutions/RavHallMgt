@@ -68,6 +68,8 @@ export default function UserAuthDialog({
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down("md"));
 
+  const userInfoStore = useSelector((state) => state.userInfo);
+
   const [loadingScreen, setLoadingScreen] = useState(false); // toggle Loading Screen
   const [inputValue, setInputValue] = useState("");
   const [inputError, setInputError] = useState("");
@@ -246,7 +248,7 @@ export default function UserAuthDialog({
           userType: userType,
           vendorType: ""
         }));
-        dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
+        dispatch(userInfoActions("userAuthStateChangeFlag", !userInfoStore.userAuthStateChangeFlag));
         setLoadingScreen(false);
         handleClose(); // Close the Entire Login/Register Dialog after Sign-In
       } catch (error) {
@@ -423,7 +425,7 @@ export default function UserAuthDialog({
         userType: userType,
         vendorType: vendorInfo.vendorTypeInfo?.vendorType
       }));
-      dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
+      dispatch(userInfoActions("userAuthStateChangeFlag", !userInfoStore.userAuthStateChangeFlag));
       setLoadingScreen(false);
       handleClose(); // Close the Entire Login/Register Dialog after Sign-In
       handleRegistrationDialogOpen();

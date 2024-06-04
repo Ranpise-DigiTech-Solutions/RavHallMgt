@@ -6,6 +6,7 @@ const bookingMasterSchema = new mongoose.Schema({
     documentId: { type: Number, default: uuidv4, unique: true }, 
     hallId: { type: mongoose.Schema.Types.ObjectId, ref: 'hallmasters'},
     hallCity: {type: String, required: true },
+    hallUserId:{type: mongoose.Schema.Types.ObjectId, ref: 'serviceprovidermasters'},
     vendorTypeId: {type: mongoose.Schema.Types.ObjectId, ref: 'vendortypes', required: true },
     eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'eventtypes', required: true },
     customerId: { type: mongoose.Schema.Types.ObjectId, ref: 'customermasters', required: true },

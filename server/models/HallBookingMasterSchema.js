@@ -25,7 +25,7 @@ const hallBookingMasterSchema = new mongoose.Schema({
     finalNonVegRate: { type: Number },
     finalVegItemsList: { type: String },
     finalNonVegItemsList: { type: String },
-    hallUserId:{type: mongoose.Schema.Types.ObjectId, ref: 'bookingmasters'}
+    hallUserId:{type: mongoose.Schema.Types.ObjectId, ref: 'serviceprovidermasters'}
 }, { timestamps: true });
 
 // hallBookingMasterSchema.index({ customerId: 1, bookingTimestamp: 1 }, { unique: true });

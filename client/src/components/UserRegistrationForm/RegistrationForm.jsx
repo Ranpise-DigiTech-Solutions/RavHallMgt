@@ -102,7 +102,7 @@ export default function RegistrationForm({
     customerLastName: "", // required field
 
     customerDocumentType: "",
-    customerProfileImage: {},
+    customerProfileImage: "",
     // ... other fields can be found in `commonDataTemplate`
   };
 
@@ -183,14 +183,14 @@ export default function RegistrationForm({
   const data = useSelector((state) => state.data); // COUNTRIES, STATES & CITIES
   const userInfo = useSelector((state) => state.userInfo); // details of registered user.
 
-  const userType = userInfo.userDetails.userType;
+  const userType = userInfo.userDetails.userType || "CUSTOMER";
   const vendorType = userInfo.userDetails.vendorType;
 
   const fileInputRef = useRef(null);
   const profilePicInputRef = useRef(null);
   const vendorPicturesInputRef = useRef(null);
 
-  const [welcomeScreen, setWelcomeScreen] = useState(true); //set the welcome page when this component is loaded for the first time.
+  const [welcomeScreen, setWelcomeScreen] = useState(false); //set the welcome page when this component is loaded for the first time.
   const [formType, setFormType] = useState("FORM_ONE"); //  FORM_ONE, FORM_TWO, FORM_THREE, FORM_FOUR
   const [formContactType, setFormContactType] = useState("PRIMARY"); // PRIMARY or SECONDARY
   const [userConfirmationDialog, setUserConfirmationDialog] = useState(false); // toggle user confirmation dialog
@@ -735,132 +735,148 @@ export default function RegistrationForm({
     setLoadingScreen(true);
     let data = {};
     let URL = "";
-    if (userType === "VENDOR") {
-      if (vendorType === "Banquet Hall") {
-        data = {
-          ...hallVendorData,
-          hallAddress: commonData.address,
-          hallCountry: commonData.country,
-          hallState: commonData.state,
-          hallCity: commonData.city,
-          hallTaluk: commonData.taluk,
-          hallPincode: commonData.pincode,
-          hallLandmark: commonData.landmark,
-
-          hallRegisterNo: commonData.registerNo,
-          hallRegisterDate: commonData.registerDate,
-          hallRegisterDocument: commonData.registerDocument,
-
-          hallMainContactName:
-            commonData.mainContactFirstName +
-            " " +
-            commonData.mainContactLastName,
-          hallMainDesignation: commonData.mainDesignation,
-          hallMainOfficeNo: commonData.mainOfficeNo,
-          hallMainMobileNo: commonData.mainMobileNo,
-          hallMainEmail: commonData.mainEmail,
-
-          hallAlternateContactName:
-            commonData.alternateContactFirstName +
-            " " +
-            commonData.alternateContactLastName,
-          hallAlternateDesignation: commonData.alternateDesignation,
-          hallAlternateOfficeNo: commonData.alternateOfficeNo,
-          hallAlternateMobileNo: commonData.alternateMobileNo,
-          hallAlternateEmail: commonData.alternateEmail,
-
-          hallDescription: commonData.description,
-
-          hallEventTypes: userInfo.userDetails.Document.eventTypes,
-          hallImages: commonData.images,
-
-          programId: "USER",
-          hallUserId: userInfo.userDetails.Document._id,
-        };
-        URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/hallMaster/registerHall/?userId=${userInfo.userDetails.UID}`;
-      } else {
-        data = {
-          ...otherVendorData,
-          companyAddress: commonData.address,
-          companyCity: commonData.city,
-          companyPincode: commonData.pincode,
-          companyState: commonData.state,
-          companyTaluk: commonData.taluk,
-          companyCountry: commonData.country,
-          companyLandmark: commonData.landmark,
-
-          vendorRegisterNo: commonData.registerNo,
-          vendorRegisterDate: commonData.registerDate,
-          vendorRegisterDocument: commonData.registerDocument,
-
-          vendorMainContactName:
-            commonData.mainContactFirstName +
-            " " +
-            commonData.mainContactLastName,
-          vendorMainDesignation: commonData.mainDesignation,
-          vendorMainOfficeNo: commonData.mainOfficeNo,
-          vendorMainMobileNo: commonData.mainMobileNo,
-          vendorMainEmail: commonData.mainEmail,
-
-          vendorAlternateContactName:
-            commonData.alternateContactFirstName +
-            " " +
-            commonData.alternateContactLastName,
-          vendorAlternateDesignation: commonData.alternateDesignation,
-          vendorAlternateOfficeNo: commonData.alternateOfficeNo,
-          vendorAlternateMobileNo: commonData.alternateMobileNo,
-          vendorAlternateEmail: commonData.alternateEmail,
-
-          vendorTypeId: userInfo.userDetails.Document.vendorTypeId,
-          vendorDescription: commonData.description,
-          vendorEventTypes: userInfo.userDetails.Document.eventTypes,
-          vendorImages: commonData.images,
-
-          programId: "USER",
-          vendorUserId: userInfo.userDetails.Document._id,
-        };
-        URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/vendorMaster/registerVendor/?userId=${userInfo.userDetails.UID}&vendorType=${userInfo.userDetails.vendorType}`;
-      }
-    } else {
-      const { customerFirstName, customerLastName, ...remainingInfo } =
-        customerData;
-      data = {
-        ...remainingInfo,
-        customerName: customerFirstName + " " + customerLastName,
-
-        customerAddress: commonData.address,
-        customerCity: commonData.city,
-        customerPincode: commonData.pincode,
-        customerState: commonData.state,
-        customerTaluk: commonData.taluk,
-        customerCountry: commonData.country,
-        customerLandmark: commonData.landmark,
-
-        customerDesignation: commonData.mainDesignation,
-        customerMainOfficeNo: commonData.mainOfficeNo,
-        customerMainMobileNo: commonData.mainMobileNo,
-        customerMainEmail: commonData.mainEmail,
-
-        customerAlternateMobileNo: commonData.alternateMobileNo,
-        customerAlternateEmail: commonData.alternateEmail,
-
-        customerDocumentId: commonData.registerNo,
-
-        programId: "USER", // required-true
-      };
-      URL = `${import.meta.env.VITE_SERVER_URL}/eventify_server/customerMaster/updateCustomer/?documentId=${userInfo.userDetails.Document._id}&userId=${userInfo.userDetails.UID}`;
-    }
 
     try {
+      if (userType === "VENDOR") {
+        if (vendorType === "Banquet Hall") {
+          data = {
+            ...hallVendorData,
+            hallAddress: commonData.address,
+            hallCountry: commonData.country,
+            hallState: commonData.state,
+            hallCity: commonData.city,
+            hallTaluk: commonData.taluk,
+            hallPincode: commonData.pincode,
+            hallLandmark: commonData.landmark,
+
+            hallRegisterNo: commonData.registerNo,
+            hallRegisterDate: commonData.registerDate,
+            hallRegisterDocument: commonData.registerDocument,
+
+            hallMainContactName:
+              commonData.mainContactFirstName +
+              " " +
+              commonData.mainContactLastName,
+            hallMainDesignation: commonData.mainDesignation,
+            hallMainOfficeNo: commonData.mainOfficeNo,
+            hallMainMobileNo: commonData.mainMobileNo,
+            hallMainEmail: commonData.mainEmail,
+
+            hallAlternateContactName:
+              commonData.alternateContactFirstName +
+              " " +
+              commonData.alternateContactLastName,
+            hallAlternateDesignation: commonData.alternateDesignation,
+            hallAlternateOfficeNo: commonData.alternateOfficeNo,
+            hallAlternateMobileNo: commonData.alternateMobileNo,
+            hallAlternateEmail: commonData.alternateEmail,
+
+            hallDescription: commonData.description,
+
+            hallEventTypes: userInfo.userDetails.Document.eventTypes,
+            hallImages: commonData.images,
+
+            programId: "USER",
+            hallUserId: userInfo.userDetails.Document._id,
+          };
+          URL = `${
+            import.meta.env.VITE_SERVER_URL
+          }/eventify_server/hallMaster/registerHall/?userId=${
+            userInfo.userDetails.UID
+          }`;
+        } else {
+          data = {
+            ...otherVendorData,
+            companyAddress: commonData.address,
+            companyCity: commonData.city,
+            companyPincode: commonData.pincode,
+            companyState: commonData.state,
+            companyTaluk: commonData.taluk,
+            companyCountry: commonData.country,
+            companyLandmark: commonData.landmark,
+
+            vendorRegisterNo: commonData.registerNo,
+            vendorRegisterDate: commonData.registerDate,
+            vendorRegisterDocument: commonData.registerDocument,
+
+            vendorMainContactName:
+              commonData.mainContactFirstName +
+              " " +
+              commonData.mainContactLastName,
+            vendorMainDesignation: commonData.mainDesignation,
+            vendorMainOfficeNo: commonData.mainOfficeNo,
+            vendorMainMobileNo: commonData.mainMobileNo,
+            vendorMainEmail: commonData.mainEmail,
+
+            vendorAlternateContactName:
+              commonData.alternateContactFirstName +
+              " " +
+              commonData.alternateContactLastName,
+            vendorAlternateDesignation: commonData.alternateDesignation,
+            vendorAlternateOfficeNo: commonData.alternateOfficeNo,
+            vendorAlternateMobileNo: commonData.alternateMobileNo,
+            vendorAlternateEmail: commonData.alternateEmail,
+
+            vendorTypeId: userInfo.userDetails.Document.vendorTypeId,
+            vendorDescription: commonData.description,
+            vendorEventTypes: userInfo.userDetails.Document.eventTypes,
+            vendorImages: commonData.images,
+
+            programId: "USER",
+            vendorUserId: userInfo.userDetails.Document._id,
+          };
+          URL = `${
+            import.meta.env.VITE_SERVER_URL
+          }/eventify_server/vendorMaster/registerVendor/?userId=${
+            userInfo.userDetails.UID
+          }&vendorType=${userInfo.userDetails.vendorType}`;
+        }
+      } else {
+        const { customerFirstName, customerLastName, ...remainingInfo } =
+          customerData;
+        data = {
+          ...remainingInfo,
+          customerName: customerFirstName + " " + customerLastName,
+
+          customerAddress: commonData.address,
+          customerCity: commonData.city,
+          customerPincode: commonData.pincode,
+          customerState: commonData.state,
+          customerTaluk: commonData.taluk,
+          customerCountry: commonData.country,
+          customerLandmark: commonData.landmark,
+
+          customerDesignation: commonData.mainDesignation,
+          customerMainOfficeNo: commonData.mainOfficeNo,
+          customerMainMobileNo: commonData.mainMobileNo,
+          customerMainEmail: commonData.mainEmail,
+
+          customerAlternateMobileNo: commonData.alternateMobileNo,
+          customerAlternateEmail: commonData.alternateEmail,
+
+          customerDocumentId: commonData.registerNo,
+
+          programId: "USER", // required-true
+        };
+        URL = `${
+          import.meta.env.VITE_SERVER_URL
+        }/eventify_server/customerMaster/updateCustomer/?documentId=${
+          userInfo.userDetails.Document._id
+        }&userId=${userInfo.userDetails.UID}`;
+      }
+
       console.log(data);
-      const response = userType === "CUSTOMER" ? await axios.patch(URL, data) : await axios.post(URL, data);
+      const response =
+        userType === "CUSTOMER"
+          ? await axios.patch(URL, data)
+          : await axios.post(URL, data);
       console.log(response.data);
-    } catch(error) {
+    } catch (error) {
       setLoadingScreen(false);
       console.error(error.message);
     }
     setLoadingScreen(false);
-    handleClose();
+    // handleClose();
   };
 
   return (
@@ -890,7 +906,11 @@ export default function RegistrationForm({
               <h2 className="title">Thank you for signing up !!</h2>
               <div className="userProfile">
                 <PersonIcon className="icon personIcon" />
-                <p>{userType === "CUSTOMER" ? userInfo.userDetails?.Document.customerName : userInfo.userDetails?.Document.vendorName}</p>
+                <p>
+                  {userType === "CUSTOMER"
+                    ? userInfo.userDetails?.Document.customerName
+                    : userInfo.userDetails?.Document.vendorName}
+                </p>
                 <VerifiedIcon className="icon verificationIcon" />
               </div>
               <div className="description">
@@ -910,9 +930,16 @@ export default function RegistrationForm({
                   </p>
                 )}
               </div>
-              <button className="continueBtn" onClick={()=> setWelcomeScreen(false)}>Continue</button>
+              <button
+                className="continueBtn"
+                onClick={() => setWelcomeScreen(false)}
+              >
+                Continue
+              </button>
               {userType === "CUSTOMER" && (
-                <button className="skipBtn" onClick={handleClose}>Skip! I will confirm later</button>
+                <button className="skipBtn" onClick={handleClose}>
+                  Skip! I will confirm later
+                </button>
               )}
             </div>
           </div>
@@ -1497,10 +1524,11 @@ export default function RegistrationForm({
                             <img
                               alt="Remy Sharp"
                               src={
-                                customerData.customerProfileImage &&
-                                URL.createObjectURL(
-                                  customerData.customerProfileImage
-                                )
+                                customerData.customerProfileImage
+                                  ? URL.createObjectURL(
+                                      customerData.customerProfileImage
+                                    )
+                                  : ""
                               }
                               className="avatar"
                             />
@@ -1524,19 +1552,15 @@ export default function RegistrationForm({
                               </div>
                             )}
                           </div>
-                          <input
-                            ref={profilePicInputRef}
-                            type="file"
-                            onChange={(e) => {
-                              handleCustomerData(
-                                "customerProfileImage",
-                                e.target.files[0]
-                              );
-                            }}
-                            className="profilePicInput"
-                            style={{ display: "none" }}
+                          {/* <FileUploader
+                            hidden
                             accept="image/*"
-                          />
+                            storageRef={firebase.storage().ref('images')}
+                            onUploadStart={this.handleUploadStart}
+                            onUploadError={this.handleUploadError}
+                            onUploadSuccess={this.handleUploadSuccess}
+                            onProgress={this.handleProgress}
+                          /> */}
                           <button disabled className="profileBtn">
                             Profile Pic
                           </button>

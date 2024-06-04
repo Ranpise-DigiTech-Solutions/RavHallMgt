@@ -76,7 +76,7 @@ export default function NavBar() {
   const handleLogout = async () => {
     try {
       await firebaseAuth.signOut(); // Sign out the current user
-      dispatch(userInfoActions("userAuthStateChangeFlag", prevFlag => !prevFlag));
+      dispatch(userInfoActions("userAuthStateChangeFlag", !userInfoStore.userAuthStateChangeFlag));
       dispatch(userInfoActions("userDetails", {}));
       console.log('User logged out successfully');
     } catch (error) { // Handle Error condition
@@ -345,6 +345,7 @@ export default function NavBar() {
                 variant="contained"
                 className="button"
                 onClick={handleSignInButtonClick}
+                // onClick={handleRegistrationDialogOpen}
               >
                 Sign In
               </Button>

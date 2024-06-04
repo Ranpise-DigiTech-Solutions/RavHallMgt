@@ -112,32 +112,15 @@ function App() {
         navigate={(to) => navigate(to)}>
           <Routes>
             <Route path="/" element={<HomePage />} />
-          </Routes>
-          <Routes>
             <Route path="/DescriptionPage" element={<DescriptionPage />} />
-          </Routes>
-          <Routes>
             <Route path="/ProfileForm" element={<ProfileForm />} />
-          </Routes>
-          <Routes>
             <Route path="/Dashboard" element={<Dashboard />} />
-          </Routes>
-          <Routes>
             <Route path="/YourCart" element={<MyCart />} />
-          </Routes>
-          <Routes>
             <Route path="/Notifications" element={<Notification />} />
-          </Routes> 
-          <Routes>
             <Route path="/Favourites" element={<Favorites />} />
-          </Routes> 
-          <Routes>
             <Route path="/Settings" element={<SettingsComponent />} />
-          </Routes>
-          <Routes>
             <Route path="/ServiceDetails" element={<HallForm />} />
           </Routes>
-          
         </ClerkProvider>
       );
   }
@@ -145,9 +128,7 @@ function App() {
   return (
     <>
         <BrowserRouter>
-       
           <ClerkProviderWithRoutes />
-          
         </BrowserRouter>
     </>
     )

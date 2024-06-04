@@ -292,6 +292,7 @@ export default function BookingDetailsDialog({
       const postData = {
         hallId: hallData._id,
         hallCity: hallData.hallCity,
+        hallUserId: hallData.hallUserId,
         vendorTypeId: serviceProviderData.vendorTypeId,
         eventId: bookingDetails.eventTypeInfo.eventTypeId,
         customerId: userInfoStore.userDetails?.Document?._id,
@@ -317,7 +318,7 @@ export default function BookingDetailsDialog({
       };
 
       const response = await axios.post(
-        `${import.meta.env.VITE_SERVER_URL}/eventify_server/bookingMaster/`,
+        `http://localhost:8000/eventify_server/bookingMaster/`,
         postData
       );
       console.log(response);
